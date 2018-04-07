@@ -1,0 +1,49 @@
+<!--to be developed-->
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<div class="test-detail-style">
+		<h2>{{exam}}</h2>
+		<h4> {{part}}</h4>
+		<h5> {{section}}</h5>
+	</div>
+	<div class="sectionliststyle" >
+		<div class="details" style="margin-top:vh;">
+			<div class="current-section" >
+				<h6>Total Questions: </h6> <small>{{part.part_total_questions}}</small><br>
+	    		<h6>Maximum Marks: </h6> <small>{{section.section_calculate_marks}}</small><br>
+			</div>
+			<div class="current-section-detail">
+	    		<a class="btn" href="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}">
+	    			Add new Question
+	    		</a>
+	    		<a class="btn" href="{% url 'online_test:createsection' exam=exam part=part %}">
+	    			Add Batch of Questions
+	    		</a>
+			</div>
+		</div>
+		{% if questions %}
+			{% for question in questions %}
+		    <div class="section-box-question">
+		    	<div class="section-box-detail-question">
+		    		<h6>Q: </h6> <small>{{question}}</small><br>
+		    	</div>
+		    	<div class="section-box-edit-question">
+		    		<ul>
+		    			<li>Choice 1</li>
+		    			<li>Choice 2</li>
+		    			<li>Choice 3</li>
+		    			<li>Choice 4</li>
+		    		</ul>
+		        </div>
+
+		    </div>
+		    {% endfor %}
+	 	{% else %}
+	 		<div >
+	 			<h1 style="text-align:center; margin-top:120px;">No question in this section</h1>
+	 		</div>
+	 	{% endif %}
+ 	</div>
+</div>
+{% endblock %}

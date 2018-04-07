@@ -1,0 +1,11 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h3>Create new test</h3>
+	<form action="{% url 'online_test:sample' exam=exam part=part section=section %}" method="post">
+		{% csrf_token %}
+    	{{ form.as_p }}
+    	<input type="submit" value="SAVE">
+	</form>
+</div>
+{% endblock %}

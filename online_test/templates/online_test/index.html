@@ -1,0 +1,56 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<meta name="description" content="{% block description %}{% endblock %}">
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC|Raleway:100,200,600,700" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'online_test/style.css' %}" />
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<title>Conceptum Education Online Test</title>
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+</head>
+
+<body>
+	<div class="topbar">
+		<p><i class="fa fa-user-secret"></i>Hello Admin</p>
+	</div>
+
+	<div class="dashboard_controls">
+		{% block sidebar %}
+		<div class="sidebar">
+	        <ul style="list-style: none;">
+	        	<li><a href="{% url 'online_test:dashboard' %}"><i class="fa fa-home"></i>Dashboard</a></li>
+	        	<li><a href="{% url 'online_test:testmanage' %}"><i class="fa fa-child"></i>Tests</a></li>
+	        	<li><a href=""><i class="fa fa-home"></i>Students</a></li>
+	        	<li><a href=""><i class="fa fa-home"></i>Results</a></li>
+	        	<li><a href="{% url 'online_test:createtest' %}"><i class="fa fa-plus"></i>Create new tests</a></li>
+    		</ul>
+    	</div>
+        {% endblock %}
+	</div> 
+
+	<div class="dashboard_content" >		
+<!-- Before the quiz content -->
+		<div class="container">
+
+
+			{% block content %}
+
+			{% endblock %}
+		</div>
+
+		<!-- After the quiz content -->
+	</div>
+
+</body>
+</html>

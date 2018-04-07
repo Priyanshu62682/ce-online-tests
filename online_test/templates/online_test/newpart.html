@@ -1,0 +1,12 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h3>Add new Part</h3>
+
+	<form action="{% url 'online_test:createpart' testslug=slug %}" method="post">
+		{% csrf_token %}
+    	{{ form.as_p }}
+    	<input type="submit" value="SAVE">
+	</form>
+</div>
+{% endblock %}
