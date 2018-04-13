@@ -13,4 +13,6 @@ urlpatterns = [
 	path('managetests/<exam>/<part>/createsection',views.CreateSectionView.as_view(), name = 'createsection'),
 	path('managetests/<exam>/<part>/<section>/newquestion',views.AddQuestionView.as_view(), name = 'addnewquestion'),
 	path('managetests/<exam>/<part>/<section>/updatesection',views.SectionUpdateView.as_view(), name = 'updatesection'),
+	path('managetests/<exam>/<part>/<section>/<question>/',views.AddNewChoices.as_view(), name = 'addnewchoices'),
+
 ]

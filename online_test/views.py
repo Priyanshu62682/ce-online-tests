@@ -80,7 +80,7 @@ class CreateSectionView(CreateView):
 
 class AddQuestionView(CreateView):
 	model = Question
-	fields = ('passage','content','figure',)
+	fields = ('content','figure',)
 	template_name = 'online_test/newquestion.html'
 	# def get_initial(self,**kwargs):
 	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
@@ -143,3 +143,31 @@ class CreatePartView(CreateView):
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:testdetail',
 			kwargs={'slug':self.kwargs['testslug'] })
+
+class AddNewChoices(CreateView):
+	model = SingleChoiceCorrect
+	fields = '__all__'
+	template_name = 'online_test/newchoices.html'
+	# def get_initial(self,**kwargs):
+	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+	# 	part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
+	# 	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+	# 	return {'exam': exam_instance,
+	# 	'part': part_instance,
+	# 	'section':section_instance}
+
+	# def form_valid(self, form,**kwargs):
+	# 	form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+	# 	form.instance.part = Part.objects.get(exam=form.instance.exam, name=self.kwargs['part'])
+	# 	form.instance.section = Section.objects.get(
+	# 		exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])	
+	# 	return super(AddQuestionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		return reverse('online_test:updatesection',
+			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(AddNewChoices,self).get_context_data(**kwargs)
+		context['question'] = self.kwargs['question']	
+		return context

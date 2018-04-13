@@ -152,11 +152,9 @@ class Question(models.Model):
 	part = models.ForeignKey(Part,on_delete = models.CASCADE)
 
 	section = models.ForeignKey(Section,on_delete = models.CASCADE)
-	passage = models.CharField(
-		max_length=1000,
-		blank = True,
-		help_text = "The passage will appear before the question, if entered",
-		)
+
+	question_id = models.AutoField(primary_key=True)
+
 	content = models.CharField(
 		max_length=1000,
 		blank = False,
@@ -169,3 +167,34 @@ class Question(models.Model):
 
 	def __str__(self):
 		return self.content
+
+class SingleChoiceCorrect(models.Model):
+
+	STATUS = Choices('Choice-1','Choice-2','Choice-3','Choice-4')
+
+	question_id = models.ForeignKey(Question,on_delete=models.CASCADE)
+	
+	choice_1 = models.CharField(
+		max_length=50,
+		blank=False,
+		verbose_name = "Choice 1",
+		)
+	choice_2 = models.CharField(
+		max_length=50,
+		blank=False,
+		verbose_name = "Choice 2",
+		)
+	choice_3 = models.CharField(
+		max_length=50,
+		blank=False,
+		verbose_name = "Choice 3",
+		)
+	choice_4 = models.CharField(
+		max_length=50,
+		blank=False,
+		verbose_name = "Choice 4",
+		)
+	correct_choice = StatusField()
+
+	def __str__(self):
+		return str(self.question_id)
