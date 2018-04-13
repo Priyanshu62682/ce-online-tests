@@ -1,6 +1,9 @@
 from django import forms
 from .models import *
 from django.forms import inlineformset_factory
+from django.forms import ModelForm
+from django.forms import modelformset_factory
+
 
 class ContactForm(forms.Form):
     name = forms.CharField()
@@ -21,4 +24,16 @@ class CreateSectionForm(forms.ModelForm):
         self.exam = exam
         self.part = part
         super(CreateSectionForm, self).__init__(*args, **kwargs)
+
+class QuestionForm(ModelForm):
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+class PartTestForm(ModelForm):
+    class Meta:
+        model = Part
+        fields = '__all__'
+
+QuestionFormset = modelformset_factory(Part, fields='__all__', extra=2, form = QuestionForm)
 

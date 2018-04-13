@@ -96,6 +96,7 @@ class Part(models.Model):
 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
 
 	name = models.CharField(
+		unique = True,
 		max_length=50,
 		blank=False,
 		verbose_name = "part name",

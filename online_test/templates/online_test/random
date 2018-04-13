@@ -1,0 +1,10 @@
+
+	def get(self,request,**kwargs):
+		formset = QuestionFormset(queryset=Part.objects.none())
+		return render(request, self.template_name, {'slug':self.kwargs['testslug'] ,'formset': formset})
+
+	def post(self, request,**kwargs):
+		formset = QuestionFormset(request.POST)
+		if formset.is_valid():
+			formset.save()
+		return HttpResponseRedirect('Success')

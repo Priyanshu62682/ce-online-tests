@@ -4,6 +4,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy,reverse
 from django.views import generic
+from django.forms import modelformset_factory
 from .forms import *
 from .models import *
 
@@ -58,34 +59,43 @@ class CreateTestView(CreateView):
 
 class CreateSectionView(CreateView):
 	template_name = 'online_test/createnewsection.html'
-	form_class = CreateSectionForm
 	model = Section
+	fields = ('section_type','positive_marks','negative_marks','section_instructions',)
+
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam, name=self.kwargs['part'])
+		return super(CreateSectionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:sections',kwargs={'testslug':self.kwargs['exam'],'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateSectionView,self).get_context_data(**kwargs)
-		test_name = self.kwargs['exam']
-		part_name = self.kwargs['part']
-		test_object = Exam.objects.get(title=test_name)
-		part_object = Part.objects.get(exam=test_object, name=part_name)
-		context['exam'] = test_object
-		context['part'] = part_object
-		return context
-
-	def get_form_kwargs(self,**kwargs):
-		kwargs = super(CreateSectionView, self).get_form_kwargs()
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
 		part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
-		kwargs['part'] = part_instance
-		kwargs['exam'] = exam_instance
-		return kwargs
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
 
 class AddQuestionView(CreateView):
 	model = Question
-	fields = '__all__'
+	fields = ('passage','content','figure',)
 	template_name = 'online_test/newquestion.html'
+	# def get_initial(self,**kwargs):
+	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+	# 	part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
+	# 	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+	# 	return {'exam': exam_instance,
+	# 	'part': part_instance,
+	# 	'section':section_instance}
+
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam, name=self.kwargs['part'])
+		form.instance.section = Section.objects.get(
+			exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])	
+		return super(AddQuestionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:updatesection',
@@ -93,12 +103,9 @@ class AddQuestionView(CreateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(AddQuestionView,self).get_context_data(**kwargs)
-		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
-		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
-		context['exam'] = exam_instance
-		context['part'] = part_instance
-		context['section'] = section_instance		
+		context['exam'] = self.kwargs['exam']
+		context['part'] = self.kwargs['part']
+		context['section'] = self.kwargs['section']		
 		return context
 	
 class SectionUpdateView(generic.TemplateView):
@@ -121,9 +128,12 @@ class SectionUpdateView(generic.TemplateView):
 
 class CreatePartView(CreateView):
 	model = Part
-	fields = '__all__'
+	fields = ('name',)
 	template_name = 'online_test/newpart.html'
 
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(url=self.kwargs['testslug'])
+		return super(CreatePartView, self).form_valid(form,**kwargs)
 
 	def get_context_data(self,**kwargs):
 		context = super(CreatePartView,self).get_context_data(**kwargs)
