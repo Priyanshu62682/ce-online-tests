@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
 	<h3>Add new Part</h3>
-	<form method="post" action="{% url 'online_test:createpart' testslug=slug %}" method="post">
+	<form method="post" action="{% url 'online_test:createpart' testslug=slug %}" >
 	    {% csrf_token %}
 		{{ form.as_p }}
 		<input type="submit" value="SAVE">

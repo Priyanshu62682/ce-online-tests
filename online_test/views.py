@@ -10,7 +10,6 @@ from .models import *
 
 
 class DashboardView(generic.TemplateView):
-	#model = Question
 	template_name = 'online_test/dashboard.html'
 
 class TestListView(generic.ListView):
@@ -146,7 +145,7 @@ class CreatePartView(CreateView):
 
 class AddNewChoices(CreateView):
 	model = SingleChoiceCorrect
-	fields = '__all__'
+	fields = ('choice_1','choice_2','choice_3','choice_4','correct_choice')
 	template_name = 'online_test/newchoices.html'
 	# def get_initial(self,**kwargs):
 	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
@@ -156,12 +155,9 @@ class AddNewChoices(CreateView):
 	# 	'part': part_instance,
 	# 	'section':section_instance}
 
-	# def form_valid(self, form,**kwargs):
-	# 	form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
-	# 	form.instance.part = Part.objects.get(exam=form.instance.exam, name=self.kwargs['part'])
-	# 	form.instance.section = Section.objects.get(
-	# 		exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])	
-	# 	return super(AddQuestionView, self).form_valid(form,**kwargs)
+	def form_valid(self, form,**kwargs):
+		form.instance.question_id = Question.objects.get(id=self.kwargs['question'])
+		return super(AddNewChoices, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:updatesection',
@@ -169,5 +165,12 @@ class AddNewChoices(CreateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(AddNewChoices,self).get_context_data(**kwargs)
-		context['question'] = self.kwargs['question']	
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
+		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+		question_instance = Question.objects.get(id=self.kwargs['question'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		context['section'] = section_instance	
+		context['question'] = question_instance
 		return context

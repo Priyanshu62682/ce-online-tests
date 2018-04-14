@@ -1,9 +1,8 @@
 {% extends "online_test/index.html" %}
 {% block content %}
 <div class="container">
-	<h3>{{question}}</h3>
-	<form method="post" action="{% url 'online_test:addnewchoices' 
-	exam=exam part=part section=section question=question %}" method="post">
+	<h3>{{question.content}}</h3>
+	<form action="{% url 'online_test:addnewchoices' exam=exam part=part section=section question=question.id %}" method="post">
 	    {% csrf_token %}
 		{{ form.as_p }}
 		<input type="submit" value="SAVE">

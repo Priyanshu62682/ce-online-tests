@@ -26,21 +26,25 @@
 			{% for question in questions %}
 		    <div class="section-box-question">
 		    	<div class="section-box-detail-question">
-		    		<h6>Q: </h6> <small>{{question}}</small><br>
+		    		<h6>Q: </h6> <small>{{question.content}}</small><br>
 		    	</div>
 		    	<div class="section-box-edit-question">
-		    		{% if question.SingleChoiceCorrect_set.all %}
-			    		<ul>
-			    			{% for choice in question.SingleChoiceCorrect_set.all %}
-			    				<li>{{choice}}</li>
+		    		<ul>
+		    			{% if question.get_choices %}
+			    			{% for choice in question.get_choices %}
+			    				<li>{{choice.choice_1}}</li>
+			    				<li>{{choice.choice_2}}</li>
+			    				<li>{{choice.choice_3}}</li>
+			    				<li>{{choice.choice_4}}</li>
+			    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
 			    			{% endfor %}
-			    		</ul>
-			    	{% else %}
-			    		<p> No choice yet</p>
-		    		{% endif %}
-		    		<a class="btn" href="{% url 'online_test:addnewchoices' exam=exam part=part section=section question=question %}">
-	    				Add Choices
-	    			</a>
+			    		{% else %}
+			    			<a class="btn" href="{% url 'online_test:addnewchoices' exam=exam part=part section=section question=question.id%}">
+	    						Add Choices
+	    					</a>
+		    			{% endif %}
+		    		</ul>
+		    		
 		        </div>
 
 		    </div>

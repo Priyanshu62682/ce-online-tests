@@ -123,11 +123,11 @@ class Section(models.Model):
 	section_type = StatusField()
 
 	positive_marks = models.IntegerField(
-		help_text = "Positive Marks",
+		help_text = "Example: +4",
 		blank = False,
 		)
 	negative_marks = models.IntegerField(
-		help_text = "Negative Marks",
+		help_text = "Example: -1",
 		blank = False,
 		)
 	section_instructions = models.CharField(
@@ -153,8 +153,6 @@ class Question(models.Model):
 
 	section = models.ForeignKey(Section,on_delete = models.CASCADE)
 
-	question_id = models.AutoField(primary_key=True)
-
 	content = models.CharField(
 		max_length=1000,
 		blank = False,
@@ -165,8 +163,12 @@ class Question(models.Model):
 		blank = True,
 		)
 
+	def get_choices(self):
+		marks = self.singlechoicecorrect_set.select_related('question_id')
+		return marks
+
 	def __str__(self):
-		return self.content
+		return str(self.id)
 
 class SingleChoiceCorrect(models.Model):
 
@@ -195,6 +197,7 @@ class SingleChoiceCorrect(models.Model):
 		verbose_name = "Choice 4",
 		)
 	correct_choice = StatusField()
+
 
 	def __str__(self):
 		return str(self.question_id)
