@@ -79,48 +79,74 @@ class CreateSectionView(CreateView):
 		context['part'] = part_instance
 		return context
 
+class AddQuestionViewBatch(CreateView):
+	#model = Question
+	#fields = ('content','figure',)
+	#template_name = 'online_test/newquestion.html'
+	form_class = QuestionForm
+	template_name = 'online_test/testquestion.html'
+
+	def get_context_data(self,**kwargs):
+		context = super(AddQuestionViewBatch,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = self.kwargs['part']
+		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+		context['exam'] = self.kwargs['exam']
+		context['part'] = self.kwargs['part']
+		context['section'] = self.kwargs['section']
+		context['formset'] = QuestionFormset(queryset=Question.objects.none())
+		return context
+
+	def post(self, request, *args, **kwargs):
+		formset = QuestionFormset(request.POST)
+		if formset.is_valid():
+			return self.form_valid(formset)
+
+	# def form_valid(self, formset):
+	# 	formset.save()
+	# 	return HttpResponseRedirect('/dashboard/managetests/')
+
+	def form_valid(self, formset,**kwargs):
+		for form in formset:
+			form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+			form.instance.part = self.kwargs['part']
+			form.instance.section = Section.objects.get(
+				exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
+		formset.save()
+		return super(AddQuestionViewBatch, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		return reverse('online_test:updatesection',
+			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] })
+
+
 class AddQuestionView(CreateView):
 	model = Question
-	#form_class = QuestionForm
 	fields = ('content','figure',)
 	template_name = 'online_test/newquestion.html'
-	#template_name = 'online_test/testquestion.html'
-
-	# def get_initial(self,**kwargs):
-	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-	# 	part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
-	# 	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
-	# 	return {'exam': exam_instance,
-	# 	'part': part_instance,
-	# 	'section':section_instance}
 
 	def get_context_data(self,**kwargs):
 		context = super(AddQuestionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = self.kwargs['part']
+		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
 		context['exam'] = self.kwargs['exam']
 		context['part'] = self.kwargs['part']
 		context['section'] = self.kwargs['section']
 		#context['formset'] = QuestionFormset(queryset=Question.objects.none())
 		return context
 
-	# def post(self, request, *args, **kwargs):
-	# 	formset = QuestionFormset(request.POST)
-	# 	if formset.is_valid():
-	# 		return self.form_valid(formset)
-
-	# def form_valid(self, formset):
-	# 	formset.save()
-	# 	return HttpResponseRedirect('/dashboard/managetests/')
-
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		form.instance.part = self.kwargs['part']
 		form.instance.section = Section.objects.get(
-			exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])	
+			exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
 		return super(AddQuestionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:updatesection',
 			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] })
+
 
 	
 class SectionUpdateView(generic.TemplateView):
@@ -164,7 +190,7 @@ class AddNewChoices(CreateView):
 	def get_context_data(self,**kwargs):
 		context = super(AddNewChoices,self).get_context_data(**kwargs)
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
+		part_instance = self.kwargs['part']
 		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
 		question_instance = Question.objects.get(id=self.kwargs['question'])
 		context['exam'] = exam_instance

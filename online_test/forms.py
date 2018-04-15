@@ -28,9 +28,9 @@ class CreateSectionForm(forms.ModelForm):
 class QuestionForm(ModelForm):
     class Meta:
         model = Question
-        fields = '__all__'
+        fields = ['content','figure']
 
 
 
-QuestionFormset = modelformset_factory(Question, fields='__all__', extra=2, form = QuestionForm)
+QuestionFormset = modelformset_factory(Question, fields=['content','figure'], extra=2, form = QuestionForm)
 

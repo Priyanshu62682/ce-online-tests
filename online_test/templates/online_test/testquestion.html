@@ -7,9 +7,12 @@
 		{% csrf_token %}
 		{{ form.non_field_errors }}
 		{{ formset.management_form }}
-    	{% for form in formset %}
-    	    {{ form.as_p }}
-    	{% endfor %}
+		<ul>
+	    	{% for form in formset %}
+	    		<li>{{ form.content.label }} - {{ form.content }}</li></br>
+	    	    <li>{{ form.figure }}</li></br>
+	    	{% endfor %}
+    	</ul>
     	<input type="submit" value="SAVE">
 	</form>
 </div>

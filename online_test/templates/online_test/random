@@ -8,3 +8,12 @@
 		if formset.is_valid():
 			formset.save()
 		return HttpResponseRedirect('Success')
+
+
+	# def get_initial(self,**kwargs):
+	# 	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+	# 	part_instance = Part.objects.get(exam=exam_instance, name=self.kwargs['part'])
+	# 	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+	# 	return {'exam': exam_instance,
+	# 	'part': part_instance,
+	# 	'section':section_instance}
