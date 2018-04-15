@@ -1,0 +1,16 @@
+
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h3>Add new question</h3>
+	<form action="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}" method="post">
+		{% csrf_token %}
+		{{ form.non_field_errors }}
+		{{ formset.management_form }}
+    	{% for form in formset %}
+    	    {{ form.as_p }}
+    	{% endfor %}
+    	<input type="submit" value="SAVE">
+	</form>
+</div>
+{% endblock %}

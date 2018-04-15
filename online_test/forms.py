@@ -30,10 +30,7 @@ class QuestionForm(ModelForm):
         model = Question
         fields = '__all__'
 
-class PartTestForm(ModelForm):
-    class Meta:
-        model = Part
-        fields = '__all__'
 
-QuestionFormset = modelformset_factory(Part, fields='__all__', extra=2, form = QuestionForm)
+
+QuestionFormset = modelformset_factory(Question, fields='__all__', extra=2, form = QuestionForm)
 

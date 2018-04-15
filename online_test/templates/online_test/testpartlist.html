@@ -7,12 +7,12 @@
 		<strong style="padding:10px 10px 0px 0px; ">Select Part</strong>
 			
 		{% for part in parts %}
-			<a href="{% url 'online_test:sections' testslug=exam.url part=part.name %}">
-				<p value="{{part.name}}">{{part.name}}</p>
+			<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
+				{{part}}
 			</a>
 		{% endfor %}
 		<div class="addnewpart">
-			<a href="{% url 'online_test:createpart' testslug=exam.url %}">
+			<a href="#">
 				Add new Part
 				<span  class="fa-stack fa-lg">
 					<i class="fa fa-plus fa-2x"></i>	

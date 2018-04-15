@@ -92,32 +92,34 @@ class Exam(models.Model):
 	def __str__(self):
 		return self.title
 
-class Part(models.Model):
-	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
+# class Part(models.Model):
+# 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
 
-	name = models.CharField(
-		unique = True,
-		max_length=50,
-		blank=False,
-		verbose_name = "part name",
-		)
-	def part_total_questions(self):
-		questions = self.question_set.count()
-		return questions
+# 	name = models.CharField(
+# 		unique = True,
+# 		max_length=50,
+# 		blank=False,
+# 		verbose_name = "part name",
+# 		)
+# 	def part_total_questions(self):
+# 		questions = self.question_set.count()
+# 		return questions
 
-	def part_calculate_marks(self):
-		marks = self.question_set.count()*self.positive_marks
-		return marks
+# 	def part_calculate_marks(self):
+# 		marks = self.question_set.count()*self.positive_marks
+# 		return marks
 
-	def __str__(self):
-		return self.name
+# 	def __str__(self):
+# 		return self.name
 
 class Section(models.Model):
 	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_answer_type')
 	
+	part_choices = Choices('Physics','Chemistry','Maths')
+	
 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
 
-	part = models.ForeignKey(Part,on_delete = models.CASCADE)
+	part = StatusField(choices_name='part_choices')
 
 	# selects question type from status variable defined above
 	section_type = StatusField()
@@ -149,7 +151,9 @@ class Section(models.Model):
 class Question(models.Model):
 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
 
-	part = models.ForeignKey(Part,on_delete = models.CASCADE)
+	part_choices = Choices('Physics','Chemistry','Maths')
+	
+	part = StatusField(choices_name='part_choices')
 
 	section = models.ForeignKey(Section,on_delete = models.CASCADE)
 
