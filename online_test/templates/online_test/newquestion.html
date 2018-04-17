@@ -5,9 +5,19 @@
 	<form action="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}" method="post">
 		{% csrf_token %}
 		{{ form.non_field_errors }}
-		<p><label for="id_content">Content:</label>
-		<textarea name="content" id="id_content" rows="4" cols="70" required></textarea></p>
-
+		<table>
+			<tr>
+				<td>
+					<label for="id_content">Content:</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<textarea name="content" id="id_content" rows="4" cols="70" required 
+					placeholder="Enter the question"></textarea>
+				</td>
+			</tr>
+		</table>
     	<input type="submit" value="SAVE">
 	</form>
 </div>

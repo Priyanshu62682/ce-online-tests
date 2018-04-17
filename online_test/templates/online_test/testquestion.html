@@ -3,16 +3,30 @@
 {% block content %}
 <div class="container">
 	<h3>Add new question</h3>
-	<form action="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}" method="post">
+	<form action="{% url 'online_test:addnewquestionbatch' exam=exam part=part section=section %}" method="post">
 		{% csrf_token %}
 		{{ form.non_field_errors }}
 		{{ formset.management_form }}
-		<ul>
+		<table>
 	    	{% for form in formset %}
-	    		<li>{{ form.content.label }} - {{ form.content }}</li></br>
-	    	    <li>{{ form.figure }}</li></br>
+	    		<tr>
+	    			<td><label>{{ form.content.label }}</lab></td>
+	    		</tr>
+	    		<tr>
+	    			<td>
+	    				<textarea name="form-{{ forloop.counter0 }}-content" id="id_form-{{ forloop.counter0 }}-content" rows="4" cols="70" required 
+						placeholder="Enter the question"></textarea>
+					</td>
+	    			<!--td>{{ form.content }}</td-->
+	    		</tr>
+	    		<tr>
+	    	    	<td>{{ form.figure }}</td>
+	    	    	{% if field.help_text %}
+        			<p class="help">{{ field.help_text|safe }}</p>
+        			{% endif %}
+	    	    </tr>
 	    	{% endfor %}
-    	</ul>
+    	</table>
     	<input type="submit" value="SAVE">
 	</form>
 </div>

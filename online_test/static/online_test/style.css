@@ -231,4 +231,15 @@ i{
 	float: right;
 	width: 40%;
 }
+form-table {
+    border-collapse: collapse;
+    margin-top: .5em;
+    width: 100%;
+    clear: both;
+	border-spacing: 2px;
+	border-color: grey;
+}
+form-table tr{
+	padding: 5px;
+}
 
