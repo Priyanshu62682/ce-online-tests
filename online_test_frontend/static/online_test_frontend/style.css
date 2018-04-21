@@ -1,0 +1,53 @@
+html,body {
+	font-family: 'Ubuntu', sans-serif !important;
+	height: 100%;
+	margin: 0;
+
+}
+
+h1,h2,h3,h4,h5,h6{
+	color:  #262626 !important;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+.block{
+	position: static;
+	display: block !important;
+}
+
+.subscription-list{
+	position: relative;
+	display: inline-block;
+	width: 33%;
+	}
+
+.test-description{
+	position: relative;
+	margin: 15px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	color:  #262626;
+	overflow: hidden;
+	clear: both;
+}
+
+.description-block{
+	position: relative;	
+	text-align: center;
+	padding: 10px;
+}
+
+.test-heading{
+	position: relative;
+	text-align: center;
+	margin: 0px !important;
+	height: auto;
+	background-color: #b3e6ff;
+	border-bottom: 1px solid #ccc;
+}
+

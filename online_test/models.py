@@ -5,6 +5,7 @@ from datetime import datetime
 from model_utils import Choices
 from model_utils.fields import StatusField
 from django.urls import reverse_lazy,reverse
+from django.contrib.postgres.fields import JSONField
 # Create your models here.
 
 class Exam(models.Model):
@@ -19,13 +20,13 @@ class Exam(models.Model):
 				break
 		return randstr
 
-	test_id = models.CharField(
-		unique=True,
-		max_length=50,
-		blank=False,
-		verbose_name = "test id",
-		default = generate_rand_id(),
-		)
+	# test_id = models.CharField(
+	# 	unique=True,
+	# 	max_length=50,
+	# 	blank=False,
+	# 	verbose_name = "test id",
+	# 	default = generate_rand_id(),
+	# 	)
 	title = models.CharField(
 		unique=True,
 		max_length=100,
@@ -54,10 +55,11 @@ class Exam(models.Model):
 		default = datetime.now,
 		blank = True,
 		)
-
-	draft = models.BooleanField(
-		default = True,
-		help_text = "Uncheck to launch the test",
+	test_choices = Choices('Free','Mock','Paid')
+	test_type = StatusField(choices_name='test_choices')
+	published = models.BooleanField(
+		default = False,
+		help_text = "Check to launch the test",
 		)
 
 	class Meta:
@@ -114,16 +116,11 @@ class Exam(models.Model):
 
 class Section(models.Model):
 	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_answer_type')
-	
 	part_choices = Choices('Physics','Chemistry','Maths')
-	
 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
-
 	part = StatusField(choices_name='part_choices')
-
 	# selects question type from status variable defined above
 	section_type = StatusField()
-
 	positive_marks = models.IntegerField(
 		help_text = "Example: +4",
 		blank = False,
@@ -150,23 +147,17 @@ class Section(models.Model):
 
 class Question(models.Model):
 	exam = models.ForeignKey(Exam,on_delete = models.CASCADE)
-
 	part_choices = Choices('Physics','Chemistry','Maths')
-	
 	part = StatusField(choices_name='part_choices')
-
 	section = models.ForeignKey(Section,on_delete = models.CASCADE)
-
 	content = models.CharField(
 		max_length=1000,
 		blank = False,
 		help_text = "Enter the question",
 		)
-
 	figure = models.ImageField(upload_to='diagrams/',
 		blank = True,
 		)
-
 	def get_choices(self):
 		marks = self.singlechoicecorrect_set.select_related('question_id')
 		return marks
@@ -177,9 +168,7 @@ class Question(models.Model):
 class SingleChoiceCorrect(models.Model):
 
 	STATUS = Choices('Choice-1','Choice-2','Choice-3','Choice-4')
-
 	question_id = models.ForeignKey(Question,on_delete=models.CASCADE)
-	
 	choice_1 = models.CharField(
 		max_length=50,
 		blank=False,
@@ -201,7 +190,43 @@ class SingleChoiceCorrect(models.Model):
 		verbose_name = "Choice 4",
 		)
 	correct_choice = StatusField()
-
-
+	
 	def __str__(self):
 		return str(self.question_id)
+
+class Student(models.Model):
+	student_username = models.CharField(
+		unique=True,
+		blank=False,
+		max_length=20,
+		)
+	name = models.CharField(
+		blank=False,
+		max_length=50,
+		help_text="Full Name",
+		)	
+	class_status = Choices('11-Studying','12-Studying','12-Pass','other')
+	batch = StatusField(choices_name='class_status')
+	#to be detailed
+	Address = models.CharField(
+		max_length=200,
+		blank=True,
+		)
+	joined_on = models.DateTimeField(
+		default = datetime.now,
+		blank = True,
+		)
+	def __str__(self):
+		return str(self.name)
+
+class Result(models.Model):
+	test_id = models.ForeignKey(Exam,on_delete=models.PROTECT)
+	student_username = models.ForeignKey(Student,on_delete=models.CASCADE)
+	#add hex code to be in the url instead of username
+	result_json = JSONField()
+	test_completed = models.BooleanField(
+		default = False,
+		blank = False,
+		)
+	def __str__(self):
+		return str(self.student_username)

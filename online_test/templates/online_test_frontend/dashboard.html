@@ -1,0 +1,51 @@
+{% extends "online_test_frontend/index.html" %}
+{% block content %}
+<div class="container">
+	<h1 >User Dashboard</h1><hr>
+
+	<h4 >Upcoming registered tests:</h4>
+	<div class="block">
+		{% for test in registered_tests %}
+			<div class="subscription-list">
+				<div class="test-description">
+					<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
+						{{test.exam}}
+					</div>
+					<div class="description-block" 
+						<h4>Part Syllabus Test</h4>
+						<h6>On board Pattern</h6>
+						<button>
+						Register
+					</button>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+	
+	<h4 >Available Tests :</h4>
+	<div class="block">
+		{% for test in active_tests %}
+		<div class="subscription-list">
+			<div class="test-description">
+				<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
+					{{test}}
+				</div>
+				<div class="description-block" 
+					<h4>Part Syllabus Test</h4>
+					<h6>On board Pattern</h6>
+					<button>
+					Register
+				</button>
+				</div>
+
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	
+	</div>
+		
+	
+</div>
+{% endblock %}

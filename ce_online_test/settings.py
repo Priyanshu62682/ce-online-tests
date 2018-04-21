@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'online_test.apps.OnlineTestConfig',
+    'online_test_frontend',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
