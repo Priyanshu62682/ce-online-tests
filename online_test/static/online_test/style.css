@@ -2,7 +2,6 @@ html,body {
 	font-family: 'Ubuntu', sans-serif !important;
 	height: 100%;
 	margin: 0;
-
 }
 
 .container h6{
@@ -45,7 +44,7 @@ html,body {
 	overflow: scroll;
 	top: 6%;
 	width:88%;
-	color: #444;
+	color: #444 !important;
 	background-color: #fff;
 	height: 100%;
 	padding: 0px 50px 0px 0px;

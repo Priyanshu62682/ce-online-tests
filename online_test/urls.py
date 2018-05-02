@@ -9,7 +9,7 @@ urlpatterns = [
 	path('managetests/', views.TestListView.as_view(), name='testmanage'),
 	path('managetests/<slug:slug>/', views.TestPartView.as_view(), name='testdetail'),
 	path('managetests/<testslug>/<part>/', views.TestSectionListView.as_view(), name='sections'),
-#	path('managetests/<testslug>/addnewpart', views.CreatePartView.as_view(), name='createpart'),
+	path('managetests/<testslug>/addnewpart', views.CreatePartView.as_view(), name='createpart'),
 	path('managetests/<exam>/<part>/createsection',views.CreateSectionView.as_view(), name = 'createsection'),
 	path('managetests/<exam>/<part>/<section>/newquestion',views.AddQuestionView.as_view(), name = 'addnewquestion'),
 	path('managetests/<exam>/<part>/<section>/newquestionbatch',views.AddQuestionViewBatch.as_view(), 

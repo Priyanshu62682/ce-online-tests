@@ -9,7 +9,7 @@
 			<div class="subscription-list">
 				<div class="test-description">
 					<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
-						{{test.exam}}
+						<a href="{% url 'online_test_frontend:test' student=student exam=test.exam %}">{{test.exam}}
 					</div>
 					<div class="description-block" 
 						<h4>Part Syllabus Test</h4>
@@ -22,7 +22,7 @@
 			</div>
 		{% endfor %}
 
-	
+
 	<h4 >Available Tests :</h4>
 	<div class="block">
 		{% for test in active_tests %}

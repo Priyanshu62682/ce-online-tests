@@ -12,7 +12,7 @@
 			</a>
 		{% endfor %}
 		<div class="addnewpart">
-			<a href="#">
+			<a href="{% url 'online_test:createpart' testslug=exam.url %}">
 				Add new Part
 				<span  class="fa-stack fa-lg">
 					<i class="fa fa-plus fa-2x"></i>	

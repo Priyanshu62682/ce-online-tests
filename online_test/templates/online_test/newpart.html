@@ -2,10 +2,23 @@
 {% block content %}
 <div class="container">
 	<h3>Add new Part</h3>
-	<form method="post" action="{% url 'online_test:createpart' testslug=slug %}" >
-	    {% csrf_token %}
-		{{ form.as_p }}
-		<input type="submit" value="SAVE">
+	<form method="post" action="{% url 'online_test:createpart' testslug=exam.url %}" >		
+		{% csrf_token %}
+		{{ form.non_field_errors }}
+		<table>
+			<tr>
+				<td>
+					<label for="id_name">Part Name :</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input name="name" id="id_content" rows="4" cols="70" required 
+					placeholder="Part name"/>
+				</td>
+			</tr>
+		</table>
+    	<input type="submit" value="SAVE">
 	</form>
 </div>
 {% endblock %}
