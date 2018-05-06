@@ -29,6 +29,7 @@ class TestPartView(generic.DetailView):
 		context['exam'] =exam
 		context['parts'] = Part.objects.filter(exam=exam)
 		context['sections'] = Section.objects.filter(exam=exam)
+		context['questions'] = Question.objects.filter(exam=exam)
 		return context
 
 class TestSectionListView(generic.ListView):

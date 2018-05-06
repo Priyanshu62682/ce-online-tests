@@ -1,26 +1,39 @@
 {% extends "online_test/index.html" %}
 {% block content %}
+
 <div class="container">
 	<div class="test-detail-style">
 		<h1>{{exam.title}}</h1>
 		<h4> {{part}}</h4>
-	</div>
-	<div class="sectionliststyle">
-		<div class="details" style="margin-top:-15vh;">
-			<div class="current-section" >
-				<h6>Total Questions: </h6> <small>part.part_total_questions</small><br>
-	    		<h6>Maximum Marks: </h6> <small>section.calculate_marks</small><br>
-			</div>
-			<div class="current-section-detail">
+		{% for section in object_list %}
+			<div style="display: inline-block;">
+	        	<a href="{% url 'online_test:updatesection' exam=exam part=part section=section %}">
+	        		<small>{{section.section_type}}</small>
+        				        		
+	        	</a>
+	        </div>
+		{% endfor %}
+		<div class="current-section-detail">
 				
 	    		<a class="btn" href="{% url 'online_test:createsection' exam=exam part=part %}">
 	    			Add new SECTION
 	    		</a>
 			</div>
+
+	</div>
+	
+	<div class="sectionliststyle">
+		
+		<div class="details">
+			<div class="current-section" >
+				<h6>Total Questions: </h6> <small>part.part_total_questions</small><br>
+	    		<h6>Maximum Marks: </h6> <small>section.calculate_marks</small><br>
+			</div>
 		</div>
+
 		{% if object_list %}
 			{% for section in object_list %}
-		    <div class="section-box">
+		    <!--div class="section-box">
 		    	<div class="section-box-detail">
 		    		<h6>Section Type:</h6> <small>{{section.section_type}}</small><br>
 		    		<h6>Total Questions: </h6> <small>{{section.section_total_questions}}</small><br>
@@ -36,10 +49,40 @@
 	        			</span>		        		
 		        	</a>
 		        </div>
-		    </div>
+		    </div-->
 		    {% endfor %}
 	 	{% else %}
 	 		<p>No Data Found</p>
+	 	{% endif %}
+	 	{% if questions %}
+			{% for question in questions %}
+			    <div class="section-box-question">
+			    	<div class="section-box-detail-question">
+			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
+			    	</div>
+			    	<div class="section-box-edit-question">
+			    		<ul>
+			    			{% if question.get_choices %}
+				    			{% for choice in question.get_choices %}
+				    				<li>{{choice.choice_1}}</li>
+				    				<li>{{choice.choice_2}}</li>
+				    				<li>{{choice.choice_3}}</li>
+				    				<li>{{choice.choice_4}}</li>
+				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
+				    			{% endfor %}
+				    		
+				    			
+			    			{% endif %}
+			    		</ul>
+			    		
+			        </div>
+
+			    </div>
+		    {% endfor %}
+	 	{% else %}
+	 		<div >
+	 			<h1 style="text-align:center; margin-top:120px;">No question in this section</h1>
+	 		</div>
 	 	{% endif %}
  	</div>
 </div>

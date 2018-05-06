@@ -27,10 +27,11 @@ class CreateSectionForm(forms.ModelForm):
 
 class QuestionForm(ModelForm):
     class Meta:
-        model = Question
-        fields = ['content','figure']
+        model = SingleChoiceCorrect
+        exclude = ()
 
 
 
 QuestionFormset = modelformset_factory(Question, fields=['content','figure'], extra=2, form = QuestionForm)
+#QuestionInlineFormSet = inlineformset_factory(Question,SingleChoiceCorrect,extra=1,form = QuestionForm)
 

@@ -1,59 +1,52 @@
 {% extends "online_test/index.html" %}
 {% block content %}
-<div class="container">
+	<div class="container">
 
-	<div class="test-detail-style">
-		<h1>{{exam.title}}</h1>
-		<strong style="padding:10px 10px 0px 0px; ">Select Part</strong>
-			
-		{% for part in parts %}
-			<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
-				{{part}}
-			</a>
-		{% endfor %}
-		<div class="addnewpart">
-			<a href="{% url 'online_test:createpart' testslug=exam.url %}">
-				Add new Part
-				<span  class="fa-stack fa-lg">
-					<i class="fa fa-plus fa-2x"></i>	
-				</span>	
-			</a>
-		</div>
-	</div>
-	
-	<div class="sectionliststyle">
-		<div class="details">
-			<div class="current-section">
-				<h3>All sections</h3>
-			</div>
-			<div class="current-section-detail">
-				<h6>Total Questions: </h6> <small>part.part_total_questions</small><br>
-	    		<h6>Maximum Marks: </h6> <small>M</small><br>
+		<div class="test-detail-style">
+			<h1>{{exam.title}}</h1>
+			<strong style="padding:10px 10px 0px 0px; ">Select Part</strong>
+				
+			{% for part in parts %}
+				<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
+					{{part}}
+				</a>
+			{% endfor %}
+			<div class="addnewpart">
+				<a href="{% url 'online_test:createpart' testslug=exam.url %}">
+					Add new Part
+					<span  class="fa-stack fa-lg">
+						<i class="fa fa-plus fa-2x"></i>	
+					</span>	
+				</a>
 			</div>
 		</div>
-		{% if sections %}
-				{% for section in sections %}
-			    <div class="section-box">
-			    	<div class="section-box-detail">
-			    		<h6>Section Type:</h6> <small>{{section.section_type}}</small><br>
-			    		<h6>Total Questions: </h6> <small>{{section.section_total_questions}}</small><br>
-			    		<h6>Maximum Marks: </h6> <small>{{section.calculate_marks}}</small><br>
-			    		<h6>Positive:</h6> <small>{{section.positive_marks}}</small><br>
-			    		<h6>Negative:</h6> <small>{{section.negative_marks}}</small><br>
+		<div class="sectionliststyle">
+			{% for question in questions %}
+			    <div class="section-box-question">
+			    	<div class="section-box-detail-question">
+			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
 			    	</div>
-			    	<div class="section-box-edit">
-			        	<a href="#">
-			        		Edit Section
-		        			<span class="fa-stack fa-lg">
-		        				<i class="fa fa-arrow-circle-right fa-2x"></i>
-		        			</span>		        		
-			        	</a>
+			    	<div class="section-box-edit-question">
+			    		<ul>
+			    			{% if question.get_choices %}
+				    			{% for choice in question.get_choices %}
+				    				<li>{{choice.choice_1}}</li>
+				    				<li>{{choice.choice_2}}</li>
+				    				<li>{{choice.choice_3}}</li>
+				    				<li>{{choice.choice_4}}</li>
+				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
+				    			{% endfor %}
+				    		{% else %}
+				    			
+			    			{% endif %}
+			    		</ul>
+			    		
 			        </div>
+
 			    </div>
-			    {% endfor %}
-		 	{% else %}
-		 		<p>No Data Found</p>
-		 	{% endif %}
-	 </div>
-</div>
+		    {% endfor %}
+		</div>
+		
+		
+	</div>
 {% endblock %}

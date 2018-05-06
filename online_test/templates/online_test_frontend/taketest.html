@@ -14,7 +14,7 @@
 				{% for part in test_sample.part_exam %}
 					<h3>{{part.name}}</h3>
 					{% for section in part.section_part %}
-						<h4>Section - {{section.section_type}}</h4>
+						<h4>{{section.section_type}}</h4>
 						<h4>Instructions:</h4> 
 						<p>{{section.section_instructions}}</hp>
 						{% for question in section.question_section %}

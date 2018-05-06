@@ -164,8 +164,9 @@ class Question(models.Model):
 		blank = True,
 		)
 	def get_choices(self):
-		marks = self.singlechoicecorrect_set.select_related('question_id')
-		return marks
+		choices = SingleChoiceCorrect.objects.filter(question_id=self)
+		#marks = self.singlechoicecorrect_set.select_related('singlechoicecorrect_question')
+		return choices
 
 	def __str__(self):
 		return str(self.id)
