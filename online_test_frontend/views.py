@@ -23,7 +23,6 @@ class TakeTestView(generic.TemplateView):
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
-		
 		serializer = ExamSerializer(instance=exam,many=True)
 		#print(serializer.data)
 		#return Response(serializer.data)
