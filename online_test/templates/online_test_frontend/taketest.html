@@ -1,11 +1,31 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-
-	<div class="container">
+<script type="text/javascript">
+	var counter=1;
+	var answer = []
+	function record(question,value){
+		var ans = {
+			"question" : question,
+			"answer" : counter
+		}
+		answer.push(ans);
+		counter++;
+		submit();
+	}
+	function submit(){
+		var myJSON = JSON.stringify(answer);
+		alert(myJSON);
+	}
+/*	$(document).ready(function(){
+	    $("button").click(function(){
+	        $("#main").hide();
+	    });
+	});*/
+</script>
+	<div id="main" class="container">
 		<h1 >{{test.id}}</h1><hr>
 
 		<h4 >{{student.name}}</h4>
-		<div >
 			{% for test_sample in test %}
 				<h1>{{test_sample.title}}</h1>
 				<h4>{{test_sample.description}}</h4>
@@ -16,26 +36,33 @@
 					{% for section in part.section_part %}
 						<h4>{{section.section_type}}</h4>
 						<h4>Instructions:</h4> 
-						<p>{{section.section_instructions}}</hp>
-						{% for question in section.question_section %}
-							{% if question %}
-								<p>Q : {{question.content}}</p>
-								{% for choices in question.singlechoicecorrect_question %}
-									<p>A: {{choices.choice_1}}</p>
-									<p>B: {{choices.choice_2}}</p>
-									<p>C: {{choices.choice_3}}</p>
-									<p>D: {{choices.choice_4}}</p>
-								{% endfor %}
-								<br>
-							{% else %}
-								<p>No Questions</p>
-							{% endif %}
+						<p>{{section.section_instructions}}</p>
+						<div style="margin-left:50px;">
+							{% for question in section.question_section %}
+								{% if question %}
+									<p>Q : {{question.content}}</p>
 
-						{% endfor %}
+									{% for choices in question.singlechoicecorrect_question %}
+										
+										<input type="radio" name="answer" value="1"> {{choices.choice_1}}<br>
+										
+										<input type="radio" name="answer" value="2"> {{choices.choice_2}}<br>
+										
+										<input type="radio" name="answer" value="3"> {{choices.choice_3}}<br>
+										
+										<input type="radio" name="answer" value="4"> {{choices.choice_4}}<br>
+									{% endfor %}
+									</br><button onclick="record('{{question.content}}','{{ forloop.counter0 }}')">Freeze</button></br></br>
+								{% else %}
+									<p>No Questions</p>
+								{% endif %}
+
+							{% endfor %}
+						</div>
 						<br>
 					{% endfor %}
 				{% endfor %}
 			{% endfor %}
-		
+		<button onclick="submit()">Submit</button>
 	</div>
 {% endblock %}
