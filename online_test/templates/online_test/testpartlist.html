@@ -1,5 +1,39 @@
 {% extends "online_test/index.html" %}
 {% block content %}
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+
+ <!--  <script>
+// function makeJason(){
+  	 
+//     jsonObj = [];
+//     $("input[type=radio]").each(function() {
+
+//         var selectedChoice = $('input[name=fruitName]:checked').val();
+//         var id = $(this).attr("id");
+//         item= {}
+//         item["id"]= id
+//         item["choice"]= selectedChoice;
+   
+
+//         jsonObj.push(item);
+//     });
+  	
+//   	}
+
+alert("yo1");
+$('input[id=my]').on('change', function() {
+    // makeJason();
+    $(this).closest("form").submit();
+    alert("yo");
+});
+</script> -->
+
+
+
 	<div class="container">
 
 		<div class="test-detail-style">
@@ -25,26 +59,42 @@
 				</a>
 			</div>
 		</div>
+	</br>
+	</br>
 		<div class="sectionliststyle">
+
+
+
+
+
+
+
 			{% for question in questions %}
 			    <div class="section-box-question">
 			    	<div class="section-box-detail-question">
 			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
 			    	</div>
 			    	<div class="section-box-edit-question">
+	    			<form method="post" action="" id="myform">
+	    				{% csrf_token %}
+
 			    		<ul>
 			    			{% if question.get_choices %}
 				    			{% for choice in question.get_choices %}
-				    				<li>{{choice.choice_1}}</li>
-				    				<li>{{choice.choice_2}}</li>
-				    				<li>{{choice.choice_3}}</li>
-				    				<li>{{choice.choice_4}}</li>
+				    			<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
+				    				
+				    			<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
+				    				<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
+				    				<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
+				    				<input type="submit"  id= "options" value="save"   name="submit" >
 				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
+				    				
 				    			{% endfor %}
 				    		{% else %}
 				    			
 			    			{% endif %}
 			    		</ul>
+			    	</form>
 			    		
 			        </div>
 
@@ -54,4 +104,36 @@
 		
 		
 	</div>
+
+	<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+
+
+<script type="text/javascript">
+$(document).on('change','#myform', function(e) {
+
+	
+	e.preventDefault();
+
+	 $.ajax({
+
+	 	type:'POST',
+	 	url: "{% url 'online_test:submitselected' %}",
+	 	data:{
+	 		question_id: $('#options').attr("name"),
+	 		selected: $('input[id="options"]:checked').val(),
+	 		csrfmiddlewaretoken: '{{ csrf_token }}'
+	 		
+	 	},
+
+	 	success:function(){
+	 		console.log('saved')
+
+	 	}
+
+
+	 })
+	
+});
+</script>
 {% endblock %}
+

@@ -55,3 +55,8 @@ class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = ('album_name', 'artist', 'tracks')
+
+class ChoiceSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Dynamic
+		fields = ('choice_1','choice_2','choice_3','choice_4')

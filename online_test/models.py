@@ -8,6 +8,8 @@ from django.urls import reverse_lazy,reverse
 from django.contrib.postgres.fields import JSONField
 # Create your models here.
 
+
+
 class Exam(models.Model):
 
 	# to generate the unique random id for test_id
@@ -236,3 +238,8 @@ class Result(models.Model):
 		)
 	def __str__(self):
 		return str(self.student_username)
+
+class Dynamic(models.Model):
+
+	question_id=models.IntegerField()
+	selected=models.CharField(max_length=1000, default=False)
