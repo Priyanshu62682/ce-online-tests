@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime  
+from datetime import datetime
 from model_utils import Choices
 from model_utils.fields import StatusField
 from online_test.models import *
@@ -44,3 +44,7 @@ class Track(models.Model):
 
     def __unicode__(self):
         return '%d: %s' % (self.order, self.title)
+
+# class Progress(models.Model):
+# 	student = models.ForeignKey(Student,on_delete=models.CASCADE)
+# 	start_time = 
