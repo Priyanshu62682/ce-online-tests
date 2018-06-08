@@ -4,6 +4,7 @@ from online_test.models import *
 from online_test_frontend.models import *
 from rest_framework.views import APIView,Response
 from online_test.serializers import *
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -42,3 +43,10 @@ class TestView(APIView):
 		
 		serializer = AlbumSerializer(album,many=True)
 		return Response(serializer.data)
+
+def ajaxview(request):
+    username = request.GET.get('url', None)
+    data = {
+        'is_taken': Exam.objects.get(title='PST1').exists()
+    }
+    return JsonResponse(data)
