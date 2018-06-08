@@ -84,6 +84,7 @@ class CreateTestView(CreateView):
 # 		context['questions'] = Question.objects.filter(exam=exam)
 # 		return context
 		
+
 def get_request_choice(request):
 	if request.method=='POST':
 		
@@ -111,6 +112,7 @@ def get_request_choice(request):
 		# 		)
 
 	return HttpResponse('')
+
 
 
 class CreatePartView(CreateView):
@@ -321,4 +323,14 @@ class TestDelete(DeleteView):
 
 	def get_success_url(self, ** kwargs):
 		return reverse('online_test:testmanage')
+
+def get_request_choice(request):
+	if request.method=='POST':
+		question_id= request.POST['question_id']
+		selected= request.POST['selected']
+		Dynamic.objects.create(
+			question_id=question_id,
+			selected=selected,
+			)
+	return HttpResponse('')
     

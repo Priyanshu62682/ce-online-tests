@@ -1,27 +1,6 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-<script type="text/javascript">
-	var counter=1;
-	var answer = []
-	function record(question,value){
-		var ans = {
-			"question" : question,
-			"answer" : counter
-		}
-		answer.push(ans);
-		counter++;
-		submit();
-	}
-	function submit(){
-		var myJSON = JSON.stringify(answer);
-		alert(myJSON);
-	}
-/*	$(document).ready(function(){
-	    $("button").click(function(){
-	        $("#main").hide();
-	    });
-	});*/
-</script>
+
 	<div id="main" class="container">
 		<h1 >{{test.id}}</h1><hr>
 
@@ -42,17 +21,23 @@
 								{% if question %}
 									<p>Q : {{question.content}}</p>
 
+									<form method="post" action="" id="myform">
+	    							{% csrf_token %}
+
 									{% for choices in question.singlechoicecorrect_question %}
-										
-										<input type="radio" name="answer" value="1"> {{choices.choice_1}}<br>
-										
-										<input type="radio" name="answer" value="2"> {{choices.choice_2}}<br>
-										
-										<input type="radio" name="answer" value="3"> {{choices.choice_3}}<br>
-										
-										<input type="radio" name="answer" value="4"> {{choices.choice_4}}<br>
+
+										<input type="radio" id= "options" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
+				    				
+				    					<input type="radio"  id= "options" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
+				    					<input type="radio"  id= "options" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
+					    				<input type="radio" id= "options" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
+					    				
+					    				<br>
+
 									{% endfor %}
-									</br><button onclick="record('{{question.content}}','{{ forloop.counter0 }}')">Freeze</button></br></br>
+
+									</form>
+
 								{% else %}
 									<p>No Questions</p>
 								{% endif %}
@@ -65,4 +50,32 @@
 			{% endfor %}
 		<button onclick="submit()">Submit</button>
 	</div>
+
+<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+<script type="text/javascript">
+$(document).on('change','#myform', function(e) {
+
+	
+	e.preventDefault();
+	 $.ajax({
+
+	 	type:'POST',
+	 	url: "{% url 'online_test_frontend:submitselected' %}",
+	 	data:{
+	 		question_id: $('#options').attr("name"),
+	 		selected: $('input[id="options"]:checked').val(),
+	 		csrfmiddlewaretoken: '{{ csrf_token }}'
+	 		
+	 	},
+
+	 	success:function(){
+	 		console.log('saved')
+
+	 	}
+
+
+	 })
+	
+});
+</script>
 {% endblock %}

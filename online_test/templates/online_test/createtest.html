@@ -1,11 +1,33 @@
 {% extends "online_test/index.html" %}
+
+{% block javascript %}
+	<script>
+	$("#id_url").change(function () {
+		var url = $(this).val();
+		$.ajax({
+		url: "{% url 'online_test_frontend:ajax' %}",
+		data: {
+		  'url': url
+		},
+		dataType: 'json',
+		success: function (data) {
+			if (data.is_taken) {
+			    alert("A user with this username already exists.");
+			  }
+			}
+		});
+
+	});
+	</script>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-	<h3>Create new test</h3>
-	<form action="{% url 'online_test:createtest' %}" method="post">
-		{% csrf_token %}
-    	{{ form.as_p }}
-    	<input type="submit" value="SAVE">
-	</form>
-</div>
+	<div class="container">
+		<h3>Create new test</h3>
+		<form action="{% url 'online_test:createtest' %}" method="post">
+			{% csrf_token %}
+	    	{{ form.as_p }}
+	    	<input type="submit" value="SAVE">
+		</form>
+	</div>
 {% endblock %}
