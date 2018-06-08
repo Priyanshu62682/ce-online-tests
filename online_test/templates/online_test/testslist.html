@@ -9,6 +9,7 @@
 	        <th>Created On</th>
 	        <th>Published</th>
 	        <th>Edit</th>
+	        <th>Remove</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -18,6 +19,7 @@
 	    		<td class="col-md-1">{{exam.created_on}}</td>
 	        	<td class="col-md-1">{{exam.draft}}</td>
 	        	<td class="col-md-1"><a href="{% url 'online_test:testdetail' slug=exam.url %}">Link</a></td>
+	        	<td class="col-md-1"><a href="{% url 'online_test:testdelete' pk=exam.id %}">Delete</a></td>
 	        	<!--td><button type="button" class="btn btn-primary btn-sm">EDIT</button></td-->
 			</tr>
 	    	{% endfor %}

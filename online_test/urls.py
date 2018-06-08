@@ -16,5 +16,9 @@ urlpatterns = [
 		name = 'addnewquestionbatch'),
 	path('managetests/<exam>/<part>/<section>/updatesection',views.SectionUpdateView.as_view(), name = 'updatesection'),
 	path('managetests/<exam>/<part>/<section>/<question>/',views.AddNewChoices.as_view(), name = 'addnewchoices'),
+	path('delete/<exam>/<part>/<section>/<question>/<int:pk>/',views.AuthorDelete.as_view(), name = 'deletequestion'),
+	path('delete/<slug:slug>/<int:pk>/',views.PartDelete.as_view(), name = 'deletepart'),
+	path('delete/<int:pk>/',views.TestDelete.as_view(), name = 'testdelete'),
+
 
 ]

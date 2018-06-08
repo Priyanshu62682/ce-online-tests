@@ -7,6 +7,7 @@ from django.views import generic
 from django.forms import modelformset_factory
 from .forms import *
 from .models import *
+from urllib import request
 
 
 class DashboardView(generic.TemplateView):
@@ -40,7 +41,10 @@ class TestSectionListView(generic.ListView):
 		queryset = super(TestSectionListView, self).get_queryset(**kwargs)
 		#part_name = self.kwargs['part']
 		test_name = Exam.objects.get(url=self.kwargs['testslug'])
-		part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
+		try:
+			part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
+		except:
+			part_object=None
 		queryset = Section.objects.filter(exam = test_name,part = part_object)
 		return queryset
 	def get_context_data(self,**kwargs):
@@ -48,7 +52,10 @@ class TestSectionListView(generic.ListView):
 		test_slug = self.kwargs['testslug']
 		#part_name = self.kwargs['part']
 		test_name = Exam.objects.get(url=test_slug)
-		part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
+		try:
+			part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_object=None
 		context['exam'] = test_name
 		context['part'] = part_object
 		return context
@@ -97,7 +104,10 @@ class CreateSectionView(CreateView):
 	def get_context_data(self,**kwargs):
 		context = super(CreateSectionView,self).get_context_data(**kwargs)
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
 		#part_instance = Part.objects.get(name=self.kwargs['part'])
 		context['exam'] = exam_instance
 		context['part'] = part_instance
@@ -222,3 +232,47 @@ class AddNewChoices(CreateView):
 		context['section'] = section_instance	
 		context['question'] = question_instance
 		return context
+
+class AuthorDelete(DeleteView):
+    model = Question
+
+    def get_success_url(self, **kwargs):
+    	return reverse('online_test:updatesection',
+			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section']})
+
+    def get_context_data(self,**kwargs):
+    	context = super(AuthorDelete,self).get_context_data(**kwargs)
+    	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+    	part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+    	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+    	context['exam'] = exam_instance
+    	context['part'] = part_instance
+    	context['section'] = section_instance		
+    	context['questions'] = Question.objects.filter(
+			exam=exam_instance,
+			part=part_instance,
+			section=section_instance)
+    	return context	
+
+class PartDelete(DeleteView):
+    model = Part
+
+    def get_success_url(self, **kwargs):
+    	return reverse('online_test:testdetail',
+			kwargs={'slug':self.kwargs['slug']})
+
+    def get_context_data(self,**kwargs):
+    	context = super(PartDelete,self).get_context_data(**kwargs)
+    	exam = Exam.objects.get(url=self.kwargs['slug'])
+    	context['exam'] =exam
+    	context['parts'] = Part.objects.filter(exam=exam)
+    	context['sections'] = Section.objects.filter(exam=exam)
+    	context['questions'] = Question.objects.filter(exam=exam)
+    	return context 
+
+class TestDelete(DeleteView):
+	model=Exam
+
+	def get_success_url(self, ** kwargs):
+		return reverse('online_test:testmanage')
+    
