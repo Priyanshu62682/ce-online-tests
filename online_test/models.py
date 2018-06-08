@@ -6,6 +6,9 @@ from model_utils import Choices
 from model_utils.fields import StatusField
 from django.urls import reverse_lazy,reverse
 from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField
+from jsonfield import JSONField
+
 # Create your models here.
 
 
@@ -240,6 +243,7 @@ class Result(models.Model):
 		return str(self.student_username)
 
 class Dynamic(models.Model):
-
-	question_id=models.IntegerField()
-	selected=models.CharField(max_length=1000, default=False)
+	student_id= models.ForeignKey(Student,on_delete=models.CASCADE)
+	test_id=models.ForeignKey(Exam,on_delete=models.PROTECT)
+	progress=JSONField(blank=True)
+	

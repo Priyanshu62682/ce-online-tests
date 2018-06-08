@@ -8,6 +8,7 @@ from django.forms import modelformset_factory
 from .forms import *
 from .models import *
 from urllib import request
+import json
 
 
 class DashboardView(generic.TemplateView):
@@ -85,16 +86,30 @@ class CreateTestView(CreateView):
 		
 def get_request_choice(request):
 	if request.method=='POST':
-		print("Hello")
+		
 		question_id= request.POST['question_id']
 		selected= request.POST['selected']
-		
+		exam_id=request.POST['exam_id']
+		progress=request.POST['progress']
+		me=Student.objects.get(student_username='Abhishek')
 
-		Dynamic.objects.create(
-			question_id=question_id,
-			selected=selected,
+		# Dynamic.objects.get(student_id=me):
+		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
+		progress_old=current_progress.progress
+		progress_oldJS=json.dumps(progress_old)
 
-			)
+		print(type(progress), type(progress_oldJS))
+		progress_new=progress+progress_oldJS 
+		current_progress.progress=progress_new
+		current_progress.save()
+
+		# else:
+		# 	Dynamic.objects.create(
+		# 		student_id=me,
+		# 		test_id=exam_id,
+		# 		progress=progress,
+		# 		)
+
 	return HttpResponse('')
 
 

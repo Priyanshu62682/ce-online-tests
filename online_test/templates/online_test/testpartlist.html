@@ -81,12 +81,12 @@ $('input[id=my]').on('change', function() {
 			    		<ul>
 			    			{% if question.get_choices %}
 				    			{% for choice in question.get_choices %}
-				    			<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
+				    			<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
 				    				
-				    			<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
-				    				<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
-				    				<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
-				    				<input type="submit"  id= "options" value="save"   name="submit" >
+				    			<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
+				    				<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
+				    				<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
+				    				<input type="submit"  class="{{exam.id}}" id= "options" value="save"   name="submit" >
 				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
 				    				
 				    			{% endfor %}
@@ -108,20 +108,29 @@ $('input[id=my]').on('change', function() {
 	<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 
 
+
+
 <script type="text/javascript">
 $(document).on('change','#myform', function(e) {
 
 	
 	e.preventDefault();
+	var question_num= $('#options').attr("name");
+	var selected_choi= $('input[id="options"]:checked').val();
+	var objectJ={question_num,selected_choi};
+	var myJ= JSON.stringify(objectJ);
 
 	 $.ajax({
 
 	 	type:'POST',
 	 	url: "{% url 'online_test:submitselected' %}",
 	 	data:{
+	 		exam_id: $('#options').attr("class"),
 	 		question_id: $('#options').attr("name"),
 	 		selected: $('input[id="options"]:checked').val(),
+	 		progress: myJ,
 	 		csrfmiddlewaretoken: '{{ csrf_token }}'
+
 	 		
 	 	},
 
