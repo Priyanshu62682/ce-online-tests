@@ -63,12 +63,6 @@ $('input[id=my]').on('change', function() {
 	</br>
 		<div class="sectionliststyle">
 
-
-
-
-
-
-
 			{% for question in questions %}
 			    <div class="section-box-question">
 			    	<div class="section-box-detail-question">
@@ -81,12 +75,11 @@ $('input[id=my]').on('change', function() {
 			    		<ul>
 			    			{% if question.get_choices %}
 				    			{% for choice in question.get_choices %}
-				    			<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
-				    				
-				    			<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
-				    				<input type="radio"  id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
-				    				<input type="radio" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
-				    				<input type="submit"  id= "options" value="save"   name="submit" >
+					    			<li> {{choice.choice_1}}</li>
+					    			<li>{{choice.choice_2}}<br>
+				    				<li>{{choice.choice_3}}<br></li>
+				    				<li>{{choice.choice_4}}<br></li>
+				    				</li>
 				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
 				    				
 				    			{% endfor %}

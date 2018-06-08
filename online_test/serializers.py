@@ -13,7 +13,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Question
-		fields = ('content', 'figure','singlechoicecorrect_question')
+		fields = ('id','content', 'figure','singlechoicecorrect_question')
 
 
 class SectionSerializer(serializers.ModelSerializer):
