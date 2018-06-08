@@ -5,6 +5,7 @@ from online_test_frontend.models import *
 from rest_framework.views import APIView,Response
 from online_test.serializers import *
 from django.http import JsonResponse
+from django.http import HttpResponse,HttpResponseRedirect
 
 # Create your views here.
 
@@ -44,9 +45,13 @@ class TestView(APIView):
 		serializer = AlbumSerializer(album,many=True)
 		return Response(serializer.data)
 
-def ajaxview(request):
-    username = request.GET.get('url', None)
-    data = {
-        'is_taken': Exam.objects.get(title='PST1').exists()
-    }
-    return JsonResponse(data)
+
+def get_request_choice(request):
+	if request.method=='POST':
+		question_id= request.POST['question_id']
+		selected= request.POST['selected']
+		Dynamic.objects.create(
+			question_id=question_id,
+			selected=selected,
+			)
+	return HttpResponse('')

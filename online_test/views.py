@@ -65,7 +65,26 @@ class CreateTestView(CreateView):
 	model = Exam
 	fields = '__all__'
 	template_name = 'online_test/createtest.html'
+
+# class DynamicChoiceSubmit(CreateView):
+# 	model = Dynamic
+# 	fields = '__all__'
+
+# 	def get_success_url(self, **kwargs):
+# 		return reverse('online_test:testdetail',kwargs={'slug':self.kwargs['slug']})
+	
+
+# 	def get_context_data(self,**kwargs):
+# 		context = super(DynamicChoiceSubmit,self).get_context_data(**kwargs)
+# 		exam = Exam.objects.get(url=self.kwargs['slug'])
+# 		context['exam'] =exam
+# 		context['parts'] = Part.objects.filter(exam=exam)
+# 		context['sections'] = Section.objects.filter(exam=exam)
+# 		context['questions'] = Question.objects.filter(exam=exam)
+# 		return context
 		
+
+
 
 class CreatePartView(CreateView):
 	template_name = 'online_test/newpart.html'
@@ -275,4 +294,14 @@ class TestDelete(DeleteView):
 
 	def get_success_url(self, ** kwargs):
 		return reverse('online_test:testmanage')
+
+def get_request_choice(request):
+	if request.method=='POST':
+		question_id= request.POST['question_id']
+		selected= request.POST['selected']
+		Dynamic.objects.create(
+			question_id=question_id,
+			selected=selected,
+			)
+	return HttpResponse('')
     

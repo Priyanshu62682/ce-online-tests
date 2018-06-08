@@ -1,4 +1,18 @@
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+
+
+
 <form method="post">{% csrf_token %}
     <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm" />
+    <input type="radio" name="gender" value="male"> confirm<br>
+    <input type="submit" style="opacity: 0" value="Confirm" />
 </form>
+
+<script>
+$('input[type=radio]').on('change', function() {
+    $(this).closest("form").submit();
+});
+</script>
