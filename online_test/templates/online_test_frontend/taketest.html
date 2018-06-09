@@ -2,11 +2,7 @@
 {% block content %}
 
 	<div id="main" class="container">
-		<h1 ></h1><hr>
-		{{test.id}}
-		<h4 >{{student.name}}</h4>
 			{% for test_sample in test %}
-				<h1>{{test_sample.id}}</h1>
 				<h1>{{test_sample.title}}</h1>
 				<h4>{{test_sample.description}}</h4>
 				<p>{{test_sample.instructions}}</p>
@@ -50,8 +46,10 @@
 						<br>
 					{% endfor %}
 				{% endfor %}
+
+				<a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
 			{% endfor %}
-		<a href="{% url 'online_test_frontend:thankyou' student='Abhishek' %}">Submit</a>
+		
 	</div>
 
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>

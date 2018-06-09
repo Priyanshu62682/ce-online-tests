@@ -8,5 +8,5 @@ urlpatterns = [
 	path('<student>/<exam>', views.TakeTestView.as_view(), name='test'),
 	#path('hello/test', views.TestView.as_view(), name='test'),
 	path('user/submitselected/',views.get_request_choice, name = 'submitselected'),
-	path('<student>/endtest/', views.Thank_view, name='thankyou'),
+	path('<student>/<exam_id>/endtest/', views.Thank_view, name='thankyou'),
 ]

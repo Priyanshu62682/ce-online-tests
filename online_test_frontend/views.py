@@ -15,7 +15,7 @@ class UserDashboardView(generic.TemplateView):
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
 		#Select exam as per convinience
-		user = Student.objects.get(student_username='Abhishek')
+		user = Student.objects.get(student_username=self.kwargs['student'])
 		print(user)
 		context['student'] = self.kwargs['student']
 		context['active_tests'] = Exam.objects.filter(published=True)
@@ -27,9 +27,10 @@ class TakeTestView(generic.TemplateView):
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
 		serializer = ExamSerializer(instance=exam,many=True)
+		student_instance=Student.objects.get(student_username=student)
 		#print(serializer.data)
 		#return Response(serializer.data)
-		return render(request, self.template_name, {'test': serializer.data})
+		return render(request, self.template_name, {'test': serializer.data,'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -61,11 +62,6 @@ def get_request_choice(request):
 		progress_old=current_progress.progress
 
 		progress_oldJS=json.dumps(progress_old)
-
-
-
-		
-
 		progress_new=progress+progress_oldJS
 		
 		current_progress.progress=progress_new
@@ -81,17 +77,14 @@ def get_request_choice(request):
 	return HttpResponse('')
 
 
-def Thank_view(request,student):
+def Thank_view(request,student,exam_id):
 	if request.method=='GET':
-		print('GETTING')
-		me=Student.objects.get(student_username='Abhishek')
-		print(me)
-		current_progress=Dynamic.objects.get(student_id=me,test_id=2)
+		student=Student.objects.get(student_username=student)
+		current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
 		progress=current_progress.progress
 		student=current_progress.student_id
 		test=current_progress.test_id
 
-		print('hello')
 		Result.objects.create(
 			test_completed= True,
 			test_id=test,
