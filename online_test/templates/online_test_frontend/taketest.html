@@ -91,11 +91,12 @@ $(document).on('change','#myform', function(e) {
 	var selected_choi= $('input[id="options"]:checked').val();
 	var objectJ={question_num,selected_choi};
 	var myJ= JSON.stringify(objectJ);
+	alert(myJ);
 
 	 $.ajax({
 
 	 	type:'POST',
-	 	url: "{% url 'online_test:submitselected' %}",
+	 	url: "{% url 'online_test_frontend:submitselected' %}",
 	 	data:{
 	 		
 	 		exam_id: $('#options').attr("class"),

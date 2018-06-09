@@ -6,6 +6,7 @@ from rest_framework.views import APIView,Response
 from online_test.serializers import *
 from django.http import JsonResponse
 from django.http import HttpResponse,HttpResponseRedirect
+import json
 
 # Create your views here.
 
@@ -60,8 +61,10 @@ def get_request_choice(request):
 		progress_old=current_progress.progress
 		progress_oldJS=json.dumps(progress_old)
 
-		print(type(progress), type(progress_oldJS))
+		print(progress_old)
+
 		progress_new=progress+progress_oldJS 
+		
 		current_progress.progress=progress_new
 		current_progress.save()
 
