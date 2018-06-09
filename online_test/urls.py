@@ -20,7 +20,8 @@ urlpatterns = [
 	path('delete/<slug:slug>/<int:pk>/',views.PartDelete.as_view(), name = 'deletepart'),
 	path('delete/<int:pk>/',views.TestDelete.as_view(), name = 'testdelete'),
 	#path('user/submitselected/',views.get_request_choice, name = 'submitselected'),
-	# path('managetests/<slug:slug>/dynamic', views.DynamicChoiceSubmit.as_view(), name='dynamicsubmit'),
+	#path('managetests/<slug:slug>/dynamic', views.DynamicChoiceSubmit.as_view(), name='dynamicsubmit'),
+
 
 
 ]

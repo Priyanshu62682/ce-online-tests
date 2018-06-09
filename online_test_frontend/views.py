@@ -15,7 +15,7 @@ class UserDashboardView(generic.TemplateView):
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
 		#Select exam as per convinience
-		user = Student.objects.get(student_username=self.kwargs['student'])
+		user = Student.objects.get(student_username='Abhishek')
 		print(user)
 		context['student'] = self.kwargs['student']
 		context['active_tests'] = Exam.objects.filter(published=True)
@@ -51,7 +51,7 @@ def get_request_choice(request):
 	if request.method=='POST':
 		
 		
-		selected= request.POST['selected']
+		# selected= request.POST['selected']
 		exam_id=request.POST['exam_id']
 		progress=request.POST['progress']
 		me=Student.objects.get(student_username='Priyanshu')
@@ -59,11 +59,14 @@ def get_request_choice(request):
 		# Dynamic.objects.get(student_id=me):
 		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
 		progress_old=current_progress.progress
+
 		progress_oldJS=json.dumps(progress_old)
 
-		print(progress_old)
 
-		progress_new=progress+progress_oldJS 
+
+		
+
+		progress_new=progress+progress_oldJS
 		
 		current_progress.progress=progress_new
 		current_progress.save()
@@ -76,3 +79,24 @@ def get_request_choice(request):
 		# 		)
 
 	return HttpResponse('')
+
+
+def Thank_view(request,student):
+	if request.method=='GET':
+		print('GETTING')
+		me=Student.objects.get(student_username='Abhishek')
+		print(me)
+		current_progress=Dynamic.objects.get(student_id=me,test_id=2)
+		progress=current_progress.progress
+		student=current_progress.student_id
+		test=current_progress.test_id
+
+		print('hello')
+		Result.objects.create(
+			test_completed= True,
+			test_id=test,
+			student_username=student,
+			result_json=progress,
+
+			)
+	return render (request, 'online_test_frontend/thankyou.html', {'progress':progress})
