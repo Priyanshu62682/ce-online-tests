@@ -51,7 +51,7 @@ def get_request_choice(request):
 	if request.method=='POST':
 		
 		
-		selected= request.POST['selected']
+		# selected= request.POST['selected']
 		exam_id=request.POST['exam_id']
 		progress=request.POST['progress']
 		me=Student.objects.get(student_username='Abhishek')
@@ -59,11 +59,14 @@ def get_request_choice(request):
 		# Dynamic.objects.get(student_id=me):
 		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
 		progress_old=current_progress.progress
+
 		progress_oldJS=json.dumps(progress_old)
+		
 
-		print(progress_old)
 
-		progress_new=progress+progress_oldJS 
+		
+
+		progress_new=progress+progress_oldJS
 		
 		current_progress.progress=progress_new
 		current_progress.save()

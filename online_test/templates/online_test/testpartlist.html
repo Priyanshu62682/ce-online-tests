@@ -66,6 +66,7 @@ $('input[id=my]').on('change', function() {
 			{% for question in questions %}
 			    <div class="section-box-question">
 			    	<div class="section-box-detail-question">
+			    		
 			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
 			    	</div>
 			    	<div class="section-box-edit-question">
@@ -106,41 +107,5 @@ $('input[id=my]').on('change', function() {
 
 
 
-<!-- <script type="text/javascript">
-$(document).on('change','#myform', function(e) {
-
-	
-	e.preventDefault();
-	var exam_id= $('#options').attr("class");
-	alert(exam_id);
-	var question_num= $('#options').attr("name");
-	var selected_choi= $('input[id="options"]:checked').val();
-	var objectJ={question_num,selected_choi};
-	var myJ= JSON.stringify(objectJ);
-
-	 $.ajax({
-
-	 	type:'POST',
-	 	url: "{% url 'online_test:submitselected' %}",
-	 	data:{
-	 		exam_id: $('#options').attr("class"),
-	 		
-	 		selected: $('input[id="options"]:checked').val(),
-	 		progress: myJ,
-	 		csrfmiddlewaretoken: '{{ csrf_token }}'
-
-	 		
-	 	},
-
-	 	success:function(){
-	 		console.log('saved')
-
-	 	}
-
-
-	 })
-	
-});
-</script> -->
 {% endblock %}
 
