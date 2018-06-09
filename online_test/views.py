@@ -88,7 +88,7 @@ class CreateTestView(CreateView):
 def get_request_choice(request):
 	if request.method=='POST':
 		
-		question_id= request.POST['question_id']
+		
 		selected= request.POST['selected']
 		exam_id=request.POST['exam_id']
 		progress=request.POST['progress']

@@ -1,24 +1,7 @@
 {% extends "online_test/index.html" %}
 
 {% block javascript %}
-	<script>
-	$("#id_url").change(function () {
-		var url = $(this).val();
-		$.ajax({
-		url: "{% url 'online_test_frontend:ajax' %}",
-		data: {
-		  'url': url
-		},
-		dataType: 'json',
-		success: function (data) {
-			if (data.is_taken) {
-			    alert("A user with this username already exists.");
-			  }
-			}
-		});
 
-	});
-	</script>
 {% endblock %}
 
 {% block content %}
