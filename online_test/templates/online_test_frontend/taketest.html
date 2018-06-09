@@ -25,11 +25,11 @@
 
 									{% for choices in question.singlechoicecorrect_question %}
 
-										<input type="radio" onCLick="pass(this, this.value, this.name, this.class)" class="{{test_sample.id}}" id= "options" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
+										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
 				    				
-				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class)" class="{{test_sample.id}}" id= "options" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
-				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class)" class="{{test_sample.id}}" id= "options" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
-					    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class)" class="{{test_sample.id}}" id= "options" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
+				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
+				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
+					    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
 					    				
 					    				<br>
 
@@ -56,16 +56,16 @@
 
 
 <script type="text/javascript">
-function pass(obj, value, name, classobj) {
+function pass(obj, value, name, classobj, idobj) {
 
-	
+	var student_username=idobj;
 	// e.preventDefault();
-	var exam_id= $(obj).attr('class')
+	var exam_id= $(obj).attr('class');
 
 	
-	var question_num= name
+	var question_num= name;
 	
-	var selected_choi= value
+	var selected_choi= value;
 	
 	var objectJ={question_num,selected_choi};
 	var myJ= JSON.stringify(objectJ);
@@ -76,6 +76,7 @@ function pass(obj, value, name, classobj) {
 	 	url: "{% url 'online_test_frontend:submitselected' %}",
 	 	data:{
 	 		
+	 		student:student_username,
 	 		exam_id: exam_id,
 	 		// selected: selected_choi,
 	 		progress: myJ,

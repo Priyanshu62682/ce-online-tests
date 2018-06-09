@@ -228,7 +228,7 @@ class Student(models.Model):
 		blank = True,
 		)
 	def __str__(self):
-		return str(self.name)
+		return str(self.student_username)
 
 class Result(models.Model):
 	test_id = models.ForeignKey(Exam,on_delete=models.PROTECT)
