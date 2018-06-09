@@ -51,7 +51,7 @@
 					{% endfor %}
 				{% endfor %}
 			{% endfor %}
-		<button onclick="submit()">Submit</button>
+		<a href="{% url 'online_test_frontend:thankyou' student='Abhishek' %}">Submit</a>
 	</div>
 
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
@@ -59,16 +59,16 @@
 
 <script type="text/javascript">
 function pass(obj, value, name, classobj) {
-	
+
 	
 	// e.preventDefault();
 	var exam_id= $(obj).attr('class')
-	alert(exam_id)
+
 	
 	var question_num= name
-	alert(question_num);
+	
 	var selected_choi= value
-	alert(selected_choi);
+	
 	var objectJ={question_num,selected_choi};
 	var myJ= JSON.stringify(objectJ);
 	
