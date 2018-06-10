@@ -9,6 +9,7 @@ from .forms import *
 from .models import *
 from urllib import request
 import json
+from django.db import transaction
 
 
 class DashboardView(generic.TemplateView):
@@ -185,9 +186,6 @@ class AddQuestionViewBatch(CreateView):
 		if formset.is_valid():
 			return self.form_valid(formset)
 
-	# def form_valid(self, formset):
-	# 	formset.save()
-	# 	return HttpResponseRedirect('/dashboard/managetests/')
 
 	def form_valid(self, formset,**kwargs):
 		for form in formset:
@@ -201,6 +199,19 @@ class AddQuestionViewBatch(CreateView):
 	def get_success_url(self,**kwargs):
 		return reverse('online_test:updatesection',
 			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] })
+
+	# def form_valid(self, formset):
+	# 	formset.save()
+	# 	return HttpResponseRedirect('/dashboard/managetests/')
+
+
+
+
+
+
+
+
+
 
 
 class AddQuestionView(CreateView):
@@ -326,4 +337,47 @@ class TestDelete(DeleteView):
 		return reverse('online_test:testmanage')
 
 
-    
+
+
+
+
+def QuestionChoiceAdd(request, exam, part, section ):
+    # if this is a POST request we need to process the form data
+	exam_obj=Exam.objects.get(title=exam)
+	part_obj=Part.objects.get(exam=exam_obj, name=part)
+	section_obj=Section.objects.get(exam=exam_obj, part=part_obj ,section_type=section)
+	question = Question.objects.create(exam=exam_obj, part=part_obj, section=section_obj)
+
+	choice = SingleChoiceCorrect.objects.create(question_id=question)
+
+	if request.method == 'POST':
+	    # create a form instance and populate it with data from the request:
+	    form_question = QuestionAddForm(request.POST)
+	    form_choice = ChoiceAddForm(request.POST)
+
+	    # check whether it's valid:
+	    if form_question.is_valid() and form_choice.is_valid():
+
+	        # Save User model fields
+	        question.content = request.POST['content']
+	        # user.last_name = request.POST['last_name']
+	        question.save()
+
+	        # Save Employee model fields
+	        choice.choice_1 = request.POST['choice_1']
+	        choice.choice_2 = request.POST['choice_2']
+	        choice.choice_3 = request.POST['choice_3']
+	        choice.choice_4 = request.POST['choice_4']
+
+	        choice.save() 
+
+	        # redirect to the index page
+	        return HttpResponseRedirect(reverse('online_test:updatesection',
+					kwargs={'exam':exam,'part':part,'section':section }))
+
+    # if a GET (or any other method) we'll create a blank form
+	else:
+	    form_question = QuestionAddForm(instance=question)
+	    form_choice = ChoiceAddForm(instance=choice)
+
+	return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
