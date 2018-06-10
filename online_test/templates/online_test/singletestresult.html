@@ -1,0 +1,34 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h1> {{exam}} Results </h1>
+	
+	<table class="table table-bordered table-striped">
+	    <thead>
+	      <tr>
+	      	<th>Student Name</th>
+	      	{% for part in exam.related_parts %}
+	        
+	        	<th>{{part.name}}</th>
+	        {% endfor %}
+
+	        <th>Total Marks</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    	{% for student in students  %}
+	    	<tr>
+	    		<td class="col-md-1"><a href="">{{student.student_username}}</a></td>
+	    		
+	        	{% for part in exam.related_parts %}    
+					<td class="col-md-1">{{part.name}} Marks</td>
+				{% endfor %}
+				<td class="col-md-1"></td>
+	        	<!--td><button type="button" class="btn btn-primary btn-sm">EDIT</button></td-->
+			</tr>
+	    	{% endfor %}
+	    </tbody>
+ 	</table>
+
+</div>
+{% endblock %}

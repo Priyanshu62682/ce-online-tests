@@ -66,7 +66,9 @@ class Exam(models.Model):
 		default = False,
 		help_text = "Check to launch the test",
 		)
-
+	test_completed = models.BooleanField(
+		default = False,
+		)
 	class Meta:
 		verbose_name = ("test")
 
@@ -85,6 +87,10 @@ class Exam(models.Model):
 		m.update(s.encode('utf-8'))
 		print(str(m.hexdigest()))
 		return url
+
+	def related_parts(self):
+		parts = Part.objects.filter(exam=self)
+		return parts
 
 	def save(self, *args, **kwargs):
 		self.test_id = get_random_string
@@ -246,5 +252,8 @@ class Dynamic(models.Model):
 	student_id= models.ForeignKey(Student,on_delete=models.CASCADE)
 	test_id=models.ForeignKey(Exam,on_delete=models.PROTECT)
 	progress=JSONField(blank=True)
+
+	def __str__(self):
+		return str(self.student_id)
 
  
