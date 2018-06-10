@@ -336,6 +336,25 @@ class TestDelete(DeleteView):
 	def get_success_url(self, ** kwargs):
 		return reverse('online_test:testmanage')
 
+class ResultListView(generic.TemplateView):
+	template_name = 'online_test/testresults.html'
+
+	def get_context_data(self,**kwargs):
+		context = super(ResultListView,self).get_context_data(**kwargs)
+		tests = Exam.objects.filter(test_completed=True)
+		context['tests'] = tests
+		return context
+
+class ResultDetailView(generic.TemplateView):
+	template_name = 'online_test/singletestresult.html'
+
+	def get_context_data(self,**kwargs):
+		context = super(ResultDetailView,self).get_context_data(**kwargs)
+		exam = Exam.objects.get(title=self.kwargs['exam'])
+		students = Result.objects.filter(test_id=exam)
+		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
+		context['students'] = students
+		return context
 
 
 

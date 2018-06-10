@@ -50,10 +50,10 @@ class TestView(APIView):
 
 def get_request_choice(request):
 	if request.method=='POST':
-		# selected= request.POST['selected']
 		progress=request.POST['progress']
 		data_input = json.loads(progress)
 		new_input={data_input['question_num']:data_input['selected_choice']}
+
 		exam_id=Exam.objects.get(id=request.POST['exam_id'])
 		student=Student.objects.get(student_username=request.POST['student'])
 
@@ -86,6 +86,5 @@ def Thank_view(request,student,exam_id):
 			test_id=test,
 			student_username=student,
 			result_json=progress,
-
 			)
 	return render (request, 'online_test_frontend/thankyou.html', {'progress':progress})

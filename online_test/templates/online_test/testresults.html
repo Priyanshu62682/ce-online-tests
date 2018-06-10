@@ -1,0 +1,28 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h1> Results </h1>
+	<table class="table table-bordered table-striped">
+	    <thead>
+	      <tr>
+	        <th>Title</th>
+	        <th>Created On</th>
+	        <th>Status</th>
+	        <th>View Performances</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    	{% for test in tests  %}
+	    	<tr>
+	    		<td class="col-md-1">{{test.title}}</td>
+	    		<td class="col-md-1">{{test.created_on}}</td>
+	        	<td class="col-md-1">{{test.draft}}</td>
+	        	<td class="col-md-1"><a href="{% url 'online_test:resultdetail' exam=test %}">View</a></td>
+	        	<!--td><button type="button" class="btn btn-primary btn-sm">EDIT</button></td-->
+			</tr>
+	    	{% endfor %}
+	    </tbody>
+ 	</table>
+
+</div>
+{% endblock %}
