@@ -2,59 +2,57 @@
 {% block content %}
 
 	<div id="main" class="container">
-			{% for test_sample in test %}
-				<h1>{{test_sample.title}}</h1>
-				<h4>{{test_sample.description}}</h4>
-				<p>{{test_sample.instructions}}</p>
-				<hr>
-				{% for part in test_sample.part_exam %}
-					<h3>{{part.name}}</h3>
-					{% for section in part.section_part %}
-						<h4>{{section.section_type}}</h4>
-						<h4>Instructions:</h4> 
-						<p>{{section.section_instructions}}</p>
-						<div style="margin-left:50px;">
-							{% for question in section.question_section %}
-								{% if question %}
-									<p>Q : {{question.content}}</p>
+		{% for test_sample in test %}
+			<h1>{{test_sample.title}}</h1>
+			<h4>{{test_sample.description}}</h4>
+			<p>{{test_sample.instructions}}</p>
+			<hr>
+			{% for part in test_sample.part_exam %}
+				<h3>{{part.name}}</h3>
+				{% for section in part.section_part %}
+					<h4>{{section.section_type}}</h4>
+					<h4>Instructions:</h4> 
+					<p>{{section.section_instructions}}</p>
+					<div style="margin-left:50px;">
+						{% for question in section.question_section %}
+							{% if question %}
+								<p>Q : {{question.content}}</p>
 
 
 
-									<form method="post" action="" id="myform">
-	    							{% csrf_token %}
+								<form method="post" action="" id="myform">
+    							{% csrf_token %}
 
-									{% for choices in question.singlechoicecorrect_question %}
+								{% for choices in question.singlechoicecorrect_question %}
 
-										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
+									<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
+			    				
+			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
+			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
+				    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
 				    				
-				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
-				    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
-					    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
-					    				
-					    				<br>
+				    				<br>
 
-									{% endfor %}
+								{% endfor %}
 
-									</form>
+								</form>
 
-								{% else %}
-									<p>No Questions</p>
-								{% endif %}
+							{% else %}
+								<p>No Questions</p>
+							{% endif %}
 
-							{% endfor %}
-						</div>
-						<br>
-					{% endfor %}
+						{% endfor %}
+					</div>
+					<br>
 				{% endfor %}
-
-				<a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
 			{% endfor %}
+
+			<a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
+		{% endfor %}
 		
 	</div>
 
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-
-
 <script type="text/javascript">
 function pass(obj, value, name, classobj, idobj) {
 
@@ -65,9 +63,9 @@ function pass(obj, value, name, classobj, idobj) {
 	
 	var question_num= name;
 	
-	var selected_choi= value;
+	var selected_choice= value;
 	
-	var objectJ={question_num,selected_choi};
+	var objectJ={question_num,selected_choice};
 	var myJ= JSON.stringify(objectJ);
 	
 	 $.ajax({

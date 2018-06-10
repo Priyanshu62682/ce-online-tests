@@ -50,33 +50,28 @@ class TestView(APIView):
 
 def get_request_choice(request):
 	if request.method=='POST':
-		
-		
 		# selected= request.POST['selected']
-		exam_id=request.POST['exam_id']
 		progress=request.POST['progress']
-		me=Student.objects.get(student_username=request.POST['student'])
-	
+		data_input = json.loads(progress)
+		new_input={data_input['question_num']:data_input['selected_choice']}
+		exam_id=Exam.objects.get(id=request.POST['exam_id'])
+		student=Student.objects.get(student_username=request.POST['student'])
 
-		# Dynamic.objects.get(student_id=me):
-		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
-		progress_old=current_progress.progress
+		if Dynamic.objects.filter(student_id=student,test_id=exam_id).exists():
+			current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
+			progress_old=current_progress.progress
+			progress_old.update(new_input)
+			current_progress.progress=progress_old
+			current_progress.save()
 
-		progress_oldJS=json.dumps(progress_old)
-		progress_new=progress+progress_oldJS
-		
-		current_progress.progress=progress_new
-		current_progress.save()
-
-		# else:
-		# 	Dynamic.objects.create(
-		# 		student_id=me,
-		# 		test_id=exam_id,
-		# 		progress=progress,
-		# 		)
+		else:
+			Dynamic.objects.create(
+				student_id=student,
+				test_id=exam_id,
+				progress=new_input,
+				)
 
 	return HttpResponse('')
-
 
 def Thank_view(request,student,exam_id):
 	if request.method=='GET':
