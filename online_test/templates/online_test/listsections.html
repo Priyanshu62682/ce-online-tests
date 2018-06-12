@@ -1,5 +1,30 @@
 {% extends "online_test/index.html" %}
 {% block content %}
+<style type="text/css">
+	
+	/* The Modal (background) */
+
+.modal-content {
+
+	left: 44%;
+	width: 30%;
+	height: 52%;
+	top:36%;
+}
+
+.close {
+
+	margin-right:1%;
+}
+
+
+
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+</style>
 
 <div class="container">
 	<div class="test-detail-style">
@@ -15,10 +40,25 @@
 		{% endfor %}
 		<div class="current-section-detail">
 				
-	    		<a class="btn" href="{% url 'online_test:createsection' exam=exam part=part %}">
-	    			Add new SECTION
-	    		</a>
+	    		<button id="myBtn">Add New Section</button>
 			</div>
+
+	</div>
+
+
+	<div id="myModal" class="modal">
+
+	  <!-- Modal content -->
+	  <div class="modal-content">
+	    <span class="close" >&times;</span>
+	    <div class="inner" style=" margin-top: 18% ">
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:singlechoicecreatesection' exam=exam part=part %}">Single Choice Correct</a></center>
+	    
+	    <center><a style="color:#f93c00; " class="sections" href="{% url 'online_test:multiplechoicecreatesection' exam=exam part=part %}">Multiple Choice Correct</a></center>
+
+	       
+	  </div>
+	</div>
 
 	</div>
 	
@@ -86,4 +126,33 @@
 	 	{% endif %}
  	</div>
 </div>
+
+<script type="text/javascript">
+	
+	var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
 {% endblock %}

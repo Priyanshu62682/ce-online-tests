@@ -126,7 +126,7 @@ class Part(models.Model):
 		return self.name
 
 class Section(models.Model):
-	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_answer_type')
+	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_choice_type','match_choice_type')
 	
 	# part_choices = Choices('Physics','Chemistry','Maths')
 	# part = StatusField(choices_name='part_choices')
@@ -138,6 +138,10 @@ class Section(models.Model):
 	section_type = StatusField()
 	positive_marks = models.IntegerField(
 		help_text = "Example: +4",
+		blank = False,
+		)
+	per_option_positive_marks = models.IntegerField(
+		help_text = "Example: +1",
 		blank = False,
 		)
 	negative_marks = models.IntegerField(
@@ -181,6 +185,7 @@ class Question(models.Model):
 
 	def __str__(self):
 		return str(self.id)
+
 
 class SingleChoiceCorrect(models.Model):
 
@@ -256,4 +261,3 @@ class Dynamic(models.Model):
 	def __str__(self):
 		return str(self.student_id)
 
- 

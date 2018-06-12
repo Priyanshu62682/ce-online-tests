@@ -140,7 +140,7 @@ class CreatePartView(CreateView):
 class CreateSectionView(CreateView):
 	template_name = 'online_test/createnewsection.html'
 	model = Section
-	fields = ('section_type','positive_marks','negative_marks','section_instructions',)
+	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
 
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
@@ -153,6 +153,32 @@ class CreateSectionView(CreateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateSectionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
+		#part_instance = Part.objects.get(name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
+
+class CreateMultipleSectionView(CreateView):
+	template_name = 'online_test/createmultiplenewsection.html'
+	model = Section
+	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		return super(CreateMultipleSectionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(CreateMultipleSectionView,self).get_context_data(**kwargs)
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
 		try:
 			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
@@ -400,3 +426,12 @@ def QuestionChoiceAdd(request, exam, part, section ):
 	    form_choice = ChoiceAddForm(instance=choice)
 
 	return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
+
+def ChooseSection(request, exam, part):
+
+	context={ 'exam':exam, 'part':part }
+
+	return render(request,'online_test/selectsection', context)
+
+
+

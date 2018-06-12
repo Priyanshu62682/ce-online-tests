@@ -19,7 +19,7 @@ class CreateSectionForm(forms.ModelForm):
 
     class Meta:
         model = Section
-        fields = ['exam','part','section_type','positive_marks','negative_marks','section_instructions']
+        fields = ['exam','part','section_type', 'positive_marks','per_option_positive_marks','negative_marks','section_instructions']
 
     def __init__(self, exam, part, *args, **kwargs):
         self.exam = exam
@@ -30,7 +30,6 @@ class QuestionForm(ModelForm):
     class Meta:
         model = SingleChoiceCorrect
         exclude = ()
-
 
 
 QuestionFormset = modelformset_factory(Question, fields=['content','figure'], extra=2, form = QuestionForm)
