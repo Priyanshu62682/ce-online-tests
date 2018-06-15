@@ -3,16 +3,19 @@
 <div class="col-md-4">
 
     {{questionchoice.managementform}}
-
+<form action="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}">
 {% for form in questionchoice %}
-<div class="form-group">
-    <label class="col-sm-2 control-label">question</label>
-    {{% form.question %}}
+
+    
+    {{form}}
     
 
 
-</div>
 {% endfor %}
+
+<input type="submit" value="SAVE">
+
+</form>
 
 
 </div>

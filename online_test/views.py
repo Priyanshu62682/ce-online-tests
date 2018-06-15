@@ -374,11 +374,7 @@ class ResultDetailView(generic.TemplateView):
 def QuestionChoiceAdd(request, exam, part, section ):
     # if this is POST request we need to process the form data
 	
-	exam_obj=Exam.objects.get(title=exam)
-	part_obj=Part.objects.get(exam=exam_obj, name=part)
-	section_obj=Section.objects.get(exam=exam_obj, part=part_obj ,section_type=section)
-	question = Question.objects.create(exam=exam_obj, part=part_obj, section=section_obj, serial= 1)
-	choice = SingleChoiceCorrect.objects.create(question_id=question)
+    question=Question()
 
 
 	print(request)
