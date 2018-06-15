@@ -174,17 +174,29 @@ class Question(models.Model):
 	figure = models.ImageField(upload_to='diagrams/',
 		blank = True,
 		)
+	serial = models.IntegerField(
+		blank = False,
+		)
 	def get_choices(self):
-		choices = SingleChoiceCorrect.objects.filter(question_id=self)
-		#marks = self.singlechoicecorrect_set.select_related('singlechoicecorrect_question')
-		return choices
+		choices_instance = QuestionChoices.objects.get(question_id=self)
+		choices_json = choices_instance.choices['choices']
+		return choices_json
+
+	def correct_choice(self):
+		choices_instance = QuestionChoices.objects.get(question_id=self)
+		correct_choice = choices_instance.choices['correct_choice']
+		return correct_choice
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.content)
 
 class SingleChoiceCorrect(models.Model):
 
-	STATUS = Choices('Choice-1','Choice-2','Choice-3','Choice-4')
+	CHOICES = (
+		('A','choice_1'),
+		('B','choice_2'),
+		('C','choice_3'),
+		('D','choice_4'))
 	question_id = models.ForeignKey(Question,related_name='singlechoicecorrect_question',on_delete=models.CASCADE)
 	choice_1 = models.CharField(
 		max_length=50,
@@ -206,10 +218,19 @@ class SingleChoiceCorrect(models.Model):
 		blank=False,
 		verbose_name = "Choice 4",
 		)
-	correct_choice = StatusField()
+	correct_choice = models.CharField(max_length=10, choices=CHOICES)
 	
 	def __str__(self):
 		return str(self.question_id)
+
+class QuestionChoices(models.Model):
+
+	question_id = models.ForeignKey(Question,related_name='question_choices_question',on_delete=models.CASCADE)
+	section = models.ForeignKey(Section,on_delete=models.CASCADE)
+	choices = JSONField()
+	
+	def __str__(self):
+		return str(self.id)
 
 class Student(models.Model):
 	student_username = models.CharField(

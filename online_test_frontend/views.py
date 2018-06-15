@@ -76,15 +76,80 @@ def get_request_choice(request):
 def Thank_view(request,student,exam_id):
 	if request.method=='GET':
 		student=Student.objects.get(student_username=student)
-		current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
+		exam_object = Exam.objects.get(id=exam_id)
+		current_progress=Dynamic.objects.get(student_id=student,test_id=exam_object)
 		progress=current_progress.progress
 		student=current_progress.student_id
 		test=current_progress.test_id
+		
+		result_object={}
+		total_positives=0
+		total_negatives=0
+		total_positive_marks=0
+		total_negative_marks=0
+		total_score=0
 
-		Result.objects.create(
-			test_completed= True,
-			test_id=test,
-			student_username=student,
-			result_json=progress,
-			)
-	return render (request, 'online_test_frontend/thankyou.html', {'progress':progress})
+		parts = Part.objects.filter(exam=exam_object)
+		part_result_object=[]
+		for part in parts:
+			marks = 0
+			positives = 0
+			negatives = 0
+			positive_marks = 0
+			negative_marks = 0
+			question_object = Question.objects.filter(exam=exam_object,part=part)
+			for question in question_object:
+				choice_object = SingleChoiceCorrect.objects.get(question_id=question)
+				key = str(question.serial)
+				# print(question.correct_choice)
+				# print(progress[key])
+				if key in progress:
+					if choice_object.correct_choice == progress[key]:
+						positives+=1
+						positive_marks += question.section.positive_marks
+					else:
+						negatives+=1
+						negative_marks += question.section.negative_marks
+			total_positives+=positives
+			total_negatives+=negatives
+			total_positive_marks+=positive_marks
+			total_negative_marks+=negative_marks
+
+			print(positive_marks)
+			print(negative_marks)
+			part_result = {
+				'name': part.name,
+				'positives': positives,
+				'negatives': negatives,
+				'positive_marks':positive_marks,
+				'negative_marks': negative_marks,
+				'score': positive_marks+negative_marks
+			}
+			part_result_object.append(part_result)
+
+		total_score+=total_positive_marks+total_negative_marks
+		final = {
+			'total_positives': total_positives,
+			'total_negatives': total_negatives,
+			'total_positive_marks': total_positive_marks,
+			'total_negative_marks': total_negative_marks,
+			'total_score': total_score
+		}
+		result_object.update({'part_result':part_result_object})
+		result_object.update(final)
+		print(result_object)
+		if not Result.objects.filter(test_id=test,student_username=student).exists():
+			Result.objects.create(
+				test_completed= True,
+				test_id=test,
+				student_username=student,
+				result_json=result_object,
+				)
+			current_progress.delete()
+			message = 'Thank you for taking the test'
+		else:
+			message = 'Already submitted'
+			progress = {}
+			total_score = 'None'
+	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
+		'total_score':total_score})

@@ -33,7 +33,7 @@ class QuestionForm(ModelForm):
 
 
 
-QuestionFormset = modelformset_factory(Question, fields=['content','figure'], extra=2, form = QuestionForm)
+QuestionFormset = modelformset_factory(Question, fields=['serial','content','figure'], extra=2, form = QuestionForm)
 
 
 
@@ -41,7 +41,7 @@ class QuestionAddForm(forms.ModelForm):
 
     class Meta:
         model = Question
-        fields = ('content',)
+        fields = ('serial','content')
 
 
 class ChoiceAddForm(forms.ModelForm):
