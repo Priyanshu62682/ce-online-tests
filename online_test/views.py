@@ -395,6 +395,9 @@ def QuestionChoiceAdd(request, exam, part, section ):
 
 	choice = SingleChoiceCorrect.objects.create(question_id=question)
 
+
+	print(request)
+
 	if request.method == 'POST':
 	    # create a form instance and populate it with data from the request:
 	    form_question = QuestionAddForm(request.POST)
@@ -422,16 +425,15 @@ def QuestionChoiceAdd(request, exam, part, section ):
 
     # if a GET (or any other method) we'll create a blank form
 	else:
-	    form_question = QuestionAddForm(instance=question)
-	    form_choice = ChoiceAddForm(instance=choice)
+
+		form_question = QuestionAddForm(instance=question)
+		form_choice = ChoiceAddForm(instance=choice)
 
 	return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
+	
 
-def ChooseSection(request, exam, part):
 
-	context={ 'exam':exam, 'part':part }
 
-	return render(request,'online_test/selectsection', context)
 
 
 
