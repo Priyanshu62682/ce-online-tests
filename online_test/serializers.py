@@ -2,6 +2,17 @@ from rest_framework import serializers, status
 from .models import *
 from online_test_frontend.models import *
 
+class QuestionChoicesSerializer(serializers.ModelSerializer):
+
+	def __init__(self, *args, **kwargs):
+		print(self.choices)
+		self.choices = 1
+		super(QuestionChoicesSerializer, self).__init__(*args, **kwargs)
+	
+	class Meta:
+		model = QuestionChoices
+		fields = ('choices')
+
 
 class ChoiceSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -10,10 +21,10 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
 	singlechoicecorrect_question = ChoiceSerializer(many=True,required=False)
-
+	#question_choices_question = QuestionChoicesSerializer(many=True,required=False)
 	class Meta:
 		model = Question
-		fields = ('id','content', 'figure','singlechoicecorrect_question')
+		fields = ('id','serial','content', 'figure','singlechoicecorrect_question')
 
 
 class SectionSerializer(serializers.ModelSerializer):

@@ -16,20 +16,17 @@
 					<div style="margin-left:50px;">
 						{% for question in section.question_section %}
 							{% if question %}
-								<p>Q : {{question.content}}</p>
-
-
+								<p>Q {{question.serial}} : {{question.content}}</p>
 
 								<form method="post" action="" id="myform">
     							{% csrf_token %}
 
 								{% for choices in question.singlechoicecorrect_question %}
 
-									<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_1}}" > {{choices.choice_1}}<br>
-			    				
-			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_2}}" >{{choices.choice_2}}<br>
-			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_3}}"  >{{choices.choice_3}}<br>
-				    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.id}}" value="{{choices.choice_4}}"  >{{choices.choice_4}}</br></br>
+									<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="A" > A : {{choices.choice_1}}<br>
+			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="B" > B : {{choices.choice_2}}<br>
+			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="C"  > C : {{choices.choice_3}}<br>
+				    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="D"  > D : {{choices.choice_4}}</br></br>
 				    				
 				    				<br>
 
@@ -46,8 +43,11 @@
 					<br>
 				{% endfor %}
 			{% endfor %}
+			<center>
+				<button><a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
+				</button>
+			</center>
 
-			<a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
 		{% endfor %}
 		
 	</div>
