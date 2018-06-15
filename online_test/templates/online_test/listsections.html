@@ -102,17 +102,14 @@
 			    	</div>
 			    	<div class="section-box-edit-question">
 			    		<ul>
-			    			{% if question.get_choices %}
-				    			{% for choice in question.get_choices %}
-				    				<li>{{choice.choice_1}}</li>
-				    				<li>{{choice.choice_2}}</li>
-				    				<li>{{choice.choice_3}}</li>
-				    				<li>{{choice.choice_4}}</li>
-				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
-				    			{% endfor %}
-				    		
-				    			
-			    			{% endif %}
+			    			<ul>
+			    			{% for choice in question.get_choices %}
+			    				<li>{{choice}} </li>
+								
+			    			{% endfor %}
+			    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
+			    					
+			    		</ul>
 			    		</ul>
 			    		
 			        </div>

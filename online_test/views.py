@@ -31,7 +31,6 @@ class TestPartView(generic.DetailView):
 		exam = Exam.objects.get(url=self.kwargs['slug'])
 		context['exam'] =exam
 		context['parts'] = Part.objects.filter(exam=exam)
-		context['sections'] = Section.objects.filter(exam=exam)
 		context['questions'] = Question.objects.filter(exam=exam)
 		return context
 
@@ -60,6 +59,7 @@ class TestSectionListView(generic.ListView):
 			part_object=None
 		context['exam'] = test_name
 		context['part'] = part_object
+		context['questions'] = Question.objects.filter(exam=test_name,part=part_object)
 		return context
 
 
@@ -212,7 +212,6 @@ class AddQuestionViewBatch(CreateView):
 		if formset.is_valid():
 			return self.form_valid(formset)
 
-
 	def form_valid(self, formset,**kwargs):
 		for form in formset:
 			form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
@@ -229,16 +228,6 @@ class AddQuestionViewBatch(CreateView):
 	# def form_valid(self, formset):
 	# 	formset.save()
 	# 	return HttpResponseRedirect('/dashboard/managetests/')
-
-
-
-
-
-
-
-
-
-
 
 class AddQuestionView(CreateView):
 	model = Question
@@ -382,43 +371,42 @@ class ResultDetailView(generic.TemplateView):
 		context['students'] = students
 		return context
 
-
-
-
-
 def QuestionChoiceAdd(request, exam, part, section ):
-    # if this is a POST request we need to process the form data
+    # if this is POST request we need to process the form data
+	
 	exam_obj=Exam.objects.get(title=exam)
 	part_obj=Part.objects.get(exam=exam_obj, name=part)
 	section_obj=Section.objects.get(exam=exam_obj, part=part_obj ,section_type=section)
-	question = Question.objects.create(exam=exam_obj, part=part_obj, section=section_obj)
-
+	question = Question.objects.create(exam=exam_obj, part=part_obj, section=section_obj, serial= 1)
 	choice = SingleChoiceCorrect.objects.create(question_id=question)
 
 	if request.method == 'POST':
-	    # create a form instance and populate it with data from the request:
-	    form_question = QuestionAddForm(request.POST)
-	    form_choice = ChoiceAddForm(request.POST)
+
+
+		# create a form instance and populate it with data from the request:
+		form_question = QuestionAddForm(request.POST)
+		form_choice = ChoiceAddForm(request.POST)
 
 	    # check whether it's valid:
-	    if form_question.is_valid() and form_choice.is_valid():
+		if form_question.is_valid() and form_choice.is_valid():
 
-	        # Save User model fields
-	        question.content = request.POST['content']
-	        # user.last_name = request.POST['last_name']
-	        question.save()
+			# Save User model fields
+			question.content = request.POST['content']
+			question.serial = request.POST['serial']
+			# user.last_name = request.POST['last_name']
+			question.save()
 
-	        # Save Employee model fields
-	        choice.choice_1 = request.POST['choice_1']
-	        choice.choice_2 = request.POST['choice_2']
-	        choice.choice_3 = request.POST['choice_3']
-	        choice.choice_4 = request.POST['choice_4']
+			# Save Employee model fields
+			choice.choice_1 = request.POST['choice_1']
+			choice.choice_2 = request.POST['choice_2']
+			choice.choice_3 = request.POST['choice_3']
+			choice.choice_4 = request.POST['choice_4']
 
-	        choice.save() 
+			choice.save() 
 
-	        # redirect to the index page
-	        return HttpResponseRedirect(reverse('online_test:updatesection',
-					kwargs={'exam':exam,'part':part,'section':section }))
+			# redirect to the index page
+			return HttpResponseRedirect(reverse('online_test:updatesection',
+				kwargs={'exam':exam,'part':part,'section':section }))
 
     # if a GET (or any other method) we'll create a blank form
 	else:

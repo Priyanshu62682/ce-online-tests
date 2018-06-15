@@ -74,22 +74,12 @@ $('input[id=my]').on('change', function() {
 	    				{% csrf_token %}
 
 			    		<ul>
-			    			{% if question.get_choices %}
-				    			{% for choice in question.get_choices %}
-
-				    			<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
-				    				
-				    			<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
-				    				<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
-				    				<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
-				    				<input type="submit"  class="{{exam.id}}" id= "options" value="save"   name="submit" >
-
-				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
-				    				
-				    			{% endfor %}
-				    		{% else %}
-				    			
-			    			{% endif %}
+			    			{% for choice in question.get_choices %}
+			    				<li>{{choice}} </li>
+								
+			    			{% endfor %}
+			    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
+			    					
 			    		</ul>
 			    	</form>
 			    		
@@ -98,11 +88,6 @@ $('input[id=my]').on('change', function() {
 			    </div>
 		    {% endfor %}
 		</div>
-		
-		
 	</div>
-
-</script> -->
-
 {% endblock %}
 
