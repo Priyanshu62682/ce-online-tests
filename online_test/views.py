@@ -114,9 +114,6 @@ def get_request_choice(request):
 
 	return HttpResponse('')
 
-
-
-
 class CreatePartView(CreateView):
 	template_name = 'online_test/newpart.html'
 	model = Part

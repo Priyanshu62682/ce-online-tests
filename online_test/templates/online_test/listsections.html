@@ -101,15 +101,15 @@
 			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
 			    	</div>
 			    	<div class="section-box-edit-question">
-			    		<ul>
-			    			<ul>
-			    			{% for choice in question.get_choices %}
-			    				<li>{{choice}} </li>
-								
-			    			{% endfor %}
-			    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
+			    		
+		    			<ul>
+		    			{% for choice in question.get_choices %}
+		    				<li>{{choice}} </li>
+							
+		    			{% endfor %}
+		    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
 			    					
-			    		</ul>
+			    		
 			    		</ul>
 			    		
 			        </div>

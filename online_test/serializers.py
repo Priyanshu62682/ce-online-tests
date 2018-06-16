@@ -1,17 +1,35 @@
 from rest_framework import serializers, status
 from .models import *
 from online_test_frontend.models import *
+import json
 
 class QuestionChoicesSerializer(serializers.ModelSerializer):
-
-	def __init__(self, *args, **kwargs):
-		print(self.choices)
-		self.choices = 1
-		super(QuestionChoicesSerializer, self).__init__(*args, **kwargs)
-	
+	#choices_modified = serializers.CharField(source='modified_choices',read_only=True)  
+	choices = serializers.SerializerMethodField('clean_json')        
 	class Meta:
 		model = QuestionChoices
-		fields = ('choices')
+		fields = ('choices',)
+
+	def clean_json(self, obj):
+		return obj.choices
+
+	# def to_representation(self, instance):
+	# 	data = super(QuestionChoicesSerializer, self).to_representation(instance)
+	# 	result_data={"status" : 200,"message" : "Category List"}
+	# 	result_data["response"]=data
+	# 	return result_data
+
+	# def __init__(self, *args, **kwargs):
+	# 	fields = kwargs.pop('fields', None)
+	# 	print(fields)
+	# 	super(QuestionChoicesSerializer,self).__init__(*args, **kwargs)
+
+	# 	context = kwargs.get('context', None)
+	# 	if fields:
+			
+	# 		print(fields)
+	# 	else:
+	# 		print("In else")
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -20,11 +38,11 @@ class ChoiceSerializer(serializers.ModelSerializer):
 		fields = ('choice_1','choice_2','choice_3','choice_4')
 
 class QuestionSerializer(serializers.ModelSerializer):
-	singlechoicecorrect_question = ChoiceSerializer(many=True,required=False)
-	#question_choices_question = QuestionChoicesSerializer(many=True,required=False)
+	#singlechoicecorrect_question = ChoiceSerializer(many=True,required=False)
+	question_choices_question = QuestionChoicesSerializer(many=True,required=False)
 	class Meta:
 		model = Question
-		fields = ('id','serial','content', 'figure','singlechoicecorrect_question')
+		fields = ('id','serial','content', 'figure','question_choices_question')
 
 
 class SectionSerializer(serializers.ModelSerializer):

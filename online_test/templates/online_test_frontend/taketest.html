@@ -21,12 +21,13 @@
 								<form method="post" action="" id="myform">
     							{% csrf_token %}
 
-								{% for choices in question.singlechoicecorrect_question %}
-
-									<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="A" > A : {{choices.choice_1}}<br>
-			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="B" > B : {{choices.choice_2}}<br>
-			    					<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="C"  > C : {{choices.choice_3}}<br>
-				    				<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id)" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="D"  > D : {{choices.choice_4}}</br></br>
+								{% for choices in question.question_choices_question %}
+									{% for choice in choices.choices %}
+										
+										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" 
+										class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+									{% endfor %}
 				    				
 				    				<br>
 
@@ -54,6 +55,7 @@
 
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script type="text/javascript">
+
 function pass(obj, value, name, classobj, idobj) {
 
 	var student_username=idobj;

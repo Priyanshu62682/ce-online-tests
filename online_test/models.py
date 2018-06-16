@@ -188,7 +188,10 @@ class Question(models.Model):
 
 	def correct_choice(self):
 		choices_instance = QuestionChoices.objects.get(question_id=self)
-		correct_choice = choices_instance.choices
+
+		
+		correct_choice = choices_instance.correct_choice
+		
 		return correct_choice
 
 	def __str__(self):
@@ -233,6 +236,7 @@ class QuestionChoices(models.Model):
 	question_id = models.ForeignKey(Question,related_name='question_choices_question',on_delete=models.CASCADE)
 	section = models.ForeignKey(Section,on_delete=models.CASCADE)
 	choices = JSONField()
+	correct_choice = JSONField()
 	
 	def __str__(self):
 		return str(self.id)
