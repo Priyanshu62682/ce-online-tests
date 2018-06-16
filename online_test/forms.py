@@ -4,7 +4,7 @@ from django.forms import inlineformset_factory
 from django.forms import ModelForm
 from django.forms import modelformset_factory
 from django.forms.models import BaseInlineFormSet
-from django.forms import inlineformset_factory
+from django.forms.models import BaseModelFormSet    
 
 
 class ContactForm(forms.Form):
@@ -37,28 +37,30 @@ class QuestionForm(ModelForm):
 QuestionFormset = modelformset_factory(Question, fields=['serial','content','figure'], extra=2, form = QuestionForm)
 
 
-class ParentQuestionForm(ModelForm):
-    class Meta:
-        model=Question
-        fields=['content']
 
+# class QuestionAddForm(forms.ModelForm):
 
-class QuestionChoiceForm(ModelForm):
-    class Meta:
-        model= QuestionChoices
-        fields=['question_id','section','choices']
+#     class Meta:
+#         model = Question
+#         fields = ('serial','content', 'figure')
+#         extra=2
 
 
 
 
+# QuestionAddFormset=modelformset_factory(Question, fields=['serial','content','figure'], extra=2, form=QuestionAddForm)
 
-QuestionChoiceFormSet = inlineformset_factory(Question, QuestionChoices, fields=('question_id','section','choices'), form=QuestionChoiceForm,extra=1)
+# class ChoiceAddForm(forms.ModelForm):
+
+#     class Meta:
+#         model = QuestionChoices
+#         fields = ('choices',)
+#         extra=2
+
+# ChoiceAddFormset=modelformset_factory(QuestionChoices, fields=['choices',], extra=2, form=ChoiceAddForm)
 
 
-
-
-
-
+QuestionAddFormset = inlineformset_factory(Question, QuestionChoices, fields = ['question_id', 'section', 'choices'], exclude = [], extra=1,can_delete = False)
 
 
 

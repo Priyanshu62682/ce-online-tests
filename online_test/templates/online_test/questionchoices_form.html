@@ -1,19 +1,17 @@
 <html>
-  <head>
+	<head>
         <meta charset="utf-8" />
-    <title>album_form</title>
-  </head>
-  <body>
+		<title>album_form</title>
+	</head>
+	<body>
       <form method="post" action="">
-        {{formset.management_form}}
          {% csrf_token %}
-        
     <table>
       {{form}}
     </table>
     <table>
-    {{ formset }}
+	  {{ formset }}
     </table>
     <input type="submit"/>
     </form>
-  </body>
+	</body>

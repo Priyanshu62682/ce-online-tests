@@ -183,12 +183,12 @@ class Question(models.Model):
 		)
 	def get_choices(self):
 		choices_instance = QuestionChoices.objects.get(question_id=self)
-		choices_json = choices_instance.choices['choices']
+		choices_json = choices_instance.choices
 		return choices_json
 
 	def correct_choice(self):
 		choices_instance = QuestionChoices.objects.get(question_id=self)
-		correct_choice = choices_instance.choices['correct_choice']
+		correct_choice = choices_instance.choices
 		return correct_choice
 
 	def __str__(self):

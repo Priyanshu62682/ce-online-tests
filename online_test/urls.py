@@ -14,7 +14,7 @@ urlpatterns = [
 	# path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateMultipleSectionView.as_view(), name = 'multiplechoicecreatesection'),
 	# path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateIntegerSectionView.as_view(), name = 'integerchoicecreatesection'),
 	# path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateMatchSectionView.as_view(), name = 'matchchoicecreatesection'),
-	path('managetests/<exam>/<part>/<section>/newquestion',views.CreateQuestion.as_view(), name = 'addnewquestion'),
+	path('managetests/<exam>/<part>/<section>/newquestion',views.QuestionChoiceAdd.as_view(), name = 'addnewquestion'),
 	path('managetests/<exam>/<part>/<section>/newquestionbatch',views.AddQuestionViewBatch.as_view(), 
 		name = 'addnewquestionbatch'),
 	path('managetests/<exam>/<part>/<section>/updatesection',views.SectionUpdateView.as_view(), name = 'updatesection'),
