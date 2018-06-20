@@ -1,7 +1,9 @@
+
 <html>
   <head>
         <meta charset="utf-8" />
-    <title>album_form</title>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <title>Add new Question</title>
   </head>
   <body>
       <form method="post" action="">
@@ -17,3 +19,25 @@
     <input type="submit"/>
     </form>
   </body>
+
+
+ <script type="text/javascript">
+   var section="{{section}}"
+      window.onload = function() {
+      if (section=='single_choice_correct_type' || section=='multiple_choice_correct_type'){
+        var extra=3;
+      }
+      else {
+          if(section=='match_type'){
+          var extra = 6;
+        }
+        else {
+          var extra =0;
+          
+        }
+    }
+
+
+
+};
+ </script>

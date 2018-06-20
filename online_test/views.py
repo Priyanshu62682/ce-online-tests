@@ -10,6 +10,7 @@ from .models import *
 from urllib import request
 import json
 from django.db import transaction
+from operator import itemgetter
 
 
 class DashboardView(generic.TemplateView):
@@ -137,11 +138,12 @@ class CreatePartView(CreateView):
 class CreateSectionView(CreateView):
 	template_name = 'online_test/createnewsection.html'
 	model = Section
-	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
 
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='single_choice_correct_type'
 		return super(CreateSectionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
@@ -163,11 +165,13 @@ class CreateSectionView(CreateView):
 class CreateMultipleSectionView(CreateView):
 	template_name = 'online_test/createmultiplenewsection.html'
 	model = Section
-	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
-
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='multiple_choice_correct_type'
+		print('multiple_choice_correct_type')
 		return super(CreateMultipleSectionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
@@ -176,6 +180,62 @@ class CreateMultipleSectionView(CreateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateMultipleSectionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
+		#part_instance = Part.objects.get(name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
+
+class CreateMatchSectionView(CreateView):
+	template_name = 'online_test/creatematchsection.html'
+	model = Section
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='match_type'
+		print('match')
+		return super(CreateMatchSectionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(CreateMatchSectionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
+		#part_instance = Part.objects.get(name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
+
+class CreateIntegerSectionView(CreateView):
+	template_name = 'online_test/createintegersection.html'
+	model = Section
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='integer_type'
+		print('integer_type')
+		return super(CreateIntegerSectionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(CreateIntegerSectionView,self).get_context_data(**kwargs)
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
 		try:
 			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
@@ -385,9 +445,18 @@ class QuestionChoiceAdd(CreateView):
     	context['section'] = self.kwargs['section']
 
     	if self.request.POST:
-    		context['formset']=QuestionAddFormset(self.request.POST)
+    		context['formset']=QuestionAddForm(self.request.POST)
     	else:
-    		context['formset']=QuestionAddFormset()
+    		if context['section']=='single_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if  context['section']=='multiple_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if context['section']=='match_type':
+	    		context['formset']=QuestionAddForm(extra=5)
+	    	if context['section']=='integer_type':
+	    		context['formset']=QuestionAddForm(extra=0)
+
+
     	return context
 
     def form_valid(self, form):
@@ -398,8 +467,56 @@ class QuestionChoiceAdd(CreateView):
         formset = context['formset']
         if formset.is_valid():
             self.object = form.save()
+
             formset.instance = self.object
-            formset.save()
+            question_id=self.request.POST.getlist("question_id")
+
+            print(question_id)
+            # cd = formset.cleaned_data
+            if context['section']=='single_choice_correct_type' or context['section']=='multiple_choice_correct_type':
+            	c_1=self.request.POST.getlist("choice_1")
+            	c_2=self.request.POST.getlist("choice_2")
+            	c_3=self.request.POST.getlist("choice_3")
+            	c_4=self.request.POST.getlist("choice_4")
+            	c_a=self.request.POST.getlist("correct_choice")
+            	answer=	[]
+            	answer.append(c_1)
+            	answer.append(C_2)
+            	answer.append(c_3)
+            	answer.append(c_4)
+            	# print(answer)
+            	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+            	member.save()
+            else:
+            	if context['section']=='match_type':
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_2=self.request.POST.getlist("choice_2")
+            		c_3=self.request.POST.getlist("choice_3")
+            		c_4=self.request.POST.getlist("choice_4")
+            		c_5=self.request.POST.getlist("choice_5")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		answer.append(c_1)
+            		answer.append(c_2)
+            		answer.append(c_3)
+            		answer.append(c_4)
+            		answer.append(c_5)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member.save()
+
+
+            	else:
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member.save()
+
+            
+
+
+
+            # formset.save()
             return HttpResponseRedirect(reverse('online_test:updatesection', 
             	kwargs={'exam':self.kwargs['exam'], 'part':self.kwargs['part'], 'section':self.kwargs['section']}))
         else:

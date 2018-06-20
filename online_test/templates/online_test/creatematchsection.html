@@ -1,0 +1,13 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="container">
+	<h3>Create new Section</h3>
+	<h2>{{exam.title}}</h2>
+	<h4>{{part}}</h4>
+	<form action="{% url 'online_test:matchcreatesection' exam=exam part=part %}" method="post">
+		{% csrf_token %}
+    	{{ form.as_p }}
+    	<input type="submit" value="SAVE">
+	</form>
+</div>
+{% endblock %}

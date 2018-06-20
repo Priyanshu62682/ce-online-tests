@@ -126,7 +126,7 @@ class Part(models.Model):
 		return self.name
 
 class Section(models.Model):
-	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_choice_type','match_choice_type')
+	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_type','match_type')
 	
 	# part_choices = Choices('Physics','Chemistry','Maths')
 	# part = StatusField(choices_name='part_choices')
