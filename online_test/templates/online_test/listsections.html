@@ -52,9 +52,15 @@
 	  <div class="modal-content">
 	    <span class="close" >&times;</span>
 	    <div class="inner" style=" margin-top: 18% ">
-	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:singlechoicecreatesection' exam=exam part=part %}">Single Choice Correct</a></center>
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:singlechoicecreatesection' exam=exam part=part  %}">Single Choice Correct</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:multiplechoicecreatesection' exam=exam part=part  %}">Multiple Choice Correct</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:matchcreatesection' exam=exam part=part  %}">Match Type</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:integercreatesection' exam=exam part=part  %}">Integer Type</a></center>
 	    
-	    <center><a style="color:#f93c00; " class="sections" href="{% url 'online_test:multiplechoicecreatesection' exam=exam part=part %}">Multiple Choice Correct</a></center>
+	
 
 	       
 	  </div>

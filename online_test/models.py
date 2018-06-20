@@ -126,7 +126,7 @@ class Part(models.Model):
 		return self.name
 
 class Section(models.Model):
-	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_choice_type','match_choice_type')
+	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_type','match_type')
 	
 	# part_choices = Choices('Physics','Chemistry','Maths')
 	# part = StatusField(choices_name='part_choices')
@@ -188,7 +188,10 @@ class Question(models.Model):
 
 	def correct_choice(self):
 		choices_instance = QuestionChoices.objects.get(question_id=self)
+
+		
 		correct_choice = choices_instance.correct_choice
+		
 		return correct_choice
 
 	def __str__(self):

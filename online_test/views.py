@@ -10,6 +10,7 @@ from .models import *
 from urllib import request
 import json
 from django.db import transaction
+from operator import itemgetter
 
 
 class DashboardView(generic.TemplateView):
@@ -137,11 +138,12 @@ class CreatePartView(CreateView):
 class CreateSectionView(CreateView):
 	template_name = 'online_test/createnewsection.html'
 	model = Section
-	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
 
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='single_choice_correct_type'
 		return super(CreateSectionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
@@ -163,11 +165,13 @@ class CreateSectionView(CreateView):
 class CreateMultipleSectionView(CreateView):
 	template_name = 'online_test/createmultiplenewsection.html'
 	model = Section
-	fields = ('section_type','positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
-
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
 	def form_valid(self, form,**kwargs):
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='multiple_choice_correct_type'
+		print('multiple_choice_correct_type')
 		return super(CreateMultipleSectionView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
@@ -176,6 +180,62 @@ class CreateMultipleSectionView(CreateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateMultipleSectionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
+		#part_instance = Part.objects.get(name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
+
+class CreateMatchSectionView(CreateView):
+	template_name = 'online_test/creatematchsection.html'
+	model = Section
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='match_type'
+		print('match')
+		return super(CreateMatchSectionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(CreateMatchSectionView,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		try:
+			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		except Part.DoesNotExist:
+			part_instance=None
+		#part_instance = Part.objects.get(name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		return context
+
+class CreateIntegerSectionView(CreateView):
+	template_name = 'online_test/createintegersection.html'
+	model = Section
+	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	
+	def form_valid(self, form,**kwargs):
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+		form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+		form.instance.section_type='integer_type'
+		print('integer_type')
+		return super(CreateIntegerSectionView, self).form_valid(form,**kwargs)
+
+	def get_success_url(self,**kwargs):
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+
+	def get_context_data(self,**kwargs):
+		context = super(CreateIntegerSectionView,self).get_context_data(**kwargs)
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
 		try:
 			part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
@@ -239,7 +299,7 @@ class AddQuestionView(CreateView):
 		context['exam'] = self.kwargs['exam']
 		context['part'] = self.kwargs['part']
 		context['section'] = self.kwargs['section']
-		#context['formset'] = QuestionFormset(queryset=Question.objects.none())
+		# context['formset'] = QuestionFormset(queryset=Question.objects.none())
 		return context
 
 	def form_valid(self, form,**kwargs):
@@ -362,61 +422,168 @@ class ResultDetailView(generic.TemplateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(ResultDetailView,self).get_context_data(**kwargs)
+
+
 		exam = Exam.objects.get(title=self.kwargs['exam'])
 		students = Result.objects.filter(test_id=exam)
 		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
 		context['students'] = students
 		return context
 
-def QuestionChoiceAdd(request, exam, part, section ):
+class QuestionChoiceAdd(CreateView):
+    model = Question
+    fields = ['serial','content', 'figure']
+    extra=2
+
+    def get_context_data(self, **kwargs):
+    	context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
+    	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+    	part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+    	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+    	context['exam'] = self.kwargs['exam']
+    	context['part'] = self.kwargs['part']
+    	context['section'] = self.kwargs['section']
+
+    	if self.request.POST:
+    		context['formset']=QuestionAddForm(self.request.POST)
+    	else:
+    		if context['section']=='single_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if  context['section']=='multiple_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if context['section']=='match_type':
+	    		context['formset']=QuestionAddForm(extra=5)
+	    	if context['section']=='integer_type':
+	    		context['formset']=QuestionAddForm(extra=0)
+
+
+    	return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+        form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+        form.instance.section = Section.objects.get(exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+
+            formset.instance = self.object
+            question_id=self.request.POST.getlist("question_id")
+
+            print(question_id)
+            # cd = formset.cleaned_data
+            if context['section']=='single_choice_correct_type' or context['section']=='multiple_choice_correct_type':
+            	c_1=self.request.POST.getlist("choice_1")
+            	c_2=self.request.POST.getlist("choice_2")
+            	c_3=self.request.POST.getlist("choice_3")
+            	c_4=self.request.POST.getlist("choice_4")
+            	c_a=self.request.POST.getlist("correct_choice")
+            	answer=	[]
+            	answer.append(c_1)
+            	answer.append(C_2)
+            	answer.append(c_3)
+            	answer.append(c_4)
+            	# print(answer)
+            	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+            	member.save()
+            else:
+            	if context['section']=='match_type':
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_2=self.request.POST.getlist("choice_2")
+            		c_3=self.request.POST.getlist("choice_3")
+            		c_4=self.request.POST.getlist("choice_4")
+            		c_5=self.request.POST.getlist("choice_5")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		answer.append(c_1)
+            		answer.append(c_2)
+            		answer.append(c_3)
+            		answer.append(c_4)
+            		answer.append(c_5)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member.save()
+
+
+            	else:
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member.save()
+
+            
+
+
+
+            # formset.save()
+            return HttpResponseRedirect(reverse('online_test:updatesection', 
+            	kwargs={'exam':self.kwargs['exam'], 'part':self.kwargs['part'], 'section':self.kwargs['section']}))
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+
+
+
+    def get_success_url(self,**kwargs):
+    	return HttpResponseRedirect(reverse('online_test:updatesection',
+    		kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] }))
     # if this is POST request we need to process the form data
 	
-	exam_obj=Exam.objects.get(title=exam)
-	part_obj=Part.objects.get(exam=exam_obj, name=part)
-	section_obj=Section.objects.get(exam=exam_obj, part=part_obj ,section_type=section)
-	question = Question.objects.create(exam=exam_obj, part=part_obj, section=section_obj, serial= 1)
-	choice = SingleChoiceCorrect.objects.create(question_id=question)
-
-	if request.method == 'POST':
+	# examobj=Exam.objects.get(title=exam)
+	# partobj=Part.objects.get(exam=examobj, name=part)
+	# sectionobj=Section.objects.get(exam=examobj, part=partobj, section_type=section)
 
 
-		# create a form instance and populate it with data from the request:
-		form_question = QuestionAddForm(request.POST)
-		form_choice = ChoiceAddForm(request.POST)
 
-	    # check whether it's valid:
-		if form_question.is_valid() and form_choice.is_valid():
 
-			# Save User model fields
-			question.content = request.POST['content']
-			question.serial = request.POST['serial']
-			# user.last_name = request.POST['last_name']
-			question.save()
+	# question=Question()
+	# choice=QuestionChoices()
 
-			# Save Employee model fields
-			choice.choice_1 = request.POST['choice_1']
-			choice.choice_2 = request.POST['choice_2']
-			choice.choice_3 = request.POST['choice_3']
-			choice.choice_4 = request.POST['choice_4']
+	
 
-			choice.save() 
+	# if request.method == 'POST':
 
-			# redirect to the index page
-			return HttpResponseRedirect(reverse('online_test:updatesection',
-				kwargs={'exam':exam,'part':part,'section':section }))
+		
+	# 	# create a form instance and populate it with data from the request:
+	# 	form_question = QuestionAddFormset(request.POST)
+	# 	form_choice = ChoiceAddFormset(request.POST)
 
-    # if a GET (or any other method) we'll create a blank form
-	else:
-	    form_question = QuestionAddForm(instance=question)
-	    form_choice = ChoiceAddForm(instance=choice)
+	#     # check whether it's valid:
+	# 	if form_question.is_valid() and form_choice.is_valid():
 
-	return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
+	# 		# Save User model fields
+	# 		question.exam=examobj
+	# 		question.part=partobj
+	# 		question.section=sectionobj
+	# 		question.content = request.POST['content']
+	# 		question.serial = request.POST['serial']
+	# 		# user.last_name = request.POST['last_name']
+	# 		question.save()
 
-def ChooseSection(request, exam, part):
+	# 		# Save Employee model fields
+	# 		choice.question_id=question
+	# 		choice.section=sectionobj
+	# 		choice.choices = request.POST['choices']
+			
 
-	context={ 'exam':exam, 'part':part }
+	# 		choice.save() 
 
-	return render(request,'online_test/selectsection', context)
+	# 		# redirect to the index page
+	# 		return HttpResponseRedirect(reverse('online_test:updatesection',
+	# 			kwargs={'exam':exam,'part':part,'section':section }))
+
+	# # if a GET (or any other method) we'll create a blank form
+	# else:
+
+	# 	form_question = QuestionAddFormset(queryset=Question.objects.none())
+	# 	form_choice = ChoiceAddFormset(queryset=Question.objects.none())
+
+	# return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
+	
+
+
+
 
 
 

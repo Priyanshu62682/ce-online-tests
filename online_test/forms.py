@@ -4,6 +4,7 @@ from django.forms import inlineformset_factory
 from django.forms import ModelForm
 from django.forms import modelformset_factory
 from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseModelFormSet    
 
 
 class ContactForm(forms.Form):
@@ -37,21 +38,50 @@ QuestionFormset = modelformset_factory(Question, fields=['serial','content','fig
 
 
 
+# class QuestionAddForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Question
+#         fields = ('serial','content', 'figure')
+#         extra=2
+
+
+
+
+# QuestionAddFormset=modelformset_factory(Question, fields=['serial','content','figure'], extra=2, form=QuestionAddForm)
+
+# class ChoiceAddForm(forms.ModelForm):
+
+#     class Meta:
+#         model = QuestionChoices
+#         fields = ('choices',)
+#         extra=2
+
+# ChoiceAddFormset=modelformset_factory(QuestionChoices, fields=['choices',], extra=2, form=ChoiceAddForm)
+
 class QuestionAddForm(forms.ModelForm):
-
     class Meta:
-        model = Question
-        fields = ('serial','content')
+        model = QuestionChoices
+        exclude = ('choices','question_id','section','correct_choice')
+    correct_choice=forms.CharField()
+    
+    extra_field_count = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        extra_fields =kwargs.pop('extra', 0)
+
+        super(QuestionAddForm, self).__init__(*args, **kwargs)
+        self.fields['extra_field_count'].initial = extra_fields
+
+        for index in range(int(extra_fields)):
+            # generate extra fields in the number specified via extra_fields
+            self.fields['choice_{index}'.format(index=index+1)] = \
+                forms.CharField()
+ 
 
 
-class ChoiceAddForm(forms.ModelForm):
 
-    class Meta:
-        model = SingleChoiceCorrect
-        fields = ('choice_1', 'choice_2','choice_3', 'choice_4')
-
-
-
+QuestionAddFormset = inlineformset_factory(Question, QuestionChoices, fields = ['question_id', 'section', 'choices'], exclude = [], extra=1,can_delete = False)
 
 
 

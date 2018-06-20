@@ -1,0 +1,29 @@
+{% extends "online_test/index.html" %}
+{% block content %}
+<div class="col-md-4">
+
+    {{questionchoice.managementform}}
+<form action="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}">
+{% for form in questionchoice %}
+
+    
+    {{form}}
+    
+
+
+{% endfor %}
+
+
+
+<input type="submit" value="SAVE">
+
+</form>
+
+
+</div>
+
+
+
+
+
+{% endblock %}
