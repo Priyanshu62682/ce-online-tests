@@ -99,11 +99,24 @@ def calculate_MCC(question,choice_object_json,progress):
 		if answer in choice_object_json.correct_choice:
 			partial_correct+=1
 		else:
+			print("returned -ve")
 			return question.section.negative_marks
-	if partial_correct==len(correct_choice):
+	if partial_correct==len(choice_object_json.correct_choice):
 		marks = question.section.positive_marks
 	else:
-		marks = per_option_positive_marks*partial_correct
+		marks = question.section.per_option_positive_marks*partial_correct
+
+	print("Multiple Correct"+ str(marks))
+	return marks
+
+def integer_choice_type(question,choice_object_json,progress):
+	key = str(question.serial)
+	if progress[key]==choice_object_json.correct_choice:
+		marks = question.section.positive_marks
+	else:
+		marks = question.section.negative_marks
+	
+	print("Marks awarded: "+ str(marks))
 
 	return marks
 
@@ -141,26 +154,27 @@ def Thank_view(request,student,exam_id):
 				# print(str(question.section))
 
 				# checks if answer is marked by the student 
-				# (if answer of corresponding question is present in Dynamic object)
+				# (if answer of corresponding question from all questions, is present in Dynamic object)
 				if key in progress:
+					# print(str(question.section))
 					if str(question.section)=="single_choice_correct_type":
 						temp_marks = calculate_SCC(question,choice_object_json,progress)
-					elif question.section=='multiple_choice_correct_type':
+					elif str(question.section)=="multiple_choice_correct_type":
 						temp_marks = calculate_MCC(question,choice_object_json,progress)
-					elif question.section=='integer_choice_type':
+					elif str(question.section)=="integer_choice_type":
 						temp_marks = calculate_IC(question,choice_object_json,progress)
-					elif question.section=='match_choice_type':
+					elif str(question.section)=="match_choice_type":
 						temp_marks = calculate_MatchCT(question,choice_object_json,progress)
 					else:
 						temp_marks = 0
 						#print('Nothing')
 
-					if temp_marks >= 0:
+					if temp_marks > 0:
 						positives+=1
-						positive_marks += question.section.positive_marks
+						positive_marks += temp_marks
 					else:
 						negatives+=1
-						negative_marks += question.section.negative_marks
+						negative_marks += temp_marks
 
 			total_positives+=positives
 			total_negatives+=negatives
@@ -191,13 +205,13 @@ def Thank_view(request,student,exam_id):
 		result_object.update(final)
 		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
-			# Result.objects.create(
-			# 	test_completed= True,
-			# 	test_id=test,
-			# 	student_username=student,
-			# 	result_json=result_object,
-			# 	)
-			# current_progress.delete()
+			Result.objects.create(
+				test_completed= True,
+				test_id=test,
+				student_username=student,
+				result_json=result_object,
+				)
+			current_progress.delete()
 			message = 'Thank you for taking the test'
 		else:
 			message = 'Already submitted'

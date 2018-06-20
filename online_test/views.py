@@ -414,6 +414,7 @@ class ResultListView(generic.TemplateView):
 	def get_context_data(self,**kwargs):
 		context = super(ResultListView,self).get_context_data(**kwargs)
 		tests = Exam.objects.filter(test_completed=True)
+		print(tests)
 		context['tests'] = tests
 		return context
 
@@ -428,6 +429,7 @@ class ResultDetailView(generic.TemplateView):
 		students = Result.objects.filter(test_id=exam)
 		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
 		context['students'] = students
+		print(students)
 		return context
 
 class QuestionChoiceAdd(CreateView):
@@ -480,10 +482,10 @@ class QuestionChoiceAdd(CreateView):
             	c_4=self.request.POST.getlist("choice_4")
             	c_a=self.request.POST.getlist("correct_choice")
             	answer=	[]
-            	answer.append(c_1)
-            	answer.append(C_2)
-            	answer.append(c_3)
-            	answer.append(c_4)
+            	answer.append(c_1[0])
+            	answer.append(c_2[0])
+            	answer.append(c_3[0])
+            	answer.append(c_4[0])
             	# print(answer)
             	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             	member.save()
@@ -496,14 +498,13 @@ class QuestionChoiceAdd(CreateView):
             		c_5=self.request.POST.getlist("choice_5")
             		c_a=self.request.POST.getlist("correct_choice")
             		answer=[]
-            		answer.append(c_1)
-            		answer.append(c_2)
-            		answer.append(c_3)
-            		answer.append(c_4)
-            		answer.append(c_5)
+            		answer.append(c_1[0])
+            		answer.append(c_2[0])
+            		answer.append(c_3[0])
+            		answer.append(c_4[0])
+            		answer.append(c_5[0])
             		member = QuestionChoices(choices=answer, correct_choice=c_a )
             		member.save()
-
 
             	else:
             		c_1=self.request.POST.getlist("choice_1")
@@ -511,10 +512,6 @@ class QuestionChoiceAdd(CreateView):
             		answer=[]
             		member = QuestionChoices(choices=answer, correct_choice=c_a )
             		member.save()
-
-            
-
-
 
             # formset.save()
             return HttpResponseRedirect(reverse('online_test:updatesection', 
