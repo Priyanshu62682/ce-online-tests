@@ -26,7 +26,7 @@
 										
 										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" 
 										class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+										value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
 									{% endfor %}
 				    				
 				    				<br>
@@ -65,7 +65,9 @@ function pass(obj, value, name, classobj, idobj) {
 	
 	var question_num= name;
 	
-	var selected_choice= value;
+	var array = new Array();
+	array.push(value)
+	var selected_choice= array;
 	
 	var objectJ={question_num,selected_choice};
 	var myJ= JSON.stringify(objectJ);

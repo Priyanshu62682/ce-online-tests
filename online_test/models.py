@@ -236,7 +236,7 @@ class QuestionChoices(models.Model):
 	correct_choice = JSONField()
 	
 	def __str__(self):
-		return str(self.id)
+		return str(self.question_id)
 
 class Student(models.Model):
 	student_username = models.CharField(

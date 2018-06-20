@@ -73,6 +73,40 @@ def get_request_choice(request):
 
 	return HttpResponse('')
 
+def calculate_SCC(question,choice_object_json,progress):
+	# print(choice_object_json.choices)
+	# print(progress['2'])
+	# for answer in progress[question.serial]:
+	# 	for correct in choice_object_json.correct_choice:
+	# 		if answer==
+	# print(question.serial)
+	# print(progress[str(question.serial)])
+	key = str(question.serial)
+	if progress[key]==choice_object_json.correct_choice:
+		marks = question.section.positive_marks
+	else:
+		marks = question.section.negative_marks
+	
+	print("Marks awarded: "+ str(marks))
+
+	return marks
+	# return 0
+
+def calculate_MCC(question,choice_object_json,progress):
+	key = str(question.serial)
+	partial_correct=0
+	for answer in progress[key]:
+		if answer in choice_object_json.correct_choice:
+			partial_correct+=1
+		else:
+			return question.section.negative_marks
+	if partial_correct==len(correct_choice):
+		marks = question.section.positive_marks
+	else:
+		marks = per_option_positive_marks*partial_correct
+
+	return marks
+
 def Thank_view(request,student,exam_id):
 	if request.method=='GET':
 		student=Student.objects.get(student_username=student)
@@ -99,24 +133,42 @@ def Thank_view(request,student,exam_id):
 			negative_marks = 0
 			question_object = Question.objects.filter(exam=exam_object,part=part)
 			for question in question_object:
-				choice_object = SingleChoiceCorrect.objects.get(question_id=question)
+				choice_object_json = QuestionChoices.objects.get(question_id=question)
 				key = str(question.serial)
+				temp_marks = 0
 				# print(question.correct_choice)
 				# print(progress[key])
+				# print(str(question.section))
+
+				# checks if answer is marked by the student 
+				# (if answer of corresponding question is present in Dynamic object)
 				if key in progress:
-					if choice_object.correct_choice == progress[key]:
+					if str(question.section)=="single_choice_correct_type":
+						temp_marks = calculate_SCC(question,choice_object_json,progress)
+					elif question.section=='multiple_choice_correct_type':
+						temp_marks = calculate_MCC(question,choice_object_json,progress)
+					elif question.section=='integer_choice_type':
+						temp_marks = calculate_IC(question,choice_object_json,progress)
+					elif question.section=='match_choice_type':
+						temp_marks = calculate_MatchCT(question,choice_object_json,progress)
+					else:
+						temp_marks = 0
+						#print('Nothing')
+
+					if temp_marks >= 0:
 						positives+=1
 						positive_marks += question.section.positive_marks
 					else:
 						negatives+=1
 						negative_marks += question.section.negative_marks
+
 			total_positives+=positives
 			total_negatives+=negatives
 			total_positive_marks+=positive_marks
 			total_negative_marks+=negative_marks
 
-			print(positive_marks)
-			print(negative_marks)
+			#print(positive_marks)
+			#print(negative_marks)
 			part_result = {
 				'name': part.name,
 				'positives': positives,
@@ -137,15 +189,15 @@ def Thank_view(request,student,exam_id):
 		}
 		result_object.update({'part_result':part_result_object})
 		result_object.update(final)
-		print(result_object)
+		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
-			Result.objects.create(
-				test_completed= True,
-				test_id=test,
-				student_username=student,
-				result_json=result_object,
-				)
-			current_progress.delete()
+			# Result.objects.create(
+			# 	test_completed= True,
+			# 	test_id=test,
+			# 	student_username=student,
+			# 	result_json=result_object,
+			# 	)
+			# current_progress.delete()
 			message = 'Thank you for taking the test'
 		else:
 			message = 'Already submitted'
