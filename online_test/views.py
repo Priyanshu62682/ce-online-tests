@@ -481,7 +481,7 @@ class QuestionChoiceAdd(CreateView):
             	c_a=self.request.POST.getlist("correct_choice")
             	answer=	[]
             	answer.append(c_1)
-            	answer.append(C_2)
+            	answer.append(c_2)
             	answer.append(c_3)
             	answer.append(c_4)
             	# print(answer)

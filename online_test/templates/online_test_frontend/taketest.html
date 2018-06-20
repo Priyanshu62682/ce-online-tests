@@ -22,17 +22,20 @@
     							{% csrf_token %}
 
 								{% for choices in question.question_choices_question %}
+									
+									<div id="{{question.serial}}">
 									{% for choice in choices.choices %}
-										
-										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" 
+									
+										<input type="checkbox"  
 										class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+										value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
 									{% endfor %}
 				    				
+				    				</div>
 				    				<br>
 
 								{% endfor %}
-
+								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
 								</form>
 
 							{% else %}
@@ -56,43 +59,105 @@
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script type="text/javascript">
 
-function pass(obj, value, name, classobj, idobj) {
+// function pass(obj, value, name, classobj, idobj) {
+// 	var question_num= name;
+// 		var student_username=idobj;
+// 	// e.preventDefault();
+// 	var exam_id= $(obj).attr('class');
 
-	var student_username=idobj;
-	// e.preventDefault();
-	var exam_id= $(obj).attr('class');
+	
+// 	var question_num= name;
+
+
+// 	}
+
+		
+
+        $("button").click(function(){
+        	// alert("clicked");
+        	
+        	
+        	var student_username=this.id
+        	// alert(student_username)
+            var selected_choice = [];
+
+
+            var exam_id=$("#"+this.name+" input[type='checkbox']:checked").attr('class')
+            alert(exam_id)
+
+            var question_num=$("#"+this.name+" input[type='checkbox']:checked").attr('name')
+            // alert(question_num)
+
+            $.each($("#"+this.name+" input[type='checkbox']:checked"), function(){            
+                selected_choice.push($(this).val());
+            });
+            
+            
+
+            var objectJ={question_num,selected_choice};
+			var myJ= JSON.stringify(objectJ);
+			
+
+
+        	 $.ajax({
+
+					 	type:'POST',
+					 	url: "{% url 'online_test_frontend:submitselected' %}",
+					 	data:{
+					 		
+					 		student:student_username,
+					 		exam_id: exam_id,
+					 		// selected: selected_choi,
+					 		progress: myJ,
+					 		csrfmiddlewaretoken: '{{ csrf_token }}'
+
+					 		
+					 	},
+
+					 	success:function(){
+					 		console.log('saved')
+
+					 	}
+
+
+					 });
+
+
+
+    	})
+
+        
+   
+
 
 	
-	var question_num= name;
 	
-	var selected_choice= value;
 	
-	var objectJ={question_num,selected_choice};
-	var myJ= JSON.stringify(objectJ);
 	
-	 $.ajax({
+	
+	 // $.ajax({
 
-	 	type:'POST',
-	 	url: "{% url 'online_test_frontend:submitselected' %}",
-	 	data:{
+	 // 	type:'POST',
+	 // 	url: "{% url 'online_test_frontend:submitselected' %}",
+	 // 	data:{
 	 		
-	 		student:student_username,
-	 		exam_id: exam_id,
-	 		// selected: selected_choi,
-	 		progress: myJ,
-	 		csrfmiddlewaretoken: '{{ csrf_token }}'
+	 // 		student:student_username,
+	 // 		exam_id: exam_id,
+	 // 		// selected: selected_choi,
+	 // 		progress: myJ,
+	 // 		csrfmiddlewaretoken: '{{ csrf_token }}'
 
 	 		
-	 	},
+	 // 	},
 
-	 	success:function(){
-	 		console.log('saved')
+	 // 	success:function(){
+	 // 		console.log('saved')
 
-	 	}
+	 // 	}
 
 
-	 })
+	 // })
 	
-}
+
 </script>
 {% endblock %}
