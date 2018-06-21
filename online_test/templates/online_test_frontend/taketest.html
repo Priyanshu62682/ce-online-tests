@@ -24,12 +24,28 @@
 								{% for choices in question.question_choices_question %}
 									
 									<div id="{{question.serial}}">
-									{% for choice in choices.choices %}
-									
-										<input type="checkbox"  
-										class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
-									{% endfor %}
+									{% if section.section_type == "single_choice_correct_type" or section.section_type == "multiple_choice_correct_type" %}
+										{% for choice in choices.choices %}
+										
+											<input type="checkbox"  
+											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+										{% endfor %}
+
+									{% else %}
+
+										{% if section.section_type == "integer_type" %}	
+
+											<input type="text"  
+											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+											 >  <br>
+
+										{% else %}
+
+										{% endif%}
+
+									{% endif %}
+
 				    				
 				    				</div>
 				    				<br>
@@ -77,22 +93,32 @@
         	// alert("clicked");
         	
         	
-        	var student_username=this.id
+        	var student_username=this.id;
         	// alert(student_username)
             var selected_choice = [];
 
+            var thisname= this.name;
+            // alert(thisname)
 
-            var exam_id=$("#"+this.name+" input[type='checkbox']:checked").attr('class')
-            alert(exam_id)
+            var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
+            var exam_id=$("#"+this.name+" input[name="+ thisname +"]").attr('class');
+            // alert(exam_id);
 
-            var question_num=$("#"+this.name+" input[type='checkbox']:checked").attr('name')
-            // alert(question_num)
+            var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
+            var question_num=$("#"+this.name+" input[name="+ thisname +"]").attr('name');
+            // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
+            // alert(question_num);
 
-            $.each($("#"+this.name+" input[type='checkbox']:checked"), function(){            
+            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
+                selected_choice.push($(this).val());
+            });
+
+             $.each($("#"+this.name+" input[name="+ thisname +"]"), function(){            
                 selected_choice.push($(this).val());
             });
             
-            
+
+            // alert(selected_choice);
 
             var objectJ={question_num,selected_choice};
 			var myJ= JSON.stringify(objectJ);
