@@ -140,7 +140,8 @@
 
         	 
 
-        	if (selected_choice==[]){
+        	if (selected_choice==""){
+
         	var selected_choice = [];	
             $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
                 selected_choice.push($(this).val());
