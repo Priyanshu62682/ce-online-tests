@@ -22,17 +22,37 @@
     							{% csrf_token %}
 
 								{% for choices in question.question_choices_question %}
-									{% for choice in choices.choices %}
+									
+									<div id="{{question.serial}}">
+									{% if section.section_type == "single_choice_correct_type" or section.section_type == "multiple_choice_correct_type" %}
+										{% for choice in choices.choices %}
 										
-										<input type="radio" onCLick="pass(this, this.value, this.name, this.class, this.id )" 
-										class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
-									{% endfor %}
+
+											<input type="checkbox"  
+											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+										{% endfor %}
+
+									{% else %}
+
+										{% if section.section_type == "integer_type" %}	
+
+											<input type="text"  
+											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+											 >  <br>
+
+										{% else %}
+
+										{% endif%}
+
+									{% endif %}
+
 				    				
+				    				</div>
 				    				<br>
 
 								{% endfor %}
-
+								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
 								</form>
 
 							{% else %}
@@ -56,45 +76,121 @@
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script type="text/javascript">
 
-function pass(obj, value, name, classobj, idobj) {
-
-	var student_username=idobj;
-	// e.preventDefault();
-	var exam_id= $(obj).attr('class');
+// function pass(obj, value, name, classobj, idobj) {
+// 	var question_num= name;
+// 		var student_username=idobj;
+// 	// e.preventDefault();
+// 	var exam_id= $(obj).attr('class');
 
 	
-	var question_num= name;
+// 	var question_num= name;
+
+
+// 	}
+
+		
+
+        $("button").click(function(){
+        	// alert("clicked");
+        	
+        	
+        	var student_username=this.id;
+        	// alert(student_username)
+            var selected_choice = [];
+
+            var thisname= this.name;
+            // alert(thisname)
+
+            var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
+            var exam_id=$("#"+this.name+" input[name="+ thisname +"]").attr('class');
+            // alert(exam_id);
+
+            var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
+            var question_num=$("#"+this.name+" input[name="+ thisname +"]").attr('name');
+            // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
+            // alert(question_num);
+
+            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
+                selected_choice.push($(this).val());
+            });
+
+             $.each($("#"+this.name+" input[name="+ thisname +"]"), function(){            
+                selected_choice.push($(this).val());
+            });
+            
+
+            // alert(selected_choice);
+
+            var objectJ={question_num,selected_choice};
+			var myJ= JSON.stringify(objectJ);
+			
+
+
+        	 $.ajax({
+
+					 	type:'POST',
+					 	url: "{% url 'online_test_frontend:submitselected' %}",
+					 	data:{
+					 		
+					 		student:student_username,
+					 		exam_id: exam_id,
+					 		// selected: selected_choi,
+					 		progress: myJ,
+					 		csrfmiddlewaretoken: '{{ csrf_token }}'
+
+					 		
+					 	},
+
+					 	success:function(){
+					 		console.log('saved')
+
+					 	}
+
+
+					 });
+
+
+
+    	})
+
+        
+   
+
+
 	
+	
+<<<<<<< HEAD
 	var array = new Array();
 	array.push(value)
 	var selected_choice= array;
+=======
+>>>>>>> 019ed07b7c03aa366508c5f88e10e80a9d1013c9
 	
-	var objectJ={question_num,selected_choice};
-	var myJ= JSON.stringify(objectJ);
 	
-	 $.ajax({
+	
+	 // $.ajax({
 
-	 	type:'POST',
-	 	url: "{% url 'online_test_frontend:submitselected' %}",
-	 	data:{
+	 // 	type:'POST',
+	 // 	url: "{% url 'online_test_frontend:submitselected' %}",
+	 // 	data:{
 	 		
-	 		student:student_username,
-	 		exam_id: exam_id,
-	 		// selected: selected_choi,
-	 		progress: myJ,
-	 		csrfmiddlewaretoken: '{{ csrf_token }}'
+	 // 		student:student_username,
+	 // 		exam_id: exam_id,
+	 // 		// selected: selected_choi,
+	 // 		progress: myJ,
+	 // 		csrfmiddlewaretoken: '{{ csrf_token }}'
 
 	 		
-	 	},
+	 // 	},
 
-	 	success:function(){
-	 		console.log('saved')
+	 // 	success:function(){
+	 // 		console.log('saved')
 
-	 	}
+	 // 	}
 
 
-	 })
+	 // })
 	
-}
+
 </script>
 {% endblock %}
