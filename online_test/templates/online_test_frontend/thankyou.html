@@ -1,32 +1,28 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-
-<center>
-<h1>{{message}}</h1>
-<h3>Your score : {{total_score}} </h3>
-</center>
-<table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Question</th>
-        <th>Your answer</th>
-        <th>Correct Answer</th>
-      </tr>
-    </thead>
-    <tbody>
-    	{%for exam in exam_list%}
-    	<tr>
-    		<td class="col-md-1">{{exam.title}}</td>
-    		<td class="col-md-1">{{exam.created_on}}</td>
-        	<td class="col-md-1">{{exam.draft}}</td>
-		</tr>
-    	{% endfor %}
-    </tbody>
-</table>
-{{progress}}
---------
-{% for answers in correct_choices.correct_choice%}
-{{answers}}
-{%endfor%}
+<div class="container">
+	<center>
+	<h1>{{message}}</h1>
+	<h3>Your score : {{total_score}} </h3>
+	</center>
+	<table class="table table-bordered table-striped">
+	    <thead>
+	      <tr>
+	        <th>Question</th>
+	        <th>Your answer</th>
+	        <th>Correct Answer</th>
+	        <th>Marks Awarded</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    	{% for p in performance%}
+	    	<tr>{%for item in p%}
+	    		<td class="col-md-1">{{item}}</td>
+	    		{% endfor %}
+			</tr>
+	    	{% endfor %}
+	    </tbody>
+	</table>
+</div>
 
 {% endblock %}
