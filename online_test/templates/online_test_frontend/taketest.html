@@ -88,8 +88,6 @@
 
 // 	}
 
-		
-
         $("button").click(function(){
         	// alert("clicked");
         	
@@ -149,24 +147,11 @@
 
 					 });
 
-
-
     	})
 
-        
-   
-
-
-	
-	
-<<<<<<< HEAD
 	var array = new Array();
 	array.push(value)
 	var selected_choice= array;
-=======
->>>>>>> 019ed07b7c03aa366508c5f88e10e80a9d1013c9
-	
-	
 	
 	 // $.ajax({
 
@@ -192,5 +177,33 @@
 	 // })
 	
 
+</script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    //Disable full page
+    $("body").on("contextmenu",function(e){
+        return false;
+    });
+    
+    //Disable part of page
+    $("#id").on("contextmenu",function(e){
+        return false;
+    });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    //Disable cut copy paste
+    $('body').bind('cut copy paste', function (e) {
+        e.preventDefault();
+    });
+   
+    //Disable mouse right click
+    $("body").on("contextmenu",function(e){
+        return false;
+    });
+});
 </script>
 {% endblock %}
