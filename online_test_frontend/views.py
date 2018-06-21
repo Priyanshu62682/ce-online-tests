@@ -96,10 +96,14 @@ def calculate_SCC(question,choice_object_json,progress):
 
 def calculate_MCC(question,choice_object_json,progress):
 	key = str(question.serial)
+	print('Inside MCQ')
 	partial_correct=0
 	for answer in progress[key]:
+		print(answer)
+		print(choice_object_json.correct_choice)
 		if answer in choice_object_json.correct_choice:
 			partial_correct+=1
+			print('Added correct partial')
 		else:
 			print("returned -ve")
 			return question.section.negative_marks

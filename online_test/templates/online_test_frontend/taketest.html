@@ -30,7 +30,7 @@
 
 											<input type="checkbox"  
 											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+											value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 										{% endfor %}
 
 									{% else %}
@@ -49,7 +49,7 @@
 										
 											<input type="radio"  
 											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+											value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 
 													{% endfor %}
 
@@ -120,17 +120,17 @@
             	var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
             }
             
-            alert(exam_id)
+            //alert(exam_id)
             
             
            
-            	var question_num=$("#"+this.name+" input[type='text']").attr('name');
+            var question_num=$("#"+this.name+" input[type='text']").attr('name');
            
             if (question_num==undefined){
             	var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
             }
            		
-           	alert(question_num);
+           	//alert(question_num);
             // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
             
            
@@ -150,11 +150,11 @@
             
             
 
-            alert(selected_choice);
+            //alert(selected_choice);
 
             var objectJ={question_num,selected_choice};
 			var myJ= JSON.stringify(objectJ);
-			alert(myJ)
+			//alert(myJ)
 
 
         	 $.ajax({
