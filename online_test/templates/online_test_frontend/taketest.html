@@ -67,6 +67,7 @@
 				    				<br>
 
 								{% endfor %}
+								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="clear">Clear</button>
 								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
 								</form>
 
@@ -132,22 +133,35 @@
            		
            	//alert(question_num);
             // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
-            
+            if (this.value=="save"){
            
-             $.each($("#"+this.name+" input[type='text']"), function(){            
-                selected_choice.push($(this).val());
-            });
+	             $.each($("#"+this.name+" input[type='text']"), function(){            
+	                selected_choice.push($(this).val());
+	            });
 
-        	 
+	        	 
+	            if (selected_choice==""){
 
-        	if (selected_choice==""){
+	        	var selected_choice = [];	
+	            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
+	                selected_choice.push($(this).val());
+	            });
+	            }
+	            
 
-        	var selected_choice = [];	
-            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
-                selected_choice.push($(this).val());
-            });
-            }
-            
+	           } 
+
+	          else{
+
+	          	$.each($("#"+this.name+" input[type='text']"), function(){            
+	                $(this).val(null);
+	            });
+
+	            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
+	                $(this).prop('checked', false);
+	            });
+
+	          }
             
 
             //alert(selected_choice);
