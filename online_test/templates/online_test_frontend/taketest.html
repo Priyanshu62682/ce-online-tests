@@ -24,7 +24,7 @@
 								{% for choices in question.question_choices_question %}
 									
 									<div id="{{question.serial}}">
-									{% if section.section_type == "single_choice_correct_type" or section.section_type == "multiple_choice_correct_type" %}
+									{% if section.section_type == "multiple_choice_correct_type" %}
 										{% for choice in choices.choices %}
 										
 
@@ -42,6 +42,20 @@
 											 >  <br>
 
 										{% else %}
+											
+											{%if section.section_type == "single_choice_correct_type" %}
+
+													{% for choice in choices.choices %}
+										
+											<input type="radio"  
+											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+													{% endfor %}
+
+											{% else %}
+
+											{% endif %}
+
 
 										{% endif%}
 
