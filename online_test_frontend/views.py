@@ -202,7 +202,11 @@ def Thank_view(request,student,exam_id):
 			'total_score': total_score
 		}
 		result_object.update({'part_result':part_result_object})
+		
+		result_object.update({'user_choices':current_progress.progress})
 		result_object.update(final)
+		print(result_object)
+
 		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
 			Result.objects.create(
@@ -211,11 +215,11 @@ def Thank_view(request,student,exam_id):
 				student_username=student,
 				result_json=result_object,
 				)
-			current_progress.delete()
+			# current_progress.delete()
 			message = 'Thank you for taking the test'
 		else:
 			message = 'Already submitted'
 			progress = {}
 			total_score = 'None'
 	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
-		'total_score':total_score})
+		'total_score':total_score,'correct_choices':choice_object_json})
