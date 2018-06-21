@@ -501,7 +501,7 @@ class QuestionChoiceAdd(CreateView):
             		answer.append(c_3)
             		answer.append(c_4)
             		answer.append(c_5)
-            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             		member.save()
 
 
@@ -509,7 +509,7 @@ class QuestionChoiceAdd(CreateView):
             		c_1=self.request.POST.getlist("choice_1")
             		c_a=self.request.POST.getlist("correct_choice")
             		answer=[]
-            		member = QuestionChoices(choices=answer, correct_choice=c_a )
+            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             		member.save()
 
             
