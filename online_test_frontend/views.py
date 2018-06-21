@@ -171,9 +171,12 @@ def Thank_view(request,student,exam_id):
 				temp_marks = 0
 
 				#performance object calculation
+				
 				temp_performance.append(question.serial)
-				temp_performance.append(progress[key])
-				temp_performance.append(choice_object_json.correct_choice)
+				save_progress = ', '.join(progress[key])
+				save_correct_choice = ', '.join(choice_object_json.correct_choice)
+				temp_performance.append(save_progress)
+				temp_performance.append(save_correct_choice)
 
 				# print(question.correct_choice)
 				# print(progress[key])
@@ -203,7 +206,7 @@ def Thank_view(request,student,exam_id):
 						negative_marks += temp_marks
 
 					temp_performance.append(temp_marks)
-					#print(temp_performance)
+					# print(temp_performance)
 					performance.append(temp_performance)
 
 			total_positives+=positives
