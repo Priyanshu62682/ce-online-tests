@@ -50,6 +50,7 @@
 											<input type="radio"  
 											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
 											value="{{choice}}" > {{ forloop.counter }} : {{choice}}<br>
+
 													{% endfor %}
 
 											{% else %}
@@ -111,31 +112,48 @@
             var selected_choice = [];
 
             var thisname= this.name;
-            // alert(thisname)
-
-            var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
-            var exam_id=$("#"+this.name+" input[name="+ thisname +"]").attr('class');
-            // alert(exam_id);
-
-            var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
-            var question_num=$("#"+this.name+" input[name="+ thisname +"]").attr('name');
+            
+            
+            var exam_id=$("#"+this.name+" input[type='text']").attr('class');
+            
+            if (exam_id==undefined){
+            	var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
+            }
+            
+            alert(exam_id)
+            
+            
+           
+            	var question_num=$("#"+this.name+" input[type='text']").attr('name');
+           
+            if (question_num==undefined){
+            	var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
+            }
+           		
+           	alert(question_num);
             // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
-            // alert(question_num);
+            
+           
+             $.each($("#"+this.name+" input[type='text']"), function(){            
+                selected_choice.push($(this).val());
+            });
 
+        	 
+
+        	if (selected_choice==[]){
+        	var selected_choice = [];	
             $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
                 selected_choice.push($(this).val());
             });
-
-             $.each($("#"+this.name+" input[name="+ thisname +"]"), function(){            
-                selected_choice.push($(this).val());
-            });
+            }
+            
             
 
-            // alert(selected_choice);
+            alert(selected_choice);
 
             var objectJ={question_num,selected_choice};
 			var myJ= JSON.stringify(objectJ);
-			
+			alert(myJ)
 
 
         	 $.ajax({
