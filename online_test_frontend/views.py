@@ -89,30 +89,30 @@ def calculate_SCC(question,choice_object_json,progress):
 	else:
 		marks = question.section.negative_marks
 	
-	print("Marks awarded: "+ str(marks))
+	#print("Marks awarded: "+ str(marks))
 
 	return marks
 	# return 0
 
 def calculate_MCC(question,choice_object_json,progress):
 	key = str(question.serial)
-	print('Inside MCQ')
+	#print('Inside MCQ')
 	partial_correct=0
 	for answer in progress[key]:
-		print(answer)
-		print(choice_object_json.correct_choice)
+		#print(answer)
+		#print(choice_object_json.correct_choice)
 		if answer in choice_object_json.correct_choice:
 			partial_correct+=1
-			print('Added correct partial')
+			#print('Added correct partial')
 		else:
-			print("returned -ve")
+			#print("returned -ve")
 			return question.section.negative_marks
 	if partial_correct==len(choice_object_json.correct_choice):
 		marks = question.section.positive_marks
 	else:
 		marks = question.section.per_option_positive_marks*partial_correct
 
-	print("Multiple Correct"+ str(marks))
+	#print("Multiple Correct"+ str(marks))
 	return marks
 
 def integer_choice_type(question,choice_object_json,progress):
@@ -122,9 +122,18 @@ def integer_choice_type(question,choice_object_json,progress):
 	else:
 		marks = question.section.negative_marks
 	
-	print("Marks awarded: "+ str(marks))
+	#print("Marks awarded: "+ str(marks))
 
 	return marks
+
+def calculate_performance(question_object,progress):
+	performance = []
+	for question in question_object:
+		choice_object_json = QuestionChoices.objects.get(question_id=question).choices
+		marked_choice = progress[str(question.serial)]
+		
+
+
 
 def Thank_view(request,student,exam_id):
 	if request.method=='GET':
@@ -144,17 +153,31 @@ def Thank_view(request,student,exam_id):
 
 		parts = Part.objects.filter(exam=exam_object)
 		part_result_object=[]
+		performance = []
 		for part in parts:
 			marks = 0
 			positives = 0
 			negatives = 0
 			positive_marks = 0
 			negative_marks = 0
-			question_object = Question.objects.filter(exam=exam_object,part=part)
+			question_object = Question.objects.filter(exam=exam_object,part=part).order_by('serial')		
+
 			for question in question_object:
+
+				temp_performance = []
+
 				choice_object_json = QuestionChoices.objects.get(question_id=question)
 				key = str(question.serial)
 				temp_marks = 0
+
+				#performance object calculation
+				
+				temp_performance.append(question.serial)
+				save_progress = ', '.join(progress[key])
+				save_correct_choice = ', '.join(choice_object_json.correct_choice)
+				temp_performance.append(save_progress)
+				temp_performance.append(save_correct_choice)
+
 				# print(question.correct_choice)
 				# print(progress[key])
 				# print(str(question.section))
@@ -167,9 +190,9 @@ def Thank_view(request,student,exam_id):
 						temp_marks = calculate_SCC(question,choice_object_json,progress)
 					elif str(question.section)=="multiple_choice_correct_type":
 						temp_marks = calculate_MCC(question,choice_object_json,progress)
-					elif str(question.section)=="integer_choice_type":
+					elif str(question.section)=="integer_type":
 						temp_marks = calculate_IC(question,choice_object_json,progress)
-					elif str(question.section)=="match_choice_type":
+					elif str(question.section)=="match_type":
 						temp_marks = calculate_MatchCT(question,choice_object_json,progress)
 					else:
 						temp_marks = 0
@@ -182,10 +205,15 @@ def Thank_view(request,student,exam_id):
 						negatives+=1
 						negative_marks += temp_marks
 
+					temp_performance.append(temp_marks)
+					# print(temp_performance)
+					performance.append(temp_performance)
+
 			total_positives+=positives
 			total_negatives+=negatives
 			total_positive_marks+=positive_marks
 			total_negative_marks+=negative_marks
+			
 
 			#print(positive_marks)
 			#print(negative_marks)
@@ -211,21 +239,24 @@ def Thank_view(request,student,exam_id):
 		
 		result_object.update({'user_choices':current_progress.progress})
 		result_object.update(final)
-		print(result_object)
+		print(performance)
 
 		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
-			Result.objects.create(
-				test_completed= True,
-				test_id=test,
-				student_username=student,
-				result_json=result_object,
-				)
+			# Result.objects.create(
+			# 	test_completed= True,
+			# 	test_id=test,
+			# 	student_username=student,
+			# 	result_json=result_object,
+			# 	)
 			# current_progress.delete()
 			message = 'Thank you for taking the test'
 		else:
 			message = 'Already submitted'
 			progress = {}
 			total_score = 'None'
+
+
+		question_object = Question.objects.filter(exam=exam_object).order_by('serial')
 	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
-		'total_score':total_score,'correct_choices':choice_object_json})
+		'total_score':total_score,'performance':performance})
