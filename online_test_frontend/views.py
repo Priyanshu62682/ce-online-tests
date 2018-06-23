@@ -56,14 +56,14 @@ def get_request_choice(request):
 		data_input = json.loads(progress)
 		new_input={data_input['question_num']:data_input['selected_choice']}
 
-		print(new_input)
+		# print(new_input)
 		exam_id=Exam.objects.get(id=request.POST['exam_id'])
 		student=Student.objects.get(student_username=request.POST['student'])
 
 		if Dynamic.objects.filter(student_id=student,test_id=exam_id).exists():
 			current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
 			progress_old=current_progress.progress
-			print(progress_old)
+			# print(progress_old)
 			progress_old.update(new_input)
 			current_progress.progress=progress_old
 			current_progress.save()

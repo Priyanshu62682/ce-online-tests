@@ -63,20 +63,63 @@ class QuestionAddForm(forms.ModelForm):
     class Meta:
         model = QuestionChoices
         exclude = ('choices','question_id','section','correct_choice')
-    correct_choice=forms.CharField()
-    
+
     extra_field_count = forms.CharField(widget=forms.HiddenInput())
+     
 
     def __init__(self, *args, **kwargs):
         extra_fields =kwargs.pop('extra', 0)
 
+
         super(QuestionAddForm, self).__init__(*args, **kwargs)
         self.fields['extra_field_count'].initial = extra_fields
+
+        
+        
+        print(extra_fields)    
+        if extra_fields == 4:
+            print('entered')
+            SOME_CHOICES = (
+            ('1', '1'),
+            ('2', '2'),
+            ('3', '3'),
+            ('4','4')
+                          )
+            self.fields['correct_choice']=forms.MultipleChoiceField(choices=SOME_CHOICES, widget=forms.CheckboxSelectMultiple())
+            print('exit')
+
+        else:
+            if extra_fields == 5:
+                SOME_CHOICES = (
+                ('1', '1'),
+                ('2', '2'),
+                ('3', '3'),
+                ('4','4'),
+                ('5','5')  
+                                )
+
+                self.fields['correct_choice']=forms.MultipleChoiceField(choices=SOME_CHOICES, widget=forms.CheckboxSelectMultiple())
+
+            else:
+                if extra_fields == 0:
+                    self.fields['correct_choice']=forms.CharField()
 
         for index in range(int(extra_fields)):
             # generate extra fields in the number specified via extra_fields
             self.fields['choice_{index}'.format(index=index+1)] = \
                 forms.CharField()
+
+
+     
+
+
+
+
+    
+    
+
+
+
  
 
 

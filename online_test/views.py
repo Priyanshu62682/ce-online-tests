@@ -487,7 +487,7 @@ class QuestionChoiceAdd(CreateView):
             	answer.append(c_3[0])
             	answer.append(c_4[0])
             	# print(answer)
-            	member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             	member.save()
             else:
             	if context['section']=='match_type':
@@ -504,14 +504,14 @@ class QuestionChoiceAdd(CreateView):
             		answer.append(c_4[0])
             		answer.append(c_5[0])
 
-            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             		member.save()
 
             	else:
             		c_1=self.request.POST.getlist("choice_1")
             		c_a=self.request.POST.getlist("correct_choice")
             		answer=[]
-            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
             		member.save()
 
             # formset.save()

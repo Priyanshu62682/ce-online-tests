@@ -40,4 +40,18 @@
 
 
 };
+
+
+if(section=='single_choice_correct_type'){
+  // alert('entered');
+var limit = 1;
+$("input[type='checkbox']").on('change', function(evt) {
+  // alert('trying');
+   if($("input[type='checkbox']:checked").length > limit) {
+       this.checked = false;
+       // alert('stopped');
+   }
+});
+
+}
  </script>
