@@ -51,6 +51,21 @@
 
 		<!-- After the quiz content -->
 	</div>
+
+	{% block user %}
+	<ul class="login details" style="z-index: 2;">
+
+    ...
+
+   {% if user.is_authenticated %}
+     <li>User: {{ user.get_username }}</li>
+     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+   {% else %}
+     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
+   {% endif %} 
+  </ul>
+
+  {% endblock %}
 	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="{% static 'online_test/js/app.js' %}"></script>
     {% block javascript %}{% endblock %}

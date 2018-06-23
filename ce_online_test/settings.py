@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,6 +58,7 @@ ROOT_URLCONF = 'ce_online_test.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -73,6 +73,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ce_online_test.wsgi.application'
+
+# AUTH_USER_MODEL = "ce_online_test.models" 
 
 
 # Database
@@ -113,6 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+LOGIN_REDIRECT_URL = 'online_test:dashboard'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

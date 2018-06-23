@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.contrib.auth import views as auth_views
+from django.conf.urls import url
+# from online_test.views import custom_login
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-dashboard/',include('online_test.urls')),
     path('user-dashboard/',include('online_test_frontend.urls')),
+    path('accounts/', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='login'),
+    # path('accounts/signup/', classroom.SignUpView.as_view(), name='signup'),
+    # path('accounts/signup/student/', students.StudentSignUpView.as_view(), name='student_signup'),
+    # path('accounts/signup/teacher/', teachers.TeacherSignUpView.as_view(), name='teacher_signup'),
 ]

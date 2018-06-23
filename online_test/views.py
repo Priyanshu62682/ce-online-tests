@@ -11,16 +11,67 @@ from urllib import request
 import json
 from django.db import transaction
 from operator import itemgetter
+from django.contrib.auth import *
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.conf import settings
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
-class DashboardView(generic.TemplateView):
+
+
+
+
+
+
+
+
+class DashboardView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/dashboard.html'
 
-class TestListView(generic.ListView):
+	def get_post_data(self,**kwargs):
+		context = super(DashboardView,self).get_post_data(**kwargs)
+		print('hello')
+		return context
+		
+		
+			
+		
+
+	
+
+	
+	
+
+
+
+
+
+
+
+
+class TestListView(LoginRequiredMixin,PermissionRequiredMixin, generic.ListView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Exam
 	template_name = 'online_test/testslist.html'
 
-class TestPartView(generic.DetailView):
+class TestPartView(LoginRequiredMixin,PermissionRequiredMixin,generic.DetailView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Exam
 	template_name = 'online_test/testpartlist.html'
 	slug_field = 'url'
@@ -35,7 +86,10 @@ class TestPartView(generic.DetailView):
 		context['questions'] = Question.objects.filter(exam=exam)
 		return context
 
-class TestSectionListView(generic.ListView):
+class TestSectionListView(LoginRequiredMixin,PermissionRequiredMixin, generic.ListView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Section
 	template_name = 'online_test/listsections.html'
 
@@ -64,7 +118,10 @@ class TestSectionListView(generic.ListView):
 		return context
 
 
-class CreateTestView(CreateView):
+class CreateTestView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Exam
 	fields = '__all__'
 	template_name = 'online_test/createtest.html'
@@ -115,7 +172,10 @@ def get_request_choice(request):
 
 	return HttpResponse('')
 
-class CreatePartView(CreateView):
+class CreatePartView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/newpart.html'
 	model = Part
 	fields = ('name',)
@@ -135,7 +195,10 @@ class CreatePartView(CreateView):
 		return context	
 
 
-class CreateSectionView(CreateView):
+class CreateSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/createnewsection.html'
 	model = Section
 	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
@@ -162,7 +225,10 @@ class CreateSectionView(CreateView):
 		context['part'] = part_instance
 		return context
 
-class CreateMultipleSectionView(CreateView):
+class CreateMultipleSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/createmultiplenewsection.html'
 	model = Section
 	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
@@ -190,7 +256,10 @@ class CreateMultipleSectionView(CreateView):
 		context['part'] = part_instance
 		return context
 
-class CreateMatchSectionView(CreateView):
+class CreateMatchSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/creatematchsection.html'
 	model = Section
 	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
@@ -218,7 +287,10 @@ class CreateMatchSectionView(CreateView):
 		context['part'] = part_instance
 		return context
 
-class CreateIntegerSectionView(CreateView):
+class CreateIntegerSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/createintegersection.html'
 	model = Section
 	fields = ('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
@@ -246,7 +318,10 @@ class CreateIntegerSectionView(CreateView):
 		context['part'] = part_instance
 		return context
 
-class AddQuestionViewBatch(CreateView):
+class AddQuestionViewBatch(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	#model = Question
 	#fields = ('content','figure',)
 	#template_name = 'online_test/newquestion.html'
@@ -286,7 +361,10 @@ class AddQuestionViewBatch(CreateView):
 	# 	formset.save()
 	# 	return HttpResponseRedirect('/dashboard/managetests/')
 
-class AddQuestionView(CreateView):
+class AddQuestionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Question
 	fields = ('content','figure',)
 	template_name = 'online_test/newquestion.html'
@@ -315,7 +393,10 @@ class AddQuestionView(CreateView):
 
 
 	
-class SectionUpdateView(generic.TemplateView):
+class SectionUpdateView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = Section
 	template_name = 'online_test/sectiondetail.html'
 
@@ -333,7 +414,10 @@ class SectionUpdateView(generic.TemplateView):
 			section=section_instance)
 		return context
 
-class AddNewChoices(CreateView):
+class AddNewChoices(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model = SingleChoiceCorrect
 	fields = ('choice_1','choice_2','choice_3','choice_4','correct_choice')
 	template_name = 'online_test/newchoices.html'
@@ -365,50 +449,62 @@ class AddNewChoices(CreateView):
 		context['question'] = question_instance
 		return context
 
-class AuthorDelete(DeleteView):
-    model = Question
+class AuthorDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
+	model = Question
 
-    def get_success_url(self, **kwargs):
-    	return reverse('online_test:updatesection',
+	def get_success_url(self, **kwargs):
+		return reverse('online_test:updatesection',
 			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section']})
 
-    def get_context_data(self,**kwargs):
-    	context = super(AuthorDelete,self).get_context_data(**kwargs)
-    	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-    	part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
-    	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
-    	context['exam'] = exam_instance
-    	context['part'] = part_instance
-    	context['section'] = section_instance		
-    	context['questions'] = Question.objects.filter(
+	def get_context_data(self,**kwargs):
+		context = super(AuthorDelete,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		context['section'] = section_instance		
+		context['questions'] = Question.objects.filter(
 			exam=exam_instance,
 			part=part_instance,
 			section=section_instance)
-    	return context	
+		return context	
 
-class PartDelete(DeleteView):
-    model = Part
+class PartDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
+	model = Part
 
-    def get_success_url(self, **kwargs):
-    	return reverse('online_test:testdetail',
+	def get_success_url(self, **kwargs):
+		return reverse('online_test:testdetail',
 			kwargs={'slug':self.kwargs['slug']})
 
-    def get_context_data(self,**kwargs):
-    	context = super(PartDelete,self).get_context_data(**kwargs)
-    	exam = Exam.objects.get(url=self.kwargs['slug'])
-    	context['exam'] =exam
-    	context['parts'] = Part.objects.filter(exam=exam)
-    	context['sections'] = Section.objects.filter(exam=exam)
-    	context['questions'] = Question.objects.filter(exam=exam)
-    	return context 
+	def get_context_data(self,**kwargs):
+		context = super(PartDelete,self).get_context_data(**kwargs)
+		exam = Exam.objects.get(url=self.kwargs['slug'])
+		context['exam'] =exam
+		context['parts'] = Part.objects.filter(exam=exam)
+		context['sections'] = Section.objects.filter(exam=exam)
+		context['questions'] = Question.objects.filter(exam=exam)
+		return context 
 
-class TestDelete(DeleteView):
+class TestDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	model=Exam
 
 	def get_success_url(self, ** kwargs):
 		return reverse('online_test:testmanage')
 
-class ResultListView(generic.TemplateView):
+class ResultListView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/testresults.html'
 
 	def get_context_data(self,**kwargs):
@@ -418,7 +514,10 @@ class ResultListView(generic.TemplateView):
 		context['tests'] = tests
 		return context
 
-class ResultDetailView(generic.TemplateView):
+class ResultDetailView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test/singletestresult.html'
 
 	def get_context_data(self,**kwargs):
@@ -432,100 +531,104 @@ class ResultDetailView(generic.TemplateView):
 		print(students)
 		return context
 
-class QuestionChoiceAdd(CreateView):
-    model = Question
-    fields = ['serial','content', 'figure']
-    extra=2
+class QuestionChoiceAdd(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 
-    def get_context_data(self, **kwargs):
-    	context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
-    	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-    	part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
-    	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
-    	context['exam'] = self.kwargs['exam']
-    	context['part'] = self.kwargs['part']
-    	context['section'] = self.kwargs['section']
+	model = Question
+	fields = ['serial','content', 'figure']
+	extra=2
 
-    	if self.request.POST:
-    		context['formset']=QuestionAddForm(self.request.POST)
-    	else:
-    		if context['section']=='single_choice_correct_type':
-	    		context['formset']=QuestionAddForm(extra=4)
-	    	if  context['section']=='multiple_choice_correct_type':
-	    		context['formset']=QuestionAddForm(extra=4)
-	    	if context['section']=='match_type':
-	    		context['formset']=QuestionAddForm(extra=5)
-	    	if context['section']=='integer_type':
-	    		context['formset']=QuestionAddForm(extra=0)
+	def get_context_data(self, **kwargs):
+		context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+		context['exam'] = self.kwargs['exam']
+		context['part'] = self.kwargs['part']
+		context['section'] = self.kwargs['section']
 
-
-    	return context
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
-        form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
-        form.instance.section = Section.objects.get(exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
-        formset = context['formset']
-        if formset.is_valid():
-            self.object = form.save()
-
-            formset.instance = self.object
-            question_id=self.request.POST.getlist("question_id")
-
-            print(question_id)
-            # cd = formset.cleaned_data
-            if context['section']=='single_choice_correct_type' or context['section']=='multiple_choice_correct_type':
-            	c_1=self.request.POST.getlist("choice_1")
-            	c_2=self.request.POST.getlist("choice_2")
-            	c_3=self.request.POST.getlist("choice_3")
-            	c_4=self.request.POST.getlist("choice_4")
-            	c_a=self.request.POST.getlist("correct_choice")
-            	answer=	[]
-            	answer.append(c_1[0])
-            	answer.append(c_2[0])
-            	answer.append(c_3[0])
-            	answer.append(c_4[0])
-            	# print(answer)
-            	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
-            	member.save()
-            else:
-            	if context['section']=='match_type':
-            		c_1=self.request.POST.getlist("choice_1")
-            		c_2=self.request.POST.getlist("choice_2")
-            		c_3=self.request.POST.getlist("choice_3")
-            		c_4=self.request.POST.getlist("choice_4")
-            		c_5=self.request.POST.getlist("choice_5")
-            		c_a=self.request.POST.getlist("correct_choice")
-            		answer=[]
-            		answer.append(c_1[0])
-            		answer.append(c_2[0])
-            		answer.append(c_3[0])
-            		answer.append(c_4[0])
-            		answer.append(c_5[0])
-
-            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
-            		member.save()
-
-            	else:
-            		c_1=self.request.POST.getlist("choice_1")
-            		c_a=self.request.POST.getlist("correct_choice")
-            		answer=[]
-            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
-            		member.save()
-
-            # formset.save()
-            return HttpResponseRedirect(reverse('online_test:updatesection', 
-            	kwargs={'exam':self.kwargs['exam'], 'part':self.kwargs['part'], 'section':self.kwargs['section']}))
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+		if self.request.POST:
+			context['formset']=QuestionAddForm(self.request.POST)
+		else:
+			if context['section']=='single_choice_correct_type':
+				context['formset']=QuestionAddForm(extra=4)
+			if  context['section']=='multiple_choice_correct_type':
+				context['formset']=QuestionAddForm(extra=4)
+			if context['section']=='match_type':
+				context['formset']=QuestionAddForm(extra=5)
+			if context['section']=='integer_type':
+				context['formset']=QuestionAddForm(extra=0)
 
 
+		return context
+
+	def form_valid(self, form):
+	    context = self.get_context_data()
+	    form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+	    form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+	    form.instance.section = Section.objects.get(exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
+	    formset = context['formset']
+	    if formset.is_valid():
+	        self.object = form.save()
+
+	        formset.instance = self.object
+	        question_id=self.request.POST.getlist("question_id")
+
+	        print(question_id)
+	        # cd = formset.cleaned_data
+	        if context['section']=='single_choice_correct_type' or context['section']=='multiple_choice_correct_type':
+	        	c_1=self.request.POST.getlist("choice_1")
+	        	c_2=self.request.POST.getlist("choice_2")
+	        	c_3=self.request.POST.getlist("choice_3")
+	        	c_4=self.request.POST.getlist("choice_4")
+	        	c_a=self.request.POST.getlist("correct_choice")
+	        	answer=	[]
+	        	answer.append(c_1[0])
+	        	answer.append(c_2[0])
+	        	answer.append(c_3[0])
+	        	answer.append(c_4[0])
+	        	# print(answer)
+	        	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+	        	member.save()
+	        else:
+	        	if context['section']=='match_type':
+	        		c_1=self.request.POST.getlist("choice_1")
+	        		c_2=self.request.POST.getlist("choice_2")
+	        		c_3=self.request.POST.getlist("choice_3")
+	        		c_4=self.request.POST.getlist("choice_4")
+	        		c_5=self.request.POST.getlist("choice_5")
+	        		c_a=self.request.POST.getlist("correct_choice")
+	        		answer=[]
+	        		answer.append(c_1[0])
+	        		answer.append(c_2[0])
+	        		answer.append(c_3[0])
+	        		answer.append(c_4[0])
+	        		answer.append(c_5[0])
+
+	        		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+	        		member.save()
+
+	        	else:
+	        		c_1=self.request.POST.getlist("choice_1")
+	        		c_a=self.request.POST.getlist("correct_choice")
+	        		answer=[]
+	        		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+	        		member.save()
+
+	        # formset.save()
+	        return HttpResponseRedirect(reverse('online_test:updatesection', 
+	        	kwargs={'exam':self.kwargs['exam'], 'part':self.kwargs['part'], 'section':self.kwargs['section']}))
+	    else:
+	        return self.render_to_response(self.get_context_data(form=form))
 
 
-    def get_success_url(self,**kwargs):
-    	return HttpResponseRedirect(reverse('online_test:updatesection',
-    		kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] }))
+
+
+	def get_success_url(self,**kwargs):
+		return HttpResponseRedirect(reverse('online_test:updatesection',
+			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] }))
     # if this is POST request we need to process the form data
 	
 	# examobj=Exam.objects.get(title=exam)
@@ -580,7 +683,31 @@ class QuestionChoiceAdd(CreateView):
 	# return render(request, 'online_test/question_form.html', {'form_question': form_question, 'form_choice': form_choice})
 	
 
+class LoginFormMiddleware(object):
 
+    def process_request(self, request):
+
+        # if the top login form has been posted
+        if request.method == 'POST' and 'is_top_login_form' in request.POST:
+
+            # validate the form
+            form = AuthenticationForm(data=request.POST)
+            if form.is_valid():
+
+                # log the user in
+                from django.contrib.auth import login
+                login(request, form.get_user())
+
+                # if this is the logout page, then redirect to /
+                # so we don't get logged out just after logging in
+                if '/account/logout/' in request.get_full_path():
+                    return HttpResponseRedirect('/')
+
+        else:
+            form = AuthenticationForm(request)
+
+        # attach the form to the request so it can be accessed within the templates
+        request.login_form = form
 
 
 

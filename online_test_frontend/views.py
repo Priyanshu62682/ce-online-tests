@@ -7,10 +7,28 @@ from online_test.serializers import *
 from django.http import JsonResponse
 from django.http import HttpResponse,HttpResponseRedirect
 import json
+from django.db import transaction
+from operator import itemgetter
+from django.contrib.auth import *
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.conf import settings
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
 
-class UserDashboardView(generic.TemplateView):
+class UserDashboardView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	# permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/dashboard.html'
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
@@ -22,7 +40,10 @@ class UserDashboardView(generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-class TakeTestView(generic.TemplateView):
+class TakeTestView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+	# permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
@@ -40,7 +61,10 @@ class TakeTestView(generic.TemplateView):
 	# 	print(serializer.data)
 	# 	return context
 
-class TestView(APIView):
+class TestView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
+	# permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
 	def get(self,request,student,exam):
 		album = Album.objects.get(album_name='The Grey Album')
 		
