@@ -8,6 +8,9 @@ from django.urls import reverse_lazy,reverse
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields import JSONField
 from jsonfield import JSONField
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -242,6 +245,8 @@ class QuestionChoices(models.Model):
 		return str(self.question_id)
 
 class Student(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	birth_date = models.DateField(null=True, blank=True)
 	student_username = models.CharField(
 		unique=True,
 		blank=False,
@@ -250,7 +255,7 @@ class Student(models.Model):
 	name = models.CharField(
 		blank=False,
 		max_length=50,
-		help_text="Full Name",
+		
 		)	
 	class_status = Choices('11-Studying','12-Studying','12-Pass','other')
 	batch = StatusField(choices_name='class_status')
@@ -265,6 +270,16 @@ class Student(models.Model):
 		)
 	def __str__(self):
 		return str(self.student_username)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Student.objects.create(user=instance)
+
+
+
+
 
 class Result(models.Model):
 	test_id = models.ForeignKey(Exam,on_delete=models.PROTECT)

@@ -8,8 +8,8 @@ from django.forms import modelformset_factory
 from .forms import *
 from .models import *
 from urllib import request
+from django.shortcuts import redirect
 import json
-from django.db import transaction
 from operator import itemgetter
 from django.contrib.auth import *
 from django.contrib.auth.forms import AuthenticationForm
@@ -24,7 +24,66 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+import sys
+sys.path.append("..ce_online_test.settings")
 
+from django.contrib.auth import login, authenticate
+from django.shortcuts import render, redirect
+from django.db import transaction
+
+
+@transaction.atomic
+def signup(request):
+    if request.method == 'POST':
+        user_form = SignUpForm(request.POST)
+        student_form = StudentForm(request.POST)
+        if user_form.is_valid() and student_form.is_valid():
+            user = user_form.save()
+            user.refresh_from_db()
+            user_obj=User.objects.get(username=user.username) 
+            student_form=Student.objects.get(user=user_obj)
+            
+            
+            print(student_form)
+
+            student_form.birth_date=request.POST.get('birth_date')
+            # print(student_form.cleaned_data.get('birth_date'))
+            student_form.student_username=user.username
+            # print(user.username)
+            student_form.batch=request.POST.get('batch')
+            student_form.address=request.POST.get('address')
+            student_form.name=request.POST.get('name')
+            # print(student_form.cleaned_data.get('name'))
+            student_form.save()            
+            raw_password = user_form.cleaned_data.get('password1')
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+            return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':user.username}))
+    else:
+        user_form = SignUpForm()
+        student_form = StudentForm()
+    return render(request, 'online_test/signup.html', {'user_form': user_form, 'student_form':student_form})
+
+
+
+
+
+
+
+
+
+
+def login_success(request):
+    """
+    Redirects users based on whether they are in the admin group
+    to add any user in admin group give him is_staff permission and also add him to admin group
+    """
+    if request.user.groups.filter(name="admin").exists():
+    	print('if')
+    	return HttpResponseRedirect(reverse('online_test:dashboard'))
+    else:
+    	student_username=request.user.username
+    	return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':student_username}))
 
 
 
@@ -38,13 +97,7 @@ class DashboardView(LoginRequiredMixin,PermissionRequiredMixin, generic.Template
 	permission_required = 'user.is_staff'
 	login_url = '/accounts/login'
 	redirect_field_name = 'redirect'
-	template_name = 'online_test/dashboard.html'
-
-	def get_post_data(self,**kwargs):
-		context = super(DashboardView,self).get_post_data(**kwargs)
-		print('hello')
-		return context
-		
+	template_name = 'online_test/dashboard.html'		
 		
 			
 		

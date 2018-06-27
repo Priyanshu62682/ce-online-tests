@@ -25,7 +25,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
 
-class UserDashboardView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+class UserDashboardView(LoginRequiredMixin, generic.TemplateView):
 	# permission_required = 'user.is_staff'
 	login_url = '/accounts/login'
 	redirect_field_name = 'redirect'
@@ -40,7 +40,7 @@ class UserDashboardView(LoginRequiredMixin,PermissionRequiredMixin, generic.Temp
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-class TakeTestView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateView):
+class TakeTestView(LoginRequiredMixin, generic.TemplateView):
 	# permission_required = 'user.is_staff'
 	login_url = '/accounts/login'
 	redirect_field_name = 'redirect'
@@ -61,7 +61,7 @@ class TakeTestView(LoginRequiredMixin,PermissionRequiredMixin, generic.TemplateV
 	# 	print(serializer.data)
 	# 	return context
 
-class TestView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
+class TestView(LoginRequiredMixin, APIView):
 	# permission_required = 'user.is_staff'
 	login_url = '/accounts/login'
 	redirect_field_name = 'redirect'

@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'reset_migrations',
     'online_test.apps.OnlineTestConfig',
     'online_test_frontend',
     'django.contrib.admin',
@@ -116,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOGIN_REDIRECT_URL = 'online_test:dashboard'
+LOGIN_REDIRECT_URL = 'online_test:login_success'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
