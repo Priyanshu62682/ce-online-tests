@@ -22,6 +22,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from datetime import datetime
 
 # Create your views here.
 
@@ -97,6 +99,8 @@ def get_request_choice(request):
 				progress=new_input,
 				)
 
+	else:
+		return HttpResponse('Get Called')
 	return HttpResponse('')
 
 def calculate_SCC(question,choice_object_json,progress):
@@ -156,8 +160,6 @@ def calculate_performance(question_object,progress):
 		choice_object_json = QuestionChoices.objects.get(question_id=question).choices
 		marked_choice = progress[str(question.serial)]
 		
-
-
 
 def Thank_view(request,student,exam_id):
 	if request.method=='GET':
@@ -267,13 +269,13 @@ def Thank_view(request,student,exam_id):
 
 		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
-			# Result.objects.create(
-			# 	test_completed= True,
-			# 	test_id=test,
-			# 	student_username=student,
-			# 	result_json=result_object,
-			# 	)
-			# current_progress.delete()
+			Result.objects.create(
+				test_completed= True,
+				test_id=test,
+				student_username=student,
+				result_json=result_object,
+				)
+			current_progress.delete()
 			message = 'Thank you for taking the test'
 		else:
 			message = 'Already submitted'
@@ -284,3 +286,41 @@ def Thank_view(request,student,exam_id):
 		question_object = Question.objects.filter(exam=exam_object).order_by('serial')
 	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
 		'total_score':total_score,'performance':performance})
+
+class UserTestInfo(generic.TemplateView):
+	template_name = 'online_test_frontend/usertestinfo.html'
+	def get_context_data(self,**kwargs):
+		context = super(UserTestInfo,self).get_context_data(**kwargs)
+		#Select exam as per convinience
+		user = Student.objects.get(student_username=self.kwargs['student'])
+		context['student'] = self.kwargs['student']
+		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
+		return context
+		
+
+
+class SubscribeTest(CreateView):
+	template_name = 'online_test_frontend/confirm_registration.html'
+	model = Subscriptions
+	fields = '__all__'
+
+	# def form_valid(self, form,**kwargs):
+
+	# 	student = Student.objects.get(student_username=self.kwargs['student'])
+	# 	exam = Exam.objects.get(title=self.kwargs['exam'])
+	# 	form.instance.student = student
+	# 	form.instance.exam = exam
+	# 	form.instance.event = 'Upcoming'
+	# 	form.instance.registered_on = datetime.now
+	# 	return super(SubscribeTest, self).form_valid(form,**kwargs)
+
+	def get_context_data(self,**kwargs):
+		context = super(SubscribeTest,self).get_context_data(**kwargs)
+		#Select exam as per convinience
+		context['student'] = self.kwargs['student']
+		context['exam'] = self.kwargs['exam']
+		return context
+	def get_success_url(self,**kwargs):
+		return reverse('online_test_frontend:usertestinfo',
+			kwargs={'student':self.kwargs['student'],'exam':self.kwargs['exam'] })
+
