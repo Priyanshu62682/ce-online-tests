@@ -1,6 +1,8 @@
 {% extends "online_test/index.html" %}
 {% block content %}
 
+{% block javascript %}
+
 <script
   src="https://code.jquery.com/jquery-3.3.1.js"
   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
@@ -31,7 +33,7 @@ $('input[id=my]').on('change', function() {
     alert("yo");
 });
 </script> -->
-
+{% endblock %}
 
 
 	<div class="container">
@@ -42,7 +44,7 @@ $('input[id=my]').on('change', function() {
 				
 			{% for part in parts %}
 		</br>
-				<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
+				<a  href="{% url 'online_test:sections' exam=exam part=part %}">
 					{{part}}
 				</a>
 				<a  href="{% url 'online_test:deletepart' slug=exam.url pk=part.id %}">
@@ -51,8 +53,8 @@ $('input[id=my]').on('change', function() {
 			
 			{% endfor %}
 			<div class="addnewpart">
-				<a href="{% url 'online_test:createpart' testslug=exam.url %}">
-					Add new Part
+				<a href="{% url 'online_test:createpart' exam=exam %}">
+					Add new part
 					<span  class="fa-stack fa-lg">
 						<i class="fa fa-plus fa-2x"></i>	
 					</span>	

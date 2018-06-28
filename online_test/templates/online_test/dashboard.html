@@ -1,4 +1,16 @@
 {% extends "online_test/index.html" %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+history.pushState(null, null, document.URL);
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, document.URL);
+});
+
+</script>
+
+{% endblock %}
 {% block content %}
 <div class="container">
 	<h3>Dashboard</h3>

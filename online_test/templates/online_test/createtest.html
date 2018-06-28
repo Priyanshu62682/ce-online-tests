@@ -1,8 +1,5 @@
 {% extends "online_test/index.html" %}
 
-{% block javascript %}
-
-{% endblock %}
 
 {% block content %}
 	<div class="container">
@@ -14,3 +11,14 @@
 		</form>
 	</div>
 {% endblock %}
+
+
+{% block javascript %}
+<script type="text/javascript">
+var stateObj = { foo: "bar" };
+history.pushState(stateObj, "page 2", "../");
+
+</script>
+
+{% endblock %}
+

@@ -36,6 +36,10 @@
 	        		<small>{{section.section_type}}</small>
         				        		
 	        	</a>
+	        	<a href="{% url 'online_test:deletesection' exam=exam part=part pk=exam.id %}">
+	        		<small>Delete Section</small>
+        				        		
+	        	</a>
 	        </div>
 		{% endfor %}
 		<div class="current-section-detail">

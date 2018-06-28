@@ -1,8 +1,12 @@
 {% extends "online_test/index.html" %}
+
+
+
+
 {% block content %}
-<div class="container">
+<div class="container" >
 	<h3>Add new Part</h3>
-	<form method="post" action="{% url 'online_test:createpart' testslug=exam.url %}" >		
+	<form method="post" action="{% url 'online_test:createpart' exam=exam %}" >		
 		{% csrf_token %}
 		{{ form.non_field_errors }}
 		<table>
@@ -18,7 +22,16 @@
 				</td>
 			</tr>
 		</table>
-    	<input type="submit" value="SAVE">
+    	<input type="submit" onclick="myFunction()"  value="SAVE">
 	</form>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+var stateObj = { foo: "bar" };
+history.pushState(stateObj, "page 2", "../");
+
+</script>
+
 {% endblock %}

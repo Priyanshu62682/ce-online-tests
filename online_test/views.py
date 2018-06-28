@@ -58,7 +58,7 @@ def signup(request):
             raw_password = user_form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':user.username}))
+            return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':user.student_username}))
     else:
         user_form = SignUpForm()
         student_form = StudentForm()
@@ -133,8 +133,9 @@ class TestPartView(LoginRequiredMixin,PermissionRequiredMixin,generic.DetailView
 		context = super(TestPartView,self).get_context_data(**kwargs)
 		# a query that selects all distinct values of part present in sections of that particular exam
 		#context['parts'] = Section.objects.order_by('part').distinct('part')
-		exam = Exam.objects.get(url=self.kwargs['slug'])
+		exam = Exam.objects.get(title=self.kwargs['exam'])
 		context['exam'] =exam
+		context['pk']=self.kwargs['exam']
 		context['parts'] = Part.objects.filter(exam=exam)
 		context['questions'] = Question.objects.filter(exam=exam)
 		return context
@@ -149,7 +150,7 @@ class TestSectionListView(LoginRequiredMixin,PermissionRequiredMixin, generic.Li
 	def get_queryset(self,**kwargs):
 		queryset = super(TestSectionListView, self).get_queryset(**kwargs)
 		#part_name = self.kwargs['part']
-		test_name = Exam.objects.get(url=self.kwargs['testslug'])
+		test_name = Exam.objects.get(title=self.kwargs['exam'])
 		try:
 			part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
 		except:
@@ -158,9 +159,9 @@ class TestSectionListView(LoginRequiredMixin,PermissionRequiredMixin, generic.Li
 		return queryset
 	def get_context_data(self,**kwargs):
 		context = super(TestSectionListView,self).get_context_data(**kwargs)
-		test_slug = self.kwargs['testslug']
+		test_slug = self.kwargs['exam']
 		#part_name = self.kwargs['part']
-		test_name = Exam.objects.get(url=test_slug)
+		test_name = Exam.objects.get(title=test_slug)
 		try:
 			part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
 		except Part.DoesNotExist:
@@ -169,6 +170,26 @@ class TestSectionListView(LoginRequiredMixin,PermissionRequiredMixin, generic.Li
 		context['part'] = part_object
 		context['questions'] = Question.objects.filter(exam=test_name,part=part_object)
 		return context
+
+class SectionDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
+	model = Section
+
+	def get_success_url(self, **kwargs):
+		return reverse('online_test:sections',
+			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part']})
+
+	def get_context_data(self,**kwargs):
+		context = super(SectionDelete,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		context['pk']=self.kwargs['pk']
+		return context	
+
 
 
 class CreateTestView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
@@ -234,16 +255,16 @@ class CreatePartView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 	fields = ('name',)
 
 	def form_valid(self, form,**kwargs):
-		form.instance.exam = Exam.objects.get(url=self.kwargs['testslug'])
+		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 		return super(CreatePartView, self).form_valid(form,**kwargs)
 
 	def get_success_url(self,**kwargs):
-		exam_instance = Exam.objects.get(url=self.kwargs['testslug'])
-		return reverse('online_test:testdetail',kwargs={'slug':exam_instance.url })
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:testdetail',kwargs={'exam':exam_instance, 'pk':exam_instance.id })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreatePartView,self).get_context_data(**kwargs)
-		exam_instance = Exam.objects.get(url=self.kwargs['testslug'])
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
 		context['exam'] = exam_instance
 		return context	
 
@@ -264,7 +285,7 @@ class CreateSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+		return reverse('online_test:sections',kwargs={'exam':exam_instance,'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateSectionView,self).get_context_data(**kwargs)
@@ -295,7 +316,7 @@ class CreateMultipleSectionView(LoginRequiredMixin,PermissionRequiredMixin, Crea
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+		return reverse('online_test:sections',kwargs={'exam':exam_instance.url,'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateMultipleSectionView,self).get_context_data(**kwargs)
@@ -326,7 +347,7 @@ class CreateMatchSectionView(LoginRequiredMixin,PermissionRequiredMixin, CreateV
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+		return reverse('online_test:sections',kwargs={'exam':exam_instance,'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateMatchSectionView,self).get_context_data(**kwargs)
@@ -357,7 +378,7 @@ class CreateIntegerSectionView(LoginRequiredMixin,PermissionRequiredMixin, Creat
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		return reverse('online_test:sections',kwargs={'testslug':exam_instance.url,'part':self.kwargs['part'] })
+		return reverse('online_test:sections',kwargs={'exam':exam_instance,'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateIntegerSectionView,self).get_context_data(**kwargs)
@@ -533,8 +554,9 @@ class PartDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
 	model = Part
 
 	def get_success_url(self, **kwargs):
+		exam = Exam.objects.get(url=self.kwargs['slug'])
 		return reverse('online_test:testdetail',
-			kwargs={'slug':self.kwargs['slug']})
+			kwargs={'exam':exam,'pk':exam.id})
 
 	def get_context_data(self,**kwargs):
 		context = super(PartDelete,self).get_context_data(**kwargs)
