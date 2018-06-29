@@ -4,34 +4,45 @@
 
 
 {% block content %}
-<div class="container" >
-	<h3>Add new Part</h3>
-	<form method="post" action="{% url 'online_test:createpart' exam=exam %}" >		
+
+<style type="text/css">
+
+	
+
+	/*.heading{
+		padding: 1% 1% 1% 1%;
+		color: white;
+		background: #23282d;
+		margin-top: 1%;
+		margin-left: 36%;
+		width:30%;
+		align-items: center;
+	}*/
+
+</style>
+<div class="" >
+	<h2 class="heading"><center>{{exam}}</center></h2>
+	<h3 class="heading part"><center>Please Enter Part Name</center></h3>
+	<center>
+	<form method="post" class="w3-container partform " action="{% url 'online_test:createpart' exam=exam %}" >		
 		{% csrf_token %}
 		{{ form.non_field_errors }}
 		<table>
 			<tr>
 				<td>
-					<label for="id_name">Part Name :</label>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<input name="name" id="id_content" rows="4" cols="70" required 
-					placeholder="Part name"/>
+					
+					<input name="name" class="partinput" id="id_content" rows="4" cols="70" required >
+										
+					
 				</td>
 			</tr>
 		</table>
-    	<input type="submit" onclick="myFunction()"  value="SAVE">
+		
+
+    	<input type="submit" class="partbutton" onclick="myFunction()"  value="SAVE">
 	</form>
+	</center>
 </div>
 {% endblock %}
 
-{% block javascript %}
-<script type="text/javascript">
-var stateObj = { foo: "bar" };
-history.pushState(stateObj, "page 2", "../");
-
-</script>
-
-{% endblock %}
+block %}

@@ -159,9 +159,9 @@ class TestSectionListView(LoginRequiredMixin,PermissionRequiredMixin, generic.Li
 		return queryset
 	def get_context_data(self,**kwargs):
 		context = super(TestSectionListView,self).get_context_data(**kwargs)
-		test_slug = self.kwargs['exam']
+		exam = self.kwargs['exam']
 		#part_name = self.kwargs['part']
-		test_name = Exam.objects.get(title=test_slug)
+		test_name = Exam.objects.get(title=exam)
 		try:
 			part_object = Part.objects.get(exam=test_name,name=self.kwargs['part'])
 		except Part.DoesNotExist:
@@ -316,7 +316,7 @@ class CreateMultipleSectionView(LoginRequiredMixin,PermissionRequiredMixin, Crea
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		return reverse('online_test:sections',kwargs={'exam':exam_instance.url,'part':self.kwargs['part'] })
+		return reverse('online_test:sections',kwargs={'exam':exam_instance,'part':self.kwargs['part'] })
 
 	def get_context_data(self,**kwargs):
 		context = super(CreateMultipleSectionView,self).get_context_data(**kwargs)
