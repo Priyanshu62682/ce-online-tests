@@ -1,8 +1,113 @@
 {% extends "online_test/index.html" %}
 {% block content %}
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
 <style type="text/css">
+a:hover {
+    text-decoration:none;
+    font-weight:normal;
+}
 	
+.outer {
+  position: fixed;
+  top: 70%;
+  
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  padding: 11px 0 0 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,40,60,.2);
+  tap-highlight-color: transparent;
+  left:53%;
+   transform: translateY(+110%);
+  transition: .5s;
+}
+
+.outer:hover {
+  position: fixed;
+ /* top: 77%;
+  left:53%;*/
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  padding: 11px 0 0 9px;
+  border-radius: 50%;
+  /*background: rgba(0,40,60,.2);*/
+  border: 1px solid rgba(0,40,60,.2);
+  tap-highlight-color: transparent;
+  box-shadow: rgb(0,40,60,.2);
+}
+.line {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: rgb(0,40,60);
+  transition: .7s;
+  pointer-events: none;
+}
+.line:nth-child(2) {
+  margin: 3px 0;
+}
+.open {
+ border: 1px solid rgba(0,40,60,.2);top:5%;
+  /*left: 12%*/
+   transform: translateY(+110%);
+  transition: .5s;
+  top:-3%;
+}
+
+/*.open:hover {
+  border-color: rgba(255,255,255,.2);
+  top:5%;
+  left: 12%
+}
+*/
+.open .line {
+  background: #000;
+}
+/*.open :first-child {
+  transform: translateY(5px) rotate(0deg);
+}
+.open :nth-child(2) {
+  transform: rotate(0deg);
+  opacity: 0;
+}
+.open :last-child {
+  transform: translateY(-5px) rotate(-112.5deg);
+}*/
+nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  transform: translateY(+100%);
+  transition: .5s;
+}
+.open + nav {
+  transform: none;
+}
+code {
+  color: white;
+  font-size: 0;
+}
+
+/*.display{
+
+	display: none;
+}*/
+
+
+
 	/* The Modal (background) */
+
 
 .modal-content {
 
@@ -17,6 +122,11 @@
 	margin-right:1%;
 }
 
+.inner{
+	margin-top: 25%;
+	margin-left: 25%;
+}
+
 
 
 @keyframes animatetop {
@@ -26,8 +136,94 @@
 
 </style>
 
-<div class="container">
-	<div class="test-detail-style" >
+<div class="container" >
+
+	<center><h3 class="showquestionheading" style="position:fixed; margin-top: 32%; margin-left: 31.5%; ">Click to view all Questions</h3></center>
+
+<a class="outer" id="clicks"  href=# style="z-index: 4;">
+<div class="inner">
+  <span class="line"></span>
+  <span class="line"></span>
+  <span class="line"></span>
+ </div>
+</a>
+
+
+<nav class="yo display" id="display" style="z-index: 3;">
+		<div class="sectionliststyle" style="color: black;">
+		
+		<div class="details">
+			<div class="current-section" >
+				<h6>Total Questions: </h6> <small>part.part_total_questions</small><br>
+	    		<h6>Maximum Marks: </h6> <small>section.calculate_marks</small><br>
+			</div>
+		</div>
+
+		{% if object_list %}
+			{% for section in object_list %}
+		    <!--div class="section-box">
+		    	<div class="section-box-detail">
+		    		<h6>Section Type:</h6> <small>{{section.section_type}}</small><br>
+		    		<h6>Total Questions: </h6> <small>{{section.section_total_questions}}</small><br>
+		    		<h6>Maximum Marks: </h6> <small>{{section.calculate_marks}}</small><br>
+		    		<h6>Positive:</h6> <small>{{section.positive_marks}}</small><br>
+		    		<h6>Negative:</h6> <small>{{section.negative_marks}}</small><br>
+		    	</div>
+		    	<div class="section-box-edit">
+		        	<a href="{% url 'online_test:updatesection' exam=exam part=part section=section %}">
+		        		Edit Section
+	        			<span class="fa-stack fa-lg">
+	        				<i class="fa fa-arrow-circle-right fa-2x"></i>
+	        			</span>		        		
+		        	</a>
+		        </div>
+		    </div-->
+		    {% endfor %}
+	 	{% else %}
+	 		<p>No Data Found</p>
+	 	{% endif %}
+	 	{% if questions %}
+			{% for question in questions %}
+			    <div class="section-box-question">
+			    	<div class="section-box-detail-question">
+			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
+			    	</div>
+			    	<div class="section-box-edit-question">
+			    		
+		    			<ul>
+		    			{% for choice in question.get_choices %}
+		    				<li>{{choice}} </li>
+							
+		    			{% endfor %}
+		    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
+			    					
+			    		
+			    		</ul>
+			    		
+			        </div>
+
+			    </div>
+		    {% endfor %}
+	 	{% else %}
+	 		<div >
+	 			<h1 style="text-align:center; margin-top:120px;">No question in this section</h1>
+	 		</div>
+	 	{% endif %}
+ 	</div>
+</nav>
+
+<code class="block" style="display: none;">
+  clicking on "a" toggles class "open" on "a"
+</code>
+
+
+
+
+
+
+
+
+	<div class="test-detail-style" style="z-index: 2;">
 		<h1>{{exam.title}}</h1>
 		<div style="margin-bottom: 1%;">
 		<h4 style="display: inline-block;" > {{part}}</h4>
@@ -77,69 +273,42 @@
 
 	</div>
 	
-	<!-- <div class="sectionliststyle">
-		
-		<div class="details">
-			<div class="current-section" >
-				<h6>Total Questions: </h6> <small>part.part_total_questions</small><br>
-	    		<h6>Maximum Marks: </h6> <small>section.calculate_marks</small><br>
-			</div>
-		</div>
 
-		{% if object_list %}
-			{% for section in object_list %}
-		    div class="section-box">
-		    	<div class="section-box-detail">
-		    		<h6>Section Type:</h6> <small>{{section.section_type}}</small><br>
-		    		<h6>Total Questions: </h6> <small>{{section.section_total_questions}}</small><br>
-		    		<h6>Maximum Marks: </h6> <small>{{section.calculate_marks}}</small><br>
-		    		<h6>Positive:</h6> <small>{{section.positive_marks}}</small><br>
-		    		<h6>Negative:</h6> <small>{{section.negative_marks}}</small><br>
-		    	</div>
-		    	<div class="section-box-edit">
-		        	<a href="{% url 'online_test:updatesection' exam=exam part=part section=section %}">
-		        		Edit Section
-	        			<span class="fa-stack fa-lg">
-	        				<i class="fa fa-arrow-circle-right fa-2x"></i>
-	        			</span>		        		
-		        	</a>
-		        </div>
-		    </div
-		    {% endfor %}
-	 	{% else %}
-	 		<p>No Data Found</p>
-	 	{% endif %}
-	 	{% if questions %}
-			{% for question in questions %}
-			    <div class="section-box-question">
-			    	<div class="section-box-detail-question">
-			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
-			    	</div>
-			    	<div class="section-box-edit-question">
-			    		
-		    			<ul>
-		    			{% for choice in question.get_choices %}
-		    				<li>{{choice}} </li>
-							
-		    			{% endfor %}
-		    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
-			    					
-			    		
-			    		</ul>
-			    		
-			        </div>
+</div>
 
-			    </div>
-		    {% endfor %}
-	 	{% else %}
-	 		<div >
-	 			<h1 style="text-align:center; margin-top:120px;">No question in this section</h1>
-	 		</div>
-	 	{% endif %}
- 	</div>
-</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
+
+
+
+
 	
 	var modal = document.getElementById('myModal');
 
@@ -147,7 +316,7 @@
 var btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+var close = document.getElementsByClassName("close")[0];
 
 // When the user clicks on the button, open the modal 
 btn.onclick = function() {
@@ -155,7 +324,7 @@ btn.onclick = function() {
 }
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function() {
+close.onclick = function() {
     modal.style.display = "none";
 }
 
@@ -165,6 +334,128 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+
+
+
+
+
+
 </script>
+
+
+
+<script type="text/javascript">
+	
+/*
+ * uilang v1.0.1
+ * http://uilang.com
+ */
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  "use strict"
+
+  var codeElements = document.getElementsByTagName("code")
+  var i = codeElements.length
+  var delimiter = "clicking on"
+  var codeBlock
+  var codeBlockContent
+
+  while (i--) {
+    var code = codeElements[i]
+    var content = code.textContent.trim()
+    if (content.lastIndexOf(delimiter, 0) === 0) {
+      codeBlock = code
+      codeBlockContent = content
+      break
+    }
+  }
+
+  if (!codeBlock) return
+  codeBlock.parentNode.removeChild(codeBlock)
+
+  function InstructionParsing(instruction) {
+    var separator = instruction.charAt(0)
+    var instructionSplit = instruction.split(separator)
+
+    this.clickSelector = instructionSplit[1]
+    this.classBehavior = instructionSplit[2].trim().split(" ")[0]
+    this.classValue = instructionSplit[3]
+    this.targetSelector = instructionSplit[5]
+  }
+
+  function UIElement(clickSelector, classBehavior, classValue, targetSelector) {
+    this.clickSelector = clickSelector
+    this.classBehavior = classBehavior.charAt(classBehavior.length-1) == "s"
+                       ? classBehavior.substring(0, classBehavior.length-1)
+                       : classBehavior
+    this.classValue = classValue.charAt(0) == "."
+                    ? classValue.substring(1, classValue.length)
+                    : classValue
+    this.targetSelector = targetSelector
+    this.createEventListener()
+  }
+
+  UIElement.prototype.createEventListener = function() {
+    var self = this
+    var clicked = document.querySelectorAll(self.clickSelector)
+    var i = clicked.length
+
+    if (i < 1) {
+      throw new Error("There's no element matching your \"" + self.clickSelector + "\" CSS selector.")
+    }
+
+    while (i--) {
+      clicked.item(i).addEventListener("click", clickCallback)
+    }
+
+    function updateClass(el) {
+      el.classList[self.classBehavior](self.classValue)
+    }
+
+    function clickCallback(e) {
+      switch (self.targetSelector) {
+        case "target" :
+        case "this"   :
+        case "it"     :
+        case "itself" :
+        case undefined:
+          updateClass(e.target)
+          break
+        default:
+          var target = document.querySelectorAll(self.targetSelector)
+          var i = target.length
+          while (i--) {
+            updateClass(target.item(i))
+          }
+      }
+      if (e.target.nodeName.toLowerCase() == "a") {
+        e.preventDefault()
+      }
+    }
+  }
+
+  codeBlockContent.split(delimiter).forEach(function(data) {
+    if (!data) return
+    var params = new InstructionParsing(data.trim())
+    new UIElement(
+      params.clickSelector,
+      params.classBehavior,
+      params.classValue,
+      params.targetSelector
+    )
+  })
+})
+
+
+
+
+
+</script>
+
 
 {% endblock %}
