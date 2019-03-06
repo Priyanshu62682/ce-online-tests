@@ -121,8 +121,17 @@ class CreatePartView(CreateView):
 	fields = ('name',)
 
 	def form_valid(self, form,**kwargs):
-		form.instance.exam = Exam.objects.get(url=self.kwargs['testslug'])
+		#print(form.cleaned_data.get("name"))
+		exam_ob = Exam.objects.get(url=self.kwargs['testslug'])
+		# print(exam_ob)
+		# print(Part.objects.filter(exam=exam_ob,name=form.cleaned_data.get("name")))
+		if Part.objects.filter(exam=exam_ob,name=form.cleaned_data.get('name')).exists():
+			form.add_error('name', forms.ValidationError('Part already Exists'))
+			return super(CreatePartView, self).form_invalid(form)
+		form.instance.exam = exam_ob
 		return super(CreatePartView, self).form_valid(form,**kwargs)
+
+		
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(url=self.kwargs['testslug'])
@@ -487,7 +496,7 @@ class QuestionChoiceAdd(CreateView):
             	answer.append(c_3[0])
             	answer.append(c_4[0])
             	# print(answer)
-            	member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+            	member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
             	member.save()
             else:
             	if context['section']=='match_type':
@@ -504,14 +513,14 @@ class QuestionChoiceAdd(CreateView):
             		answer.append(c_4[0])
             		answer.append(c_5[0])
 
-            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
             		member.save()
 
             	else:
             		c_1=self.request.POST.getlist("choice_1")
             		c_a=self.request.POST.getlist("correct_choice")
             		answer=[]
-            		member = QuestionChoices(choices=answer, correct_choice=c_a, question_id=formset.instance, section=form.instance.section)
+            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
             		member.save()
 
             # formset.save()
