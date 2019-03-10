@@ -45,7 +45,7 @@ class Exam(models.Model):
 		help_text = "Enter the url for the test",
 		)
 	description = models.CharField(
-		max_length=300,
+		max_length=2000,
 		verbose_name = "test description",
 		help_text = "Test description",
 		blank = True,
