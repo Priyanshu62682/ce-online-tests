@@ -1,92 +1,87 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
+	<div id="main" class="container">	
+		<h1>{{test.title}}</h1>
+		<h4>{{test.description}}</h4>
+		<p>{{test.instructions}}</p>
+		<hr>
+		{% for part in test.part_exam %}
+			<h3>{{part.name}}</h3>
+			{% for section in part.section_part %}
+				<h4>{{section.section_type}}</h4>
+				<h4>Instructions:</h4> 
+				<p>{{section.section_instructions}}</p>
+				<div style="margin-left:50px;">
+					{% for question in section.question_section %}
+						{% if question %}
+							<p>Q {{question.serial}} : {{question.content}}</p>
 
-	<div id="main" class="container">
-		{% for test_sample in test %}
-			<h1>{{test_sample.title}}</h1>
-			<h4>{{test_sample.description}}</h4>
-			<p>{{test_sample.instructions}}</p>
-			<hr>
-			{% for part in test_sample.part_exam %}
-				<h3>{{part.name}}</h3>
-				{% for section in part.section_part %}
-					<h4>{{section.section_type}}</h4>
-					<h4>Instructions:</h4> 
-					<p>{{section.section_instructions}}</p>
-					<div style="margin-left:50px;">
-						{% for question in section.question_section %}
-							{% if question %}
-								<p>Q {{question.serial}} : {{question.content}}</p>
+							<form method="post" action="" ind="myform">
+							{% csrf_token %}
 
-								<form method="post" action="" id="myform">
-    							{% csrf_token %}
-
-								{% for choices in question.question_choices_question %}
+							{% for choices in question.question_choices_question %}
+								
+								<div id="{{question.serial}}">
+								{% if section.section_type == "multiple_choice_correct_type" %}
+									{% for choice in choices.choices %}
 									
-									<div id="{{question.serial}}">
-									{% if section.section_type == "multiple_choice_correct_type" %}
-										{% for choice in choices.choices %}
-										
 
-											<input type="checkbox"  
-											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-											value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
-										{% endfor %}
+										<input type="checkbox"  
+										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
+										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+									{% endfor %}
+
+								{% else %}
+
+									{% if section.section_type == "integer_type" %}	
+
+										<input type="text"  
+										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
+										 >  <br>
 
 									{% else %}
+										
+										{%if section.section_type == "single_choice_correct_type" %}
 
-										{% if section.section_type == "integer_type" %}	
+												{% for choice in choices.choices %}
+									
+										<input type="radio"  
+										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
+										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 
-											<input type="text"  
-											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-											 >  <br>
+												{% endfor %}
 
 										{% else %}
-											
-											{%if section.section_type == "single_choice_correct_type" %}
 
-													{% for choice in choices.choices %}
-										
-											<input type="radio"  
-											class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
-											value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
-
-													{% endfor %}
-
-											{% else %}
-
-											{% endif %}
+										{% endif %}
 
 
-										{% endif%}
+									{% endif%}
 
-									{% endif %}
+								{% endif %}
 
-				    				
-				    				</div>
-				    				<br>
+			    				
+			    				</div>
+			    				<br>
 
-								{% endfor %}
-								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="clear">Clear</button>
-								<button type="button" class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
-								</form>
+							{% endfor %}
+							<button type="button" class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" value="clear">Clear</button>
+							<button type="button" class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
+							</form>
 
-							{% else %}
-								<p>No Questions</p>
-							{% endif %}
+						{% else %}
+							<p>No Questions</p>
+						{% endif %}
 
-						{% endfor %}
-					</div>
-					<br>
-				{% endfor %}
+					{% endfor %}
+				</div>
+				<br>
 			{% endfor %}
-			<center>
-				<button><a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test_sample.id %}">Submit</a>
-				</button>
-			</center>
-
 		{% endfor %}
-		
+		<center>
+			<button><a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test.id %}">Submit</a>
+			</button>
+		</center>	
 	</div>
 
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
