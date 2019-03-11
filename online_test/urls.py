@@ -26,9 +26,8 @@ urlpatterns = [
 	#for results
 	path('resultslist/', views.ResultListView.as_view(), name='resultlist'),
 	path('resultslist/<exam>/', views.ResultDetailView.as_view(), name='resultdetail'),
+	path('resultslist/<exam>/<student>/detail', views.ResultFullDetailView.as_view(), name='resultfulldetail'),
 	#path('user/submitselected/',views.get_request_choice, name = 'submitselected'),
 	#path('managetests/<slug:slug>/dynamic', views.DynamicChoiceSubmit.as_view(), name='dynamicsubmit'),
-
-
 
 ]

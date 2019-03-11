@@ -409,7 +409,7 @@ class PartDelete(DeleteView):
     	context['parts'] = Part.objects.filter(exam=exam)
     	context['sections'] = Section.objects.filter(exam=exam)
     	context['questions'] = Question.objects.filter(exam=exam)
-    	return context 
+    	return context
 
 class TestDelete(DeleteView):
 	model=Exam
@@ -422,8 +422,7 @@ class ResultListView(generic.TemplateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(ResultListView,self).get_context_data(**kwargs)
-		tests = Exam.objects.filter(test_completed=True)
-		print(tests)
+		tests = Exam.objects.all().order_by('-created_on')
 		context['tests'] = tests
 		return context
 
@@ -432,13 +431,24 @@ class ResultDetailView(generic.TemplateView):
 
 	def get_context_data(self,**kwargs):
 		context = super(ResultDetailView,self).get_context_data(**kwargs)
-
-
 		exam = Exam.objects.get(title=self.kwargs['exam'])
 		students = Result.objects.filter(test_id=exam)
 		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
 		context['students'] = students
-		print(students)
+		return context
+
+class ResultFullDetailView(generic.TemplateView):
+	template_name = 'online_test/fulltestresult.html'
+
+	def get_context_data(self,**kwargs):
+		context = super(ResultFullDetailView,self).get_context_data(**kwargs)
+		exam = Exam.objects.get(title=self.kwargs['exam'])
+		student = Student.objects.get(student_username=self.kwargs['student'])
+		result = Result.objects.get(test_id=exam, student_username=student)
+		context['studentresult'] = result
+		#markedchoices = incorporate all the type of datachoices
+		context['selectedchoices'] = result.result_json['user_choices']
+		print(result.result_json['user_choices']['3'])
 		return context
 
 class QuestionChoiceAdd(CreateView):

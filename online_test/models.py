@@ -282,6 +282,7 @@ class Dynamic(models.Model):
 	student_id= models.ForeignKey(Student,on_delete=models.CASCADE)
 	test_id=models.ForeignKey(Exam,on_delete=models.PROTECT)
 	progress=JSONField(blank=True)
+	progress_flags = JSONField(blank=True)
 
 	def __str__(self):
 		return str(self.student_id)

@@ -24,16 +24,20 @@ class UserDashboardView(generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-#class TakeTestView(APIView):
-class TakeTestView(generic.TemplateView):
+class TakeTestView(APIView):
+#class TakeTestView(generic.TemplateView):
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
-		serializer = ExamSerializer(instance=exam,many=True)
 		student_instance=Student.objects.get(student_username=student)
+		context = {
+			"exam":exam,
+			"student":student_instance,
+		}
+		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		#return Response(serializer.data[0])
-		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		return Response(serializer.data[0])
+		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -143,8 +147,12 @@ def Thank_view(request,student,exam_id):
 		student=Student.objects.get(student_username=student)
 		exam_object = Exam.objects.get(id=exam_id)
 		current_progress=Dynamic.objects.get(student_id=student,test_id=exam_object)
+		print(exam_object)
+
 		progress=current_progress.progress
 		student=current_progress.student_id
+		print(progress)
+		print(student)
 		test=current_progress.test_id
 		
 		result_object={}
@@ -242,9 +250,7 @@ def Thank_view(request,student,exam_id):
 		
 		result_object.update({'user_choices':current_progress.progress})
 		result_object.update(final)
-		print(performance)
 
-		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
 			Result.objects.create(
 				test_completed= True,
