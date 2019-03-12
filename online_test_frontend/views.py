@@ -24,8 +24,8 @@ class UserDashboardView(generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-#class TakeTestView(APIView):
-class TakeTestView(generic.TemplateView):
+class TakeTestView(APIView):
+#class TakeTestView(generic.TemplateView):
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
@@ -36,8 +36,8 @@ class TakeTestView(generic.TemplateView):
 		}
 		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		#return Response(serializer.data[0])
-		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		return Response(serializer.data[0])
+		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)

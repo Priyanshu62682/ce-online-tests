@@ -51,11 +51,14 @@ class QuestionSerializer(serializers.ModelSerializer):
 			pastbackup = Dynamic.objects.get(test_id=exam,student_id=student)
 			try:
 				previous_choice = pastbackup.progress[str(obj.serial)]
+				print(previous_choice[0])
+				previous_choice = int(previous_choice[0])
 			except:
 				previous_choice = None
 
 			try:
 				previous_flag = pastbackup.progress_flags[str(obj.serial)]
+				previous_flag = int(previous_flag[0])
 			except:
 				previous_flag = None
 
