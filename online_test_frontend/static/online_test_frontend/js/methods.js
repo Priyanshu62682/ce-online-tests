@@ -74,67 +74,27 @@ function CheckQueAttemptStatus() {
     }), $(".lblTotalQuestion").text(e), $(".lblNotAttempted").text(t), $(".lblTotalSaved").text(a), $(".lblTotalSaveMarkForReview").text(n), $(".lblTotalMarkForReview").text(s), $(".lblNotVisited").text(i)
 }
 
-
-function CheckResult() {
-    var n = 0
-    $('#tbodyResult').html();
-    var score = 0;
-    var TotalQuestion = 0;
-    var TotalAttempted = 0;
-    var TotalCorrect = 0;
-    var TotalWrong = 0;
-
-    $(".test-questions").find("li").each(function () {
-        var r = $(this);
-        var a = r.find("a").attr("data-href");
-        var currectAns = $("#" + a).find(".hdfCurrectAns").val();
-        var currectQue = $("#" + a).find(".question-title").text();
-        TotalQuestion = TotalQuestion + 1;
-        var tr = $('<tr></tr>');
-        tr.append('<td>' + currectQue + '</td>');
-        var ansStatus = "Wrong";
-        var selectedAns = '';
-        if (r.children().hasClass("que-save") || r.children().hasClass("que-save-mark")) {
-            $("#" + a).find("input[name='radios" + a + "']").each(function () {
-                var e = $(this);
-                if (e.is(':checked')) {
-                    selectedAns = e.val();
-                    if (e.val() == currectAns) {
-                        ansStatus = "Correct";
-                    }
-                }
-            });
-            if (ansStatus == 'Correct') {
-                score = score + 4;
-                TotalCorrect = TotalCorrect + 1;
-            } else {
-                score = score - 1;
-                TotalWrong = TotalWrong + 1;
-            }
-            TotalAttempted = TotalAttempted + 1;
+function sendResponseData(studentName, examId, questionNumber, selectedOption, flag) {
+    var answerResponse={
+        "questionNumber" : parseInt(questionNumber),
+        "choice": parseInt(selectedOption),
+        "state": parseInt(selectedOption)
+    };
+    var answerResponseJ= JSON.stringify(answerResponse);
+    $.ajax({
+        type:'POST',
+        url: "{% url 'online_test_frontend:submitselected' %}",
+        data:{
+            
+            student:studentName,
+            exam_id: examId,
+            progress: answerResponseJ,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success:function(){
+            console.log('saved')
         }
-        if (r.children().hasClass("que-save") || r.children().hasClass("que-save-mark")) {
-            tr.append('<td>' + selectedAns + '</td>');
-        } else {
-            tr.append('<td>---</td>');
-        }
-        if (r.children().hasClass("que-save") || r.children().hasClass("que-save-mark")) {
-            if (ansStatus == 'Correct') {
-                tr.append('<td><span class="label label-success">' + ansStatus + '</span></td>');
-            } else {
-                tr.append('<td><span class="label label-danger">' + ansStatus + '</span></td>');
-            }
-        } else {
-            tr.append('<td>N/A</td>');
-        }
-        tr.append('<td>' + currectAns + '</td>');
-        $('#tbodyResult').append(tr);
     });
-    $('#lblRTotalQuestion').text(TotalQuestion);
-    $('#lblRTotalAttempted').text(TotalAttempted);
-    $('#lblRTotalCorrect').text(TotalCorrect);
-    $('#lblRTotalWrong').text(TotalWrong);
-    $('#lblRScore').text(score);
 }
 
 $(document).ready(function () {
@@ -154,20 +114,31 @@ $(document).ready(function () {
             $(this).parent().addClass("active"),
             $(this).hasClass("que-save") || $(this).hasClass("que-save-mark") || $(this).hasClass("que-mark") || ($(this).addClass("que-not-answered"), $(this).removeClass("que-not-attempted")), e.hasClass("que-save") || e.hasClass("que-save-mark") || e.hasClass("que-mark") || (e.addClass("que-not-answered"), e.removeClass("que-not-attempted")), OpenCurrentQue($(this))
     });
+
     $(".btn-save-answer").click(function (e) {
         e.preventDefault();
         var t = $(".test-questions").find("li.active"),
             a = t.find("a").attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
+            selectedOption = $("input[name='radios" + a + "']:checked").val() ? $("input[name='radios" + a + "']:checked").val() : 0, //selected option
+            studentName = $("input[name='radios" + a + "']").attr('studentName'),
+            examId = $("input[name='radios" + a + "']").attr('class'),
             n = ($("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(), $("#" + a).find(".hdfCurrectAns").val(), !1);
         if ($("input[name='radios" + a + "']").each(function () {
             $(this).is(":checked") && (n = !0)
         }), 0 == n) { alert("Please choose an option"); return !1 };
-        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-save-mark"), t.find("a").removeClass("que-mark"), t.find("a").addClass("que-save"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus()
+        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-save-mark"), t.find("a").removeClass("que-mark"), t.find("a").addClass("que-save"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus();
+        sendResponseData(studentName, examId, questionNumber, selectedOption, 0);
     });
+
     $(".btn-save-mark-answer").click(function (e) {
         e.preventDefault();
         var t = $(".test-questions").find("li.active"),
             a = t.find("a").attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]) //question number
+            selectedOption = $("input[name='radios" + a + "']:checked").val() ? $("input[name='radios" + a + "']:checked").val() : 0, //selected option
+            studentName = $("input[name='radios" + a + "']").attr('studentName'),
+            examId = $("input[name='radios" + a + "']").attr('class'),
             n = ($("#" + a).find(".hdfQuestionID").val(),
                 $("#" + a).find(".hdfPaperSetID").val(),
                 $("#" + a).find(".hdfCurrectAns").val(),
@@ -176,13 +147,20 @@ $(document).ready(function () {
             $(this).is(":checked") && (n = !0)
         }), 0 == n) { alert("Please choose an option"); return !1 };;
         $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-save"), t.find("a").removeClass("que-mark"), t.find("a").addClass("que-save-mark"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus()
+        sendResponseData(studentName, examId, questionNumber, selectedOption, 1);
     });
+
     $(".btn-mark-answer").click(function (e) {
         e.preventDefault();
         var t = $(".test-questions").find("li.active"),
-            a = t.find("a").attr("data-href");
+            a = t.find("a").attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
+            studentName = $("input[name='radios" + a + "']").attr('studentName'),
+            examId = $("input[name='radios" + a + "']").attr('class');
         $("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(), $("#" + a).find(".hdfCurrectAns").val(), $("#" + a).find(".hdfCurrectAns").val(), t.find("a").removeClass("que-save-mark"), t.find("a").removeClass("que-save"), t.find("a").addClass("que-mark"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus()
+        sendResponseData(studentName, examId, questionNumber, 0, 1);
     });
+
     $(".btn-reset-answer").click(function (e) {
         e.preventDefault();
         var t = $(".test-questions").find("li.active"),
@@ -204,6 +182,7 @@ $(document).ready(function () {
             //NextQuestion(!1),
             CheckQueAttemptStatus()
     });
+
     $(".btn-submit-all-answers").click(function (e) {
         e.preventDefault(), $(this),
             $(".test-questions").find("li").each(function () {
@@ -226,6 +205,7 @@ $(document).ready(function () {
             $(".exam-summery").show(),
             CheckQueAttemptStatus()
     });
+
     $("#btnYesSubmit").on("click", function (e) {
         e.preventDefault(), $(".exam-confirm").show(), $("#divdrplngcng").hide(), $(".exam-summery").hide()
     });

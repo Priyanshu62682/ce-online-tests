@@ -36,8 +36,8 @@ class TakeTestView(APIView):
 		}
 		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		return Response(serializer.data[0])
-		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		#return Response(serializer.data[0])
+		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)

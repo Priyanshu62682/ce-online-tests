@@ -52,7 +52,7 @@
 							<tr class="full-width">
 								<td class="full-width"><h1 class="full-width"> {{test.title}} </h1></td>
 								{% for part in test.part_exam %}
-									<td class="full-width"><a class="full-width mb5 btn btn-primary btn-lg stream_1" href="javascript:void(0);" data-href="page1">{{part.name}}</a></td>
+									<td class="full-width"><a class="full-width mb5 btn btn-primary btn-lg stream_1" href="javascript:void(0);" data-href="page{{part.first_serial}}">{{part.name}}</a></td>
 								{% endfor %}
 							</tr>
 						</tbody>
@@ -105,42 +105,27 @@
 															<input type="hidden" value="4" class="hdfCurrectAns">
 															<div class="question-height">
 																<h4 class="question-title"> Question {{question.serial}}: <img src="{% static 'online_test_frontend/img/down.png' %}" class="btndown pull-right"> </h4>
-																<div>{{question.content}}</div>
-																<br>
-																<!-- <table class="table table-borderless mb0">
-																	<tbody>
-																		<tr> -->
-																	{% for choices in question.question_choices_question %}
-																	<!-- <div id="{{question.serial}}"> -->
+																<div>{{question.content}}</div><br>
+																{% for choices in question.question_choices_question %}
 																	{% if section.section_type == "multiple_choice_correct_type" %}
 																		{% for choice in choices.choices %}
 																			<input type="checkbox"  
-																			class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+																			class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice.0|floatformat:"0" == forloop.counter %}checked{% endif %} id= "{{student}}" name="checkBox{{question.serial}}"
 																			value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 																		{% endfor %}
 								
 																	{% elif section.section_type == "integer_type" %}
 																		<input type="text"  
-																		class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}"><br>
+																		class="{{test.id}}" id= "{{student}}" name="input{{question.serial}}"><br>
 								
 																	{% elif section.section_type == "single_choice_correct_type" %}
 																		{% for choice in choices.choices %}
-																		<input type="radio"  
-																		class="{{test_sample.id}}" id= "{{student}}" name="radiospage{{question.serial}}" 
+																		<input studentName="{{student}}"  type="radio"  
+																		class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice.0|floatformat:"0" == forloop.counter %}checked{% endif %} id= "{{student}}" name="radiospage{{question.serial}}" 
 																		value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 																		{% endfor %}
-																	{% else %}
-																	{% endif %}
-																	<!-- </div> -->
-																	<br>
-																	{% endfor %}
-																		<!-- 	<td> <input type="radio" value="1" name="radiospage01" id="rOption1_1"> 1 ) </td>
-																			<td> <input type="radio" value="2" name="radiospage01" id="rOption1_1"> 2 ) </td>
-																			<td> <input type="radio" value="3" name="radiospage01" id="rOption1_1"> 3 ) </td>
-																			<td> <input type="radio" value="4" name="radiospage01" id="rOption1_1"> 4 ) </td> -->
-																		<!-- </tr>
-																	</tbody>
-																</table> -->
+																	{% endif %}<br>
+																{% endfor %}
 																<div class="question-footer"><img src="{% static 'online_test_frontend/img/up.png' %}" class="btnup pull-right"></div>
 															</div>
 														</div>
@@ -194,21 +179,17 @@
 					<div class="panel panel-default ">
 						<div class="panel-body " style="height:320px;overflow-y:scroll;">
 							<ul class="pagination test-questions">
-								<li class="active" data-seq="1"><a class="test-ques que-not-answered" href="javascript:void(0);" data-href="page1">01</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page2">02</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page3">03</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page4">04</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page5">05</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page6">06</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page7">07</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page8">08</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page9">09</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page10">10</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page11">11</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page12">12</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page13">13</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page14">14</a></li>
-								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page15">15</a></li>
+								{% for part in test.part_exam %}
+									{% for section in part.section_part %}
+										{% for question in section.question_section %}
+											{% if question %}
+												<li class="{% if question.serial == 1 %} active {% endif %}" data-seq="1"><a class="test-ques {% if question.serial == 1 %} que-not-answered {% else %} que-not-attempted {% endif %}" href="javascript:void(0);" data-href="page{{question.serial}}">{% if not question.serial > 10 %}0{% endif %}{{question.serial}}</a></li>
+											{% else %}
+												<p>No Questions</p>
+											{% endif %}
+										{% endfor %}
+									{% endfor %}
+								{% endfor %}
 							</ul>
 						</div>
 					</div>
