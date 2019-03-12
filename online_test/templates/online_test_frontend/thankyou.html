@@ -1,8 +1,28 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-
-
-<h1> Thank You for taking the Test. </h1>
-
+<div class="container">
+	<center>
+	<h1>{{message}}</h1>
+	<h3>Your score : {{total_score}} </h3>
+	</center>
+	<table class="table table-bordered table-striped">
+	    <thead>
+	      <tr>
+	        <th>Question</th>
+	        <th>Your answer</th>
+	        <th>Correct Answer</th>
+	        <th>Marks Awarded</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    	{% for p in performance%}
+	    	<tr>{%for items in p%}
+	    		<td class="col-md-1">{{items}}</td>
+	    		{% endfor %}
+			</tr>
+	    	{% endfor %}
+	    </tbody>
+	</table>
+</div>
 
 {% endblock %}

@@ -45,7 +45,7 @@ class Exam(models.Model):
 		help_text = "Enter the url for the test",
 		)
 	description = models.CharField(
-		max_length=300,
+		max_length=2000,
 		verbose_name = "test description",
 		help_text = "Test description",
 		blank = True,
@@ -126,7 +126,7 @@ class Part(models.Model):
 		return self.name
 
 class Section(models.Model):
-	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_choice_type','match_choice_type')
+	STATUS = Choices('single_choice_correct_type','multiple_choice_correct_type','integer_type','match_type')
 	
 	# part_choices = Choices('Physics','Chemistry','Maths')
 	# part = StatusField(choices_name='part_choices')
@@ -178,18 +178,33 @@ class Question(models.Model):
 	figure = models.ImageField(upload_to='diagrams/',
 		blank = True,
 		)
+	serial = models.IntegerField(
+		blank = False,
+		)
 	def get_choices(self):
-		choices = SingleChoiceCorrect.objects.filter(question_id=self)
-		#marks = self.singlechoicecorrect_set.select_related('singlechoicecorrect_question')
-		return choices
+		choices_instance = QuestionChoices.objects.get(question_id=self)
+		choices_json = choices_instance.choices
+		return choices_json
+
+	def correct_choice(self):
+		choices_instance = QuestionChoices.objects.get(question_id=self)
+
+		
+		correct_choice = choices_instance.correct_choice
+		
+		return correct_choice
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.content)
 
 
 class SingleChoiceCorrect(models.Model):
 
-	STATUS = Choices('Choice-1','Choice-2','Choice-3','Choice-4')
+	CHOICES = (
+		('A','choice_1'),
+		('B','choice_2'),
+		('C','choice_3'),
+		('D','choice_4'))
 	question_id = models.ForeignKey(Question,related_name='singlechoicecorrect_question',on_delete=models.CASCADE)
 	choice_1 = models.CharField(
 		max_length=50,
@@ -211,7 +226,17 @@ class SingleChoiceCorrect(models.Model):
 		blank=False,
 		verbose_name = "Choice 4",
 		)
-	correct_choice = StatusField()
+	correct_choice = models.CharField(max_length=10, choices=CHOICES)
+	
+	def __str__(self):
+		return str(self.question_id)
+
+class QuestionChoices(models.Model):
+
+	question_id = models.ForeignKey(Question,related_name='question_choices_question',on_delete=models.CASCADE)
+	section = models.ForeignKey(Section,on_delete=models.CASCADE)
+	choices = JSONField()
+	correct_choice = JSONField()
 	
 	def __str__(self):
 		return str(self.question_id)
@@ -257,6 +282,7 @@ class Dynamic(models.Model):
 	student_id= models.ForeignKey(Student,on_delete=models.CASCADE)
 	test_id=models.ForeignKey(Exam,on_delete=models.PROTECT)
 	progress=JSONField(blank=True)
+	progress_flags = JSONField(blank=True)
 
 	def __str__(self):
 		return str(self.student_id)

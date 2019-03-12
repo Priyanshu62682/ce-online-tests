@@ -5,47 +5,50 @@
 
 	<h4 >Upcoming registered tests:</h4>
 	<div class="block">
-		{% for test in registered_tests %}
-			<div class="subscription-list">
-				<div class="test-description">
-					<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
-						<a href="{% url 'online_test_frontend:test' student=student exam=test.exam %}">{{test.exam}}</a>
-					</div>
-					<div class="description-block" 
-						<h4>Part Syllabus Test</h4>
-						<h6>On board Pattern</h6>
-						<button>
-						Register
-					</button>
+		{% if registered_tests %}
+			{% for test in registered_tests %}
+				<div class="subscription-list">
+					<div class="test-description">
+						<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
+						</div>
+						<div class="description-block">
+							{{test.exam}}
+							<h6>On board Pattern</h6>
+							<button>
+								<a href="{% url 'online_test_frontend:usertestinfo' student=student exam=test.exam %}">Start Now
+								</a>
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		{% endfor %}
-
-
+			{% endfor %}
+		{% else %}
+			<center>
+				<p>No registered tests</p>
+			</center>
+		{% endif %}
+	</div>	
 	<h4 >Available Tests :</h4>
 	<div class="block">
 		{% for test in active_tests %}
 		<div class="subscription-list">
 			<div class="test-description">
 				<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
-					<a href="{% url 'online_test_frontend:test' student=student exam=test.title %}">{{test}}</a>
 				</div>
-				<div class="description-block" 
-					<h4>Part Syllabus Test</h4>
+				<div class="description-block"> 
+					<h2>{{test}}</h2>
 					<h6>On board Pattern</h6>
 					<button>
-					Register
+						<a href="{% url 'online_test_frontend:subscribetest' student=student exam=test.title %}" >Register Now</a>
 				</button>
+
+
 				</div>
 
 			</div>
 		</div>
 		{% endfor %}
 	</div>
-	
-	</div>
-		
 	
 </div>
 {% endblock %}

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'online_test_frontend/css/questionStyle.css' %}">
 <title>Conceptum Education Online Test</title>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -25,10 +26,13 @@
 
 <!-- Before the quiz content -->
 	<div class="menu-bar">
-
 	</div>
-	{% block content %}
-	{% endblock %}
-
+	<div class="">
+		{% block content %}
+		{% endblock %}
+	</div>
+	
+	<script src="{% static 'online_test_frontend/js/anti-cheat.js' %}" type="text/javascript"></script>
+	<script src="{% static 'online_test_frontend/js/methods.js' %}" type="text/javascript"></script>
 </body>
 </html>

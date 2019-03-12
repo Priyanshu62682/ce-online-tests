@@ -1,0 +1,16 @@
+{% extends "online_test_frontend/index.html" %}
+{% block content %}
+<div class="container">
+	<center>
+	<h2>{{exam}}</h2>
+	<h3>Scheduled On:</h3>
+	<hr>
+	<form action="{% url 'online_test_frontend:subscribetest' student=student exam=exam %}" method="post">
+		{% csrf_token %}
+    	{{ form.as_p }}
+    	<input type="submit" value="SAVE">
+	</form>
+	</center>
+</div>
+
+{% endblock %}

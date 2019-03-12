@@ -13,6 +13,7 @@
 	        {% endfor %}
 
 	        <th>Total Marks</th>
+	        <th>Detail</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -20,10 +21,14 @@
 	    	<tr>
 	    		<td class="col-md-1"><a href="">{{student.student_username}}</a></td>
 	    		
-	        	{% for part in exam.related_parts %}    
-					<td class="col-md-1">{{part.name}} Marks</td>
+	        	{% for part in student.result_json.part_result %}
+	        		<td class="col-md-1">{{part.score}}</td> 
+					<!--td class="col-md-1">{{part.score}} Marks</td-->
 				{% endfor %}
-				<td class="col-md-1"></td>
+				<td class="col-md-1">{{student.result_json.total_score}} </td>
+
+				<td class="col-md-1"><a href="{% url 'online_test:resultfulldetail' exam=exam student=student %}">See complete result</a></td>
+
 	        	<!--td><button type="button" class="btn btn-primary btn-sm">EDIT</button></td-->
 			</tr>
 	    	{% endfor %}

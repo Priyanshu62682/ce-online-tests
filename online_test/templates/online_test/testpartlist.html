@@ -1,108 +1,58 @@
 {% extends "online_test/index.html" %}
 {% block content %}
-
-<script
-  src="https://code.jquery.com/jquery-3.3.1.js"
-  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-  crossorigin="anonymous"></script>
-
- <!--  <script>
-// function makeJason(){
-  	 
-//     jsonObj = [];
-//     $("input[type=radio]").each(function() {
-
-//         var selectedChoice = $('input[name=fruitName]:checked').val();
-//         var id = $(this).attr("id");
-//         item= {}
-//         item["id"]= id
-//         item["choice"]= selectedChoice;
-   
-
-//         jsonObj.push(item);
-//     });
-  	
-//   	}
-
-alert("yo1");
-$('input[id=my]').on('change', function() {
-    // makeJason();
-    $(this).closest("form").submit();
-    alert("yo");
-});
-</script> -->
-
-
-
-	<div class="container">
-
-		<div class="test-detail-style">
-			<h1>{{exam.title}}</h1>
-			<strong style="padding:10px 10px 0px 0px; ">Select Part</strong>
-				
-			{% for part in parts %}
-		</br>
-				<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
-					{{part}}
-				</a>
-				<a  href="{% url 'online_test:deletepart' slug=exam.url pk=part.id %}">
-					Delete Part
-				</a>
+<div class="container">
+	<div class="test-detail-style">
+		<h1>{{exam.title}}</h1>
+		<strong style="padding:10px 10px 0px 0px; ">Select Part</strong>
 			
-			{% endfor %}
-			<div class="addnewpart">
-				<a href="{% url 'online_test:createpart' testslug=exam.url %}">
-					Add new Part
-					<span  class="fa-stack fa-lg">
-						<i class="fa fa-plus fa-2x"></i>	
-					</span>	
-				</a>
-			</div>
-		</div>
+		{% for part in parts %}
 	</br>
-	</br>
-		<div class="sectionliststyle">
-
-			{% for question in questions %}
-			    <div class="section-box-question">
-			    	<div class="section-box-detail-question">
-			    		
-			    		<h6>Q: </h6> <small>{{question.content}}</small><br>
-			    	</div>
-			    	<div class="section-box-edit-question">
-	    			<form method="post" action="" id="myform">
-	    				{% csrf_token %}
-
-			    		<ul>
-			    			{% if question.get_choices %}
-				    			{% for choice in question.get_choices %}
-
-				    			<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_1}}" > {{choice.choice_1}}<br>
-				    				
-				    			<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_2}}" >{{choice.choice_2}}<br>
-				    				<input type="radio"  class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_3}}"  >{{choice.choice_3}}<br>
-				    				<input type="radio" class="{{exam.id}}" id= "options" name="{{question.id}}" value="{{choice.choice_4}}"  >{{choice.choice_4}}<br>
-				    				<input type="submit"  class="{{exam.id}}" id= "options" value="save"   name="submit" >
-
-				    				<h6>Correct-choice: </h6> <small>{{choice.correct_choice}}</small> 
-				    				
-				    			{% endfor %}
-				    		{% else %}
-				    			
-			    			{% endif %}
-			    		</ul>
-			    	</form>
-			    		
-			        </div>
-
-			    </div>
-		    {% endfor %}
+			<a  href="{% url 'online_test:sections' testslug=exam.url part=part %}">
+				{{part}}
+			</a>
+			<a  href="{% url 'online_test:deletepart' slug=exam.url pk=part.id %}">
+				Delete Part
+			</a>
+		
+		{% endfor %}
+		<div class="addnewpart">
+			<a href="{% url 'online_test:createpart' testslug=exam.url %}">
+				Add new Part
+				<span  class="fa-stack fa-lg">
+					<i class="fa fa-plus fa-2x"></i>	
+				</span>	
+			</a>
 		</div>
-		
-		
 	</div>
+</br>
+</br>
+	<div class="sectionliststyle">
 
-</script> -->
+		{% for question in questions %}
+		    <div class="section-box-question">
+		    	<div class="section-box-detail-question">
+		    		
+		    		<h6>Q: </h6> <small>{{question.content}}</small><br>
+		    	</div>
+		    	<div class="section-box-edit-question">
+    			<form method="post" action="" id="myform">
+    				{% csrf_token %}
 
+		    		<ul>
+		    			{% for choice in question.get_choices %}
+		    				<li>{{choice}} </li>
+							
+		    			{% endfor %}
+		    			<h6>Correct-choice: </h6> <small>{{question.correct_choice }}</small> 
+		    					
+		    		</ul>
+		    	</form>
+		    		
+		        </div>
+
+		    </div>
+	    {% endfor %}
+	</div>
+</div>
 {% endblock %}
 

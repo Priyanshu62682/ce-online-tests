@@ -10,9 +10,14 @@
 		<table>
 	    	{% for form in formset %}
 	    		<tr>
-	    			<td><label>{{ form.content.label }}</lab></td>
+	    			<td><label>{{ form.serial.label }}</label></td>
+	    			<td><label>{{ form.content.label }}</label></td>
 	    		</tr>
 	    		<tr>
+	    			<td>
+						<input name="form-{{ forloop.counter0 }}-serial" id="id_form-{{ forloop.counter0 }}-id_serial" required 
+						placeholder="Enter serial number">
+					</td>
 	    			<td>
 	    				<textarea name="form-{{ forloop.counter0 }}-content" id="id_form-{{ forloop.counter0 }}-content" rows="4" cols="70" required 
 						placeholder="Enter the question"></textarea>

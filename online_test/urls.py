@@ -10,11 +10,11 @@ urlpatterns = [
 	path('managetests/<slug:slug>/', views.TestPartView.as_view(), name='testdetail'),
 	path('managetests/<testslug>/<part>/', views.TestSectionListView.as_view(), name='sections'),
 	path('managetests/<testslug>/addnewpart', views.CreatePartView.as_view(), name='createpart'),
-	path('managetests/<exam>/<part>/createmultiplechoicesection',views.CreateSectionView.as_view(), name = 'singlechoicecreatesection'),
-	path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateMultipleSectionView.as_view(), name = 'multiplechoicecreatesection'),
-	# path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateIntegerSectionView.as_view(), name = 'integerchoicecreatesection'),
-	# path('managetests/<exam>/<part>/createsinglechoicesection',views.CreateMatchSectionView.as_view(), name = 'matchchoicecreatesection'),
-	path('managetests/<exam>/<part>/<section>/newquestion',views.QuestionChoiceAdd, name = 'addnewquestion'),
+	path('managetests/<exam>/<part>/createsinglechoicesection/',views.CreateSectionView.as_view(), name = 'singlechoicecreatesection'),
+	path('managetests/<exam>/<part>/createmultiplechoicesection',views.CreateMultipleSectionView.as_view(), name = 'multiplechoicecreatesection'),
+	path('managetests/<exam>/<part>/createintegersection',views.CreateIntegerSectionView.as_view(), name = 'integercreatesection'),
+	path('managetests/<exam>/<part>/creatematchsection',views.CreateMatchSectionView.as_view(), name = 'matchcreatesection'),
+	path('managetests/<exam>/<part>/<section>/newquestion',views.QuestionChoiceAdd.as_view(), name = 'addnewquestion'),
 	path('managetests/<exam>/<part>/<section>/newquestionbatch',views.AddQuestionViewBatch.as_view(), 
 		name = 'addnewquestionbatch'),
 	path('managetests/<exam>/<part>/<section>/updatesection',views.SectionUpdateView.as_view(), name = 'updatesection'),
@@ -26,9 +26,8 @@ urlpatterns = [
 	#for results
 	path('resultslist/', views.ResultListView.as_view(), name='resultlist'),
 	path('resultslist/<exam>/', views.ResultDetailView.as_view(), name='resultdetail'),
+	path('resultslist/<exam>/<student>/detail', views.ResultFullDetailView.as_view(), name='resultfulldetail'),
 	#path('user/submitselected/',views.get_request_choice, name = 'submitselected'),
 	#path('managetests/<slug:slug>/dynamic', views.DynamicChoiceSubmit.as_view(), name='dynamicsubmit'),
-
-
 
 ]
