@@ -24,8 +24,8 @@ class UserDashboardView(generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-class TakeTestView(APIView):
-#class TakeTestView(generic.TemplateView):
+#class TakeTestView(APIView):
+class TakeTestView(generic.TemplateView):
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
@@ -36,8 +36,8 @@ class TakeTestView(APIView):
 		}
 		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		return Response(serializer.data[0])
-		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		#return Response(serializer.data[0])
+		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -60,16 +60,18 @@ def get_request_choice(request):
 		progress=request.POST['progress']
 		data_input = json.loads(progress)
 		new_input={data_input['question_num']:data_input['selected_choice']}
-
-		# print(new_input)
+		print('************')
+		print(new_input)
 		exam_id=Exam.objects.get(id=request.POST['exam_id'])
 		student=Student.objects.get(student_username=request.POST['student'])
 
 		if Dynamic.objects.filter(student_id=student,test_id=exam_id).exists():
 			current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
 			progress_old=current_progress.progress
-			# print(progress_old)
+			print('-----------')
+			print(progress_old)
 			progress_old.update(new_input)
+			print(progress_old)
 			current_progress.progress=progress_old
 			current_progress.save()
 
@@ -85,23 +87,14 @@ def get_request_choice(request):
 	return HttpResponse('')
 
 def calculate_SCC(question,choice_object_json,progress):
-	# print(choice_object_json.choices)
-	# print(progress['2'])
-	# for answer in progress[question.serial]:
-	# 	for correct in choice_object_json.correct_choice:
-	# 		if answer==
-	# print(question.serial)
-	# print(progress[str(question.serial)])
+
 	key = str(question.serial)
 	if progress[key]==choice_object_json.correct_choice:
 		marks = question.section.positive_marks
 	else:
 		marks = question.section.negative_marks
-	
-	#print("Marks awarded: "+ str(marks))
 
 	return marks
-	# return 0
 
 def calculate_MCC(question,choice_object_json,progress):
 	key = str(question.serial)

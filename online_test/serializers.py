@@ -66,7 +66,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 		except ObjectDoesNotExist:
-			previous_choice = None
+			previous_data = None
 		
 		return previous_data
 
@@ -85,10 +85,25 @@ class SectionSerializer(serializers.ModelSerializer):
 
 class PartSerializer(serializers.ModelSerializer):
 	section_part = SectionSerializer(many=True,required=False)
-	
+	total_questions = serializers.SerializerMethodField()
+	first_serial = serializers.SerializerMethodField()
+
+	def get_total_questions(self,obj):
+		exam = self.context.get("exam").first()
+		total_questions = Question.objects.filter(exam=exam, part=obj).count()
+		return total_questions
+
+	def get_first_serial(self, obj):
+		exam = self.context.get("exam").first()
+		try:
+			serial = Question.objects.filter(exam=exam, part=obj).order_by('serial').first().serial
+		except:
+			serial = None
+		return serial
+
 	class Meta:
 		model = Part
-		fields = ('name','section_part')
+		fields = ('name','total_questions','first_serial','section_part')
 
 
 
