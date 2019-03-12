@@ -58,7 +58,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 				previous_flag = pastbackup.progress_flags[str(obj.serial)]
 			except:
 				previous_flag = None
-				
+
 			previous_data ={
 					'previous_choice':previous_choice,
 					'previous_flag':previous_flag
@@ -85,7 +85,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
 class PartSerializer(serializers.ModelSerializer):
 	section_part = SectionSerializer(many=True,required=False)
-
+	
 	class Meta:
 		model = Part
 		fields = ('name','section_part')
