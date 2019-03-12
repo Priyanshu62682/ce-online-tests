@@ -1,251 +1,324 @@
 {% extends "online_test_frontend/index.html" %}
+{% load static %}
 {% block content %}
-	<div id="main" class="container">	
-		<h1>{{test.title}}</h1>
-		<h4>{{test.description}}</h4>
-		<p>{{test.instructions}}</p>
-		<hr>
-		{% for part in test.part_exam %}
-			<h3>{{part.name}}</h3>
-			{% for section in part.section_part %}
-				<h4>{{section.section_type}}</h4>
-				<h4>Instructions:</h4> 
-				<p>{{section.section_instructions}}</p>
-				<div style="margin-left:50px;">
-					{% for question in section.question_section %}
-						{% if question %}
-							<p>Q {{question.serial}} : {{question.content}}</p>
-
-							<form method="post" action="" ind="myform">
-							{% csrf_token %}
-
-							{% for choices in question.question_choices_question %}
-								
-								<div id="{{question.serial}}">
-								{% if section.section_type == "multiple_choice_correct_type" %}
-									{% for choice in choices.choices %}
-									
-
-										<input type="checkbox"  
-										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
-									{% endfor %}
-
-								{% else %}
-
-									{% if section.section_type == "integer_type" %}	
-
-										<input type="text"  
-										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
-										 >  <br>
-
-									{% else %}
-										
-										{%if section.section_type == "single_choice_correct_type" %}
-
-												{% for choice in choices.choices %}
-									
-										<input type="radio"  
-										class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" 
-										value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
-
-												{% endfor %}
-
-										{% else %}
-
-										{% endif %}
-
-
-									{% endif%}
-
-								{% endif %}
-
-			    				
-			    				</div>
-			    				<br>
-
-							{% endfor %}
-							<button type="button" class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" value="clear">Clear</button>
-							<button type="button" class="{{test.id}}" id= "{{student}}" name="{{question.serial}}" value="save">Save</button>
-							</form>
-
-						{% else %}
-							<p>No Questions</p>
-						{% endif %}
-
-					{% endfor %}
+	<header class="headerContainer">
+		<div class="headerNavbar">
+			<div class="container">
+				<div class="navbar-header">
+					<img src="{% static 'online_test_frontend/img/logo.png' %}" alt="NTA logo" class="img-responsive">
 				</div>
-				<br>
-			{% endfor %}
-		{% endfor %}
-		<center>
-			<button><a href="{% url 'online_test_frontend:thankyou' student=student exam_id=test.id %}">Submit</a>
-			</button>
-		</center>	
+				<div class="col-md-5 pull-right">
+					<div class="navbar-collapse">
+						<ul class="nav navbar-nav pull-right">
+							<li class="user-profile">
+								<table>
+									<tbody><tr>
+										<td style="padding: 5px 15px; border: 2px solid #666"><i class="fa fa-user fa-4x"></i></td>
+										<td>
+											<table><tbody>
+												<tr>
+													<td style="padding: 0px 5px;">Candidate Name</td>
+													<td> : <span style="color: #f7931e; font-weight: bold">{{student}}</span></td>
+												</tr>
+												<tr>
+													<td style="padding: 0px 5px;">Subject Name</td>
+													<td> : <span style="color: #f7931e; font-weight: bold">[Test Practice]</span></td>
+												</tr>
+												<tr>
+													<td style="padding: 0px 5px;">Remaining Time</td>
+													<td>: <span class="timer-title time-started">02:38:59</span></td>
+												</tr>
+											</tbody></table>
+										</td>
+									</tr>
+								</tbody></table>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<input type="hidden" id="hdfTestDuration" value="180">
+	<div id="heading-breadcrumbs">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 pull-left">
+					<div class="clear-xs"></div>
+					<div class="clear-xs"></div>
+					<div class="clear-xs"></div>
+					<table class="stream">
+						<tbody>
+							<tr class="full-width">
+								<td class="full-width"><h1 class="full-width"> {{test.title}} </h1></td>
+								{% for part in test.part_exam %}
+									<td class="full-width"><a class="full-width mb5 btn btn-primary btn-lg stream_1" href="javascript:void(0);" data-href="page1">{{part.name}}</a></td>
+								{% endfor %}
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="clear-xs"></div>
+				<div class="col-md-4 col-sm-4 text-left">
+					<div style="padding: 1px 0 0 0">
+						<table>
+							<tbody><tr>
+								<td style="color:#fff;font-weight:bold;">DOWNLOAD PAPER IN:</td>
+							</tr>
+							<tr style="width:100%;">
+								<td style="width:65%;">
+									<a class="full-width mb5 btn btn-primary" style="width:100%;" href="#" data-href="/assets/quiz/pdf/JEE-Main-2018.pdf"><i class="fa fa-download"></i>Download</a>
+								</td>
+							</tr>
+						</tbody></table>
+					</div>
+				</div>
+				<div class="clear-xs"></div>
+				<div class="col-md-2 col-sm-12" id="divdrplngcng">
+					<text style="color:white; font-weight:bold">Paper Language:</text>
+					<select class="form-control drplanguage">
+						<option selected="" value="english">English</option>
+						<!-- <option value="hindi">Hindi</option>
+						<option value="gujarati">Gujarati</option> -->
+					</select>
+					<input type="hidden" id="hdfCurrentLng" value="English">
+				</div>
+			</div>
+		</div>
 	</div>
-
-<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-<script type="text/javascript">
-
-// function pass(obj, value, name, classobj, idobj) {
-// 	var question_num= name;
-// 		var student_username=idobj;
-// 	// e.preventDefault();
-// 	var exam_id= $(obj).attr('class');
-
-	
-// 	var question_num= name;
-
-
-// 	}
-
-        $("button").click(function(){
-        	// alert("clicked");
-        	
-        	
-        	var student_username=this.id;
-        	//alert(student_username)
-            var selected_choice = [];
-
-            var thisname= this.name;
-            
-            
-            var exam_id=$("#"+this.name+" input[type='text']").attr('class');
-            
-            if (exam_id==undefined){
-            	var exam_id=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('class');
-            }
-            
-            //alert(exam_id)
-            
-            
-           
-            var question_num=$("#"+this.name+" input[type='text']").attr('name');
-           
-            if (question_num==undefined){
-            	var question_num=$("#"+this.name+" input[name="+ thisname +"]:checked").attr('name');
-            }
-           		
-           	//alert(question_num);
-            // var question_num=$("#"+this.name+" input[type='text']:checked").attr('name')
-            if (this.value=="save"){
-           
-	             $.each($("#"+this.name+" input[type='text']"), function(){            
-	                selected_choice.push($(this).val());
-	            });
-
-	        	 
-	            if (selected_choice==""){
-
-	        	var selected_choice = [];	
-	            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
-	                selected_choice.push($(this).val());
-	            });
-	            }
-	            
-
-	           } 
-
-	          else{
-
-	          	$.each($("#"+this.name+" input[type='text']"), function(){            
-	                $(this).val(null);
-	            });
-
-	            $.each($("#"+this.name+" input[name="+ thisname +"]:checked"), function(){            
-	                $(this).prop('checked', false);
-	            });
-
-	          }
-            
-
-            //alert(selected_choice);
-
-            var objectJ={question_num,selected_choice};
-			var myJ= JSON.stringify(objectJ);
-			//alert(myJ)
-
-
-        	 $.ajax({
-
-					 	type:'POST',
-					 	url: "{% url 'online_test_frontend:submitselected' %}",
-					 	data:{
-					 		
-					 		student:student_username,
-					 		exam_id: exam_id,
-					 		// selected: selected_choi,
-					 		progress: myJ,
-					 		csrfmiddlewaretoken: '{{ csrf_token }}'
-
-					 		
-					 	},
-
-					 	success:function(){
-					 		console.log('saved')
-
-					 	}
-
-
-					 });
-
-    	})
-
-	// var array = new Array();
-	// array.push(value)
-	// var selected_choice= array;
-	
-	 // $.ajax({
-
-	 // 	type:'POST',
-	 // 	url: "{% url 'online_test_frontend:submitselected' %}",
-	 // 	data:{
-	 		
-	 // 		student:student_username,
-	 // 		exam_id: exam_id,
-	 // 		// selected: selected_choi,
-	 // 		progress: myJ,
-	 // 		csrfmiddlewaretoken: '{{ csrf_token }}'
-
-	 		
-	 // 	},
-
-	 // 	success:function(){
-	 // 		console.log('saved')
-
-	 // 	}
-
-
-	 // })
-	
-
-</script>
-
-<script type="text/javascript">
-$(document).ready(function () {
-    //Disable full page
-    $("body").on("contextmenu",function(e){
-        return false;
-    });
-    
-    //Disable part of page
-    $("#id").on("contextmenu",function(e){
-        return false;
-    });
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function () {
-    //Disable cut copy paste
-    $('body').bind('cut copy paste', function (e) {
-        e.preventDefault();
-    });
-   
-    //Disable mouse right click
-    $("body").on("contextmenu",function(e){
-        return false;
-    });
-});
-</script>
+	<div id="content">
+		<div class="container">
+			<div class="row exam-paper">
+				<div class="col-md-8" id="quest" style="padding: 0px;">
+					<table>
+						<tbody><tr>
+							<td>
+								<div class="panel panel-default">
+									<div class="panel-body mb0">
+										{% for part in test.part_exam %}
+											{% for section in part.section_part %}
+												{% for question in section.question_section %}
+													{% if question %}
+														<div {% if not question.serial == 1 %} style="display: none" {% endif %} class="tab-content div-question mb0" id="page{{question.serial}}">
+															<input type="hidden" value="1" class="hdfQuestionID">
+															<input type="hidden" value="1" class="hdfPaperSetID">
+															<input type="hidden" value="4" class="hdfCurrectAns">
+															<div class="question-height">
+																<h4 class="question-title"> Question {{question.serial}}: <img src="{% static 'online_test_frontend/img/down.png' %}" class="btndown pull-right"> </h4>
+																<div>{{question.content}}</div>
+																<br>
+																<!-- <table class="table table-borderless mb0">
+																	<tbody>
+																		<tr> -->
+																	{% for choices in question.question_choices_question %}
+																	<!-- <div id="{{question.serial}}"> -->
+																	{% if section.section_type == "multiple_choice_correct_type" %}
+																		{% for choice in choices.choices %}
+																			<input type="checkbox"  
+																			class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}" 
+																			value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+																		{% endfor %}
+								
+																	{% elif section.section_type == "integer_type" %}
+																		<input type="text"  
+																		class="{{test_sample.id}}" id= "{{student}}" name="{{question.serial}}"><br>
+								
+																	{% elif section.section_type == "single_choice_correct_type" %}
+																		{% for choice in choices.choices %}
+																		<input type="radio"  
+																		class="{{test_sample.id}}" id= "{{student}}" name="radiospage{{question.serial}}" 
+																		value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
+																		{% endfor %}
+																	{% else %}
+																	{% endif %}
+																	<!-- </div> -->
+																	<br>
+																	{% endfor %}
+																		<!-- 	<td> <input type="radio" value="1" name="radiospage01" id="rOption1_1"> 1 ) </td>
+																			<td> <input type="radio" value="2" name="radiospage01" id="rOption1_1"> 2 ) </td>
+																			<td> <input type="radio" value="3" name="radiospage01" id="rOption1_1"> 3 ) </td>
+																			<td> <input type="radio" value="4" name="radiospage01" id="rOption1_1"> 4 ) </td> -->
+																		<!-- </tr>
+																	</tbody>
+																</table> -->
+																<div class="question-footer"><img src="{% static 'online_test_frontend/img/up.png' %}" class="btnup pull-right"></div>
+															</div>
+														</div>
+													{% else %}
+														<p>No Questions</p>
+													{% endif %}
+												{% endfor %}
+											{% endfor %}
+										{% endfor %}
+										<div class="clearfix"></div>
+										<div style="border-top:1px solid #808080;padding-top:10px;" class="col-md-12"><button class="mb5 full-width btn btn-success btn-save-answer">Save &amp; Next</button>&nbsp;&nbsp; <button class="mb5 full-width btn btn-warning btn-save-mark-answer">Save &amp; Mark For Review</button>&nbsp;&nbsp; <button class="mb5 full-width btn btn-default btn-reset-answer">Clear Response</button>&nbsp;&nbsp; <button class="mb5 full-width btn btn-primary btn-mark-answer">Mark For Review &amp; Next</button>&nbsp;&nbsp; </div>
+									</div>
+									<div class="panel-footer">
+										<div class="row">
+											<div class="col-md-12"> <button class="btn btn-success btn-submit-all-answers pull-right">Submit</button>&nbsp;&nbsp; <a href="javascript:void(0);" class="btn btn-default pull-left" id="btnPrevQue" disabled="disabled"> &lt;&lt; Back </a>&nbsp;&nbsp; <a href="javascript:void(0);" class="btn btn-default pull-left" id="btnNextQue">Next &gt;&gt;</a>&nbsp;&nbsp; </div>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="full_screen pull-right" style="cursor: pointer; background-color: #000; color: #fff; padding: 5px;">
+									<i class="fa fa-angle-right fa-2x"></i>
+								</div>
+								<div class="collapse_screen hidden pull-right" style="cursor: pointer; background-color: #000; color: #fff; padding: 5px;">
+									<i class="fa fa-angle-left fa-2x"></i>
+								</div>
+							</td>
+						</tr>
+					</tbody></table>
+				</div>
+				<!-- answered list right pane -->
+				<div class="col-md-4" id="pallette">
+					<div class="panel panel-default mb0">
+						<div class="panel-body">
+							<table class="table table-borderless mb0">
+								<tbody><tr>
+									<td class="full-width"> <a class="test-ques-stats que-not-attempted lblNotVisited">89</a> Not Visited </td>
+									<td class="full-width"> <a class="test-ques-stats que-not-answered lblNotAttempted">1</a> Not Answered </td>
+								</tr>
+								<tr>
+									<td class="full-width"> <a class="test-ques-stats que-save lblTotalSaved">0</a> Answered </td>
+									<td class="full-width"> <a class="test-ques-stats que-mark lblTotalMarkForReview">0</a> Marked for Review </td>
+								</tr>
+								<tr>
+									<td colspan="2"> <a class="test-ques-stats que-save-mark lblTotalSaveMarkForReview">0</a> Answered &amp; Marked for Review (will be considered for evaluation) </td>
+								</tr>
+							</tbody></table>
+						</div>
+					</div>
+					<!-- question navigator -->
+					<div class="panel panel-default ">
+						<div class="panel-body " style="height:320px;overflow-y:scroll;">
+							<ul class="pagination test-questions">
+								<li class="active" data-seq="1"><a class="test-ques que-not-answered" href="javascript:void(0);" data-href="page1">01</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page2">02</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page3">03</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page4">04</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page5">05</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page6">06</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page7">07</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page8">08</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page9">09</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page10">10</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page11">11</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page12">12</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page13">13</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page14">14</a></li>
+								<li data-seq="1"><a class="test-ques que-not-attempted" href="javascript:void(0);" data-href="page15">15</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="row">
+				<div class="col-md-12 exam-summery" style="display:none;">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<h3 class="text-center">Exam Summary</h3>
+							<table class="table table-bordered table-condensed">
+								<thead>
+									<tr>
+										<th>Section Name</th>
+										<th>No of Questions</th>
+										<th>Answered</th>
+										<th>Not Answered</th>
+										<th>Marked for Review</th>
+										<th>Answered &amp; Marked for Review(will be considered for evaluation)</th>
+										<th>Not Visited</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="">Paper 1</td>
+										<td class="lblTotalQuestion">90</td>
+										<td class="lblTotalSaved">0</td>
+										<td class="lblNotAttempted">1</td>
+										<td class="lblTotalMarkForReview">0</td>
+										<td class="lblTotalSaveMarkForReview">0</td>
+										<td class="lblNotVisited">89</td>
+									</tr>
+								</tbody>
+							</table>
+							<hr>
+							<div class="col-md-12 text-center">
+								<h4> Are you sure you want to submit for final marking?<br>No changes will be allowed after submission. <br> </h4>
+								<a class="btn btn-default btn-lg" id="btnYesSubmit">Yes</a> <a class="btn btn-default btn-lg" id="btnNoSubmit">No</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 exam-confirm" style="display:none;">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="col-md-12 text-center">
+								<h4> Thank You, your responses will be submitted for final marking - click OK to complete final submission. <br> </h4>
+								<a class="btn btn-default btn-lg" id="btnYesSubmitConfirm">Ok</a> <a class="btn btn-default btn-lg" id="btnNoSubmitConfirm">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 exam-thankyou" style="display:none;">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="col-md-12 text-center">
+								<h4> Thank you, Submitted Successfully.</h4>
+								<a class="btn btn-default btn-lg" id="btnViewResult">View Result</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 exam-result" style="display:none;">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="col-md-12 text-center">
+								<h3>
+									Result
+									<a id="btnRBack" class="btn btn-info pull-right">Back</a>
+								</h3>
+								<div class="row">
+									<div class="buttons">
+										<h6 class="col-md-3"></h6>
+										<h5 class="col-md-6" style="color:red">Please provide your valuable  feedback about Mock Test:</h5>
+										<a href="/feedback" target="_blank" class="btn btn-danger pull-right col-md-3">Student FeedBack</a>
+									</div>
+								</div>
+								<h5>Score: <strong id="lblRScore"></strong></h5>
+								<table class="table table-bordered">
+									<tbody>
+										<tr>
+											<td>Total Question</td>
+											<th id="lblRTotalQuestion"></th>
+											<td>Total Attempted</td>
+											<th id="lblRTotalAttempted"></th>
+										</tr>
+										<tr>
+											<td>Correct Answers</td>
+											<th id="lblRTotalCorrect"></th>
+											<td>Incorrect Answers</td>
+											<th id="lblRTotalWrong"></th>
+										</tr>
+									</tbody>
+								</table>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Question No.</th>
+											<th>selected Option</th>
+											<th>Status</th>
+											<th>Currect Option</th>
+										</tr>
+									</thead>
+									<tbody id="tbodyResult"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> -->
+		</div>
+	</div>
 {% endblock %}
