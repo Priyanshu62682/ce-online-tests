@@ -42,7 +42,7 @@
 	<input type="hidden" id="studentName" value="{{test.id}}">
 	<input type="hidden" id="examId" value="{{student}}">
 	<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
-	<input type="hidden" id="hdfTestDuration" value="1">
+	<input type="hidden" id="hdfTestDuration" value="180">
 	<div id="heading-breadcrumbs">
 		<div class="container">
 			<div class="row">
@@ -93,7 +93,7 @@
 		<div class="container">
 			<div class="row exam-paper">
 				<div class="col-md-8" id="quest" style="padding: 0px;">
-					<table>
+					<table style="width: 100%">
 						<tbody><tr>
 							<td>
 								<div class="panel panel-default">
@@ -152,7 +152,7 @@
 								<div class="full_screen pull-right" style="cursor: pointer; background-color: #000; color: #fff; padding: 5px;">
 									<i class="fa fa-angle-right fa-2x"></i>
 								</div>
-								<div class="collapse_screen hidden pull-right" style="cursor: pointer; background-color: #000; color: #fff; padding: 5px;">
+								<div class="collapse_screen pull-right" style="display:none; cursor: pointer; background-color: #000; color: #fff; padding: 5px;">
 									<i class="fa fa-angle-left fa-2x"></i>
 								</div>
 							</td>
@@ -212,36 +212,11 @@
 					</div>
 				</div>
 			</div>
-			<!-- <div class="row">
+			<div class="row">
+				<!-- Are you sure you want to submit for final marking -->
 				<div class="col-md-12 exam-summery" style="display:none;">
 					<div class="panel panel-default">
 						<div class="panel-body">
-							<h3 class="text-center">Exam Summary</h3>
-							<table class="table table-bordered table-condensed">
-								<thead>
-									<tr>
-										<th>Section Name</th>
-										<th>No of Questions</th>
-										<th>Answered</th>
-										<th>Not Answered</th>
-										<th>Marked for Review</th>
-										<th>Answered &amp; Marked for Review(will be considered for evaluation)</th>
-										<th>Not Visited</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td class="">Paper 1</td>
-										<td class="lblTotalQuestion">90</td>
-										<td class="lblTotalSaved">0</td>
-										<td class="lblNotAttempted">1</td>
-										<td class="lblTotalMarkForReview">0</td>
-										<td class="lblTotalSaveMarkForReview">0</td>
-										<td class="lblNotVisited">89</td>
-									</tr>
-								</tbody>
-							</table>
-							<hr>
 							<div class="col-md-12 text-center">
 								<h4> Are you sure you want to submit for final marking?<br>No changes will be allowed after submission. <br> </h4>
 								<a class="btn btn-default btn-lg" id="btnYesSubmit">Yes</a> <a class="btn btn-default btn-lg" id="btnNoSubmit">No</a>
@@ -249,74 +224,17 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-12 exam-confirm" style="display:none;">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<div class="col-md-12 text-center">
-								<h4> Thank You, your responses will be submitted for final marking - click OK to complete final submission. <br> </h4>
-								<a class="btn btn-default btn-lg" id="btnYesSubmitConfirm">Ok</a> <a class="btn btn-default btn-lg" id="btnNoSubmitConfirm">Cancel</a>
-							</div>
-						</div>
-					</div>
-				</div>
+				<!-- Thank you, Submitted Successfully -->
 				<div class="col-md-12 exam-thankyou" style="display:none;">
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="col-md-12 text-center">
 								<h4> Thank you, Submitted Successfully.</h4>
-								<a class="btn btn-default btn-lg" id="btnViewResult">View Result</a>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-md-12 exam-result" style="display:none;">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<div class="col-md-12 text-center">
-								<h3>
-									Result
-									<a id="btnRBack" class="btn btn-info pull-right">Back</a>
-								</h3>
-								<div class="row">
-									<div class="buttons">
-										<h6 class="col-md-3"></h6>
-										<h5 class="col-md-6" style="color:red">Please provide your valuable  feedback about Mock Test:</h5>
-										<a href="/feedback" target="_blank" class="btn btn-danger pull-right col-md-3">Student FeedBack</a>
-									</div>
-								</div>
-								<h5>Score: <strong id="lblRScore"></strong></h5>
-								<table class="table table-bordered">
-									<tbody>
-										<tr>
-											<td>Total Question</td>
-											<th id="lblRTotalQuestion"></th>
-											<td>Total Attempted</td>
-											<th id="lblRTotalAttempted"></th>
-										</tr>
-										<tr>
-											<td>Correct Answers</td>
-											<th id="lblRTotalCorrect"></th>
-											<td>Incorrect Answers</td>
-											<th id="lblRTotalWrong"></th>
-										</tr>
-									</tbody>
-								</table>
-								<table class="table table-bordered">
-									<thead>
-										<tr>
-											<th>Question No.</th>
-											<th>selected Option</th>
-											<th>Status</th>
-											<th>Currect Option</th>
-										</tr>
-									</thead>
-									<tbody id="tbodyResult"></tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> -->
+			</div>
 		</div>
 	</div>
 {% endblock %}

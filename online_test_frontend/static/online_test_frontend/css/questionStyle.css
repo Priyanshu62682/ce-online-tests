@@ -102,7 +102,7 @@ h1{
 .pagination>li>a, .pagination>li>span {
     margin-bottom: 4px;
 }
-.pagination>li>a.que-state1, .pagination>li>a.que-state2, .pagination>li>a.que-state3, .pagination>li>a.state4 {
+.pagination>li>a.que-state1, .pagination>li>a.que-state2, .pagination>li>a.que-state3, .pagination>li>a.que-state4 {
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: center;

@@ -41,7 +41,11 @@ function CoundownTimer(e) {
 }
 
 function CleartTimer() {
-    clearInterval(myInterval), $("title").text("Time Out"), $("#btnYesSubmitConfirm").trigger("click")
+    clearInterval(myInterval),
+    $("title").text("Time Out"),
+    $(".exam-paper").hide(),
+    $(".exam-thankyou").show(),
+    $("#divdrplngcng").hide();
 }
 
 function GetTime(e) {
@@ -189,39 +193,22 @@ $(document).ready(function () {
     });
 
     $(".btn-submit-all-answers").click(function (e) {
-        e.preventDefault(), $(this),
-            $(".test-questions").find("li").each(function () {
-                var e = $(this),
-                    t = !1;
-                if (e.children().hasClass("que-state2") ? t = !0 : e.children().hasClass("que-state4") && (t = !0), t) {
-                    var a = e.find("a").attr("data-href");
-                    //console.log(a), $("#" + a);
-                    $("#" + a).find(".hdfCurrectAns").val();
-                    $("#" + a).find("input[name='radios" + a + "']").each(function () {
-                        var e = $(this);
-                        e.is(":checked") && e.val()
-                    });
-                }
-            }),
-            $(".exam-paper").hide(),
-            $(".stream_1").hide(),
-            $("#divdrplngcng").hide()
-
-            $(".exam-summery").show(),
-            CheckQueAttemptStatus()
+        e.preventDefault(),
+        $(".exam-paper").hide(),
+        $(".stream_1").hide(),
+        $("#divdrplngcng").hide(),
+        $(".exam-summery").show(),
+        CheckQueAttemptStatus();
     });
 
     $("#btnYesSubmit").on("click", function (e) {
-        e.preventDefault(), $(".exam-confirm").show(), $("#divdrplngcng").hide(), $(".exam-summery").hide()
+        e.preventDefault();
+        $(".exam-summery").hide();
+        $(".exam-thankyou").show();
+        $("#divdrplngcng").hide();
     });
     $("#btnNoSubmit").on("click", function (e) {
         e.preventDefault(), $(".exam-paper").show(), $(".stream_1").show(), $(".exam-summery").hide(), $("#divdrplngcng").show()
-    });
-    $("#btnYesSubmitConfirm").on("click", function (e) {
-        e.preventDefault(), $(".exam-thankyou").show(), $("#divdrplngcng").hide(), $(".exam-confirm").hide()
-    });
-    $("#btnNoSubmitConfirm").on("click", function (e) {
-        e.preventDefault(), $(".exam-paper").show(), $(".stream_1").show(), $(".exam-confirm").hide(), $("#divdrplngcng").show()
     });
     $('.drplanguage').on('change', function (e) {
         e.preventDefault();
@@ -248,16 +235,21 @@ $(document).ready(function () {
         var a = $(".test-questions").find("li").find("a[data-href=" + current_herf + "]");
         a.trigger('click');
     });
-    $('#btnViewResult').on('click', function (e) {
-        e.preventDefault();
-        CheckResult();
-        $('.exam-result').show();
-        $(".exam-thankyou").hide();
-        $("#divdrplngcng").hide();
-    });
 
-    $('#btnRBack').on('click', function (e) {
+    $('.full_screen').on('click', function (e) {
         e.preventDefault();
-        window.location.href = $('#hdfBaseURL').val() + "Quiz/Home/Index"
+        $('.full_screen').hide();
+        $('.collapse_screen').show();
+        $('#pallette').hide();
+        $('#quest').removeClass('col-md-8');
+        $('#quest').addClass('col-md-12');
+    });
+    $('.collapse_screen').on('click', function (e) {
+        e.preventDefault();
+        $('.collapse_screen').hide();
+        $('.full_screen').show();
+        $('#pallette').show();
+        $('#quest').removeClass('col-md-12');
+        $('#quest').addClass('col-md-8');
     });
 });
