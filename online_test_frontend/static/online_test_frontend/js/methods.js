@@ -1,9 +1,10 @@
 var myInterval, AttemptedAns = [], TotalTime = 0;
+var studentName, examId, csrf_token;
 
 function NextQuestion(e) {
     var t = $(".test-questions").find("li.active");
     if (CheckNextPrevButtons(), t.is(":last-child")) return !1;
-    $(".test-questions").find("li").removeClass("active"), t.next().addClass("active"), OpenCurrentQue(t.next().find("a")), e && (t.find("a").addClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"));
+    $(".test-questions").find("li").removeClass("active"), t.next().addClass("active"), OpenCurrentQue(t.next().find("a")), e && (t.find("a").addClass("que-state1"), t.find("a").removeClass("que-state0"));
     var a = t.attr("data-seq");
     $(".nav-tab-sections").find("li").removeClass("active"), $(".nav-tab-sections").find("li[data-id=" + a + "]").addClass("active"), CheckQueAttemptStatus()
 }
@@ -70,26 +71,29 @@ function CheckQueAttemptStatus() {
         i = 0;
     $(".test-questions").find("li").each(function () {
         var r = $(this);
-        e += 1, r.children().hasClass("que-save") ? a += 1 : r.children().hasClass("que-save-mark") ? n += 1 : r.children().hasClass("que-mark") ? s += 1 : r.children().hasClass("que-not-answered") ? t += 1 : i += 1
+        e += 1, r.children().hasClass("que-state2") ? a += 1 : r.children().hasClass("que-state4") ? n += 1 : r.children().hasClass("que-state3") ? s += 1 : r.children().hasClass("que-state1") ? t += 1 : i += 1
     }), $(".lblTotalQuestion").text(e), $(".lblNotAttempted").text(t), $(".lblTotalSaved").text(a), $(".lblTotalSaveMarkForReview").text(n), $(".lblTotalMarkForReview").text(s), $(".lblNotVisited").text(i)
 }
 
-function sendResponseData(studentName, examId, questionNumber, selectedOption, flag) {
+function sendResponseData(questionNumber, selectedOption, state) {
+    // state 1 = question not answered
+    // state 2 = question answered
+    // state 3 = marked for review
+    // state 4 = answered and marked for review
     var answerResponse={
         "questionNumber" : parseInt(questionNumber),
         "choice": parseInt(selectedOption),
-        "state": parseInt(selectedOption)
+        "state": parseInt(state)
     };
     var answerResponseJ= JSON.stringify(answerResponse);
     $.ajax({
         type:'POST',
         url: "{% url 'online_test_frontend:submitselected' %}",
         data:{
-            
             student:studentName,
             exam_id: examId,
             progress: answerResponseJ,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
+            csrfmiddlewaretoken: csrf_token
         },
         success:function(){
             console.log('saved')
@@ -98,6 +102,9 @@ function sendResponseData(studentName, examId, questionNumber, selectedOption, f
 }
 
 $(document).ready(function () {
+    studentName = $('#studentName').val();
+    examId = $('#examId').val();
+    csrf_token = $('#csrfToken').val();
     $("#page01").show(); $(".exam-paper").show();
     CoundownTimer(parseInt($("#hdfTestDuration").val()));
     CheckNextPrevButtons();
@@ -106,13 +113,17 @@ $(document).ready(function () {
         PrevQuestion(!0)
     });
     $("#btnNextQue").click(function () {
+        var t = $(".test-questions").find("li.active"),
+            a = t.find("a").attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]); //question number
+        sendResponseData(questionNumber, 0, 1);
         NextQuestion(!0)
     });
     $(".test-ques").click(function () {
         var e = $(".test-questions").find("li.active").find("a");
         $(".test-questions").find("li").removeClass("active"),
             $(this).parent().addClass("active"),
-            $(this).hasClass("que-save") || $(this).hasClass("que-save-mark") || $(this).hasClass("que-mark") || ($(this).addClass("que-not-answered"), $(this).removeClass("que-not-attempted")), e.hasClass("que-save") || e.hasClass("que-save-mark") || e.hasClass("que-mark") || (e.addClass("que-not-answered"), e.removeClass("que-not-attempted")), OpenCurrentQue($(this))
+            $(this).hasClass("que-state2") || $(this).hasClass("que-state4") || $(this).hasClass("que-state3") || ($(this).addClass("que-state1"), $(this).removeClass("que-state0")), e.hasClass("que-state2") || e.hasClass("que-state4") || e.hasClass("que-state3") || (e.addClass("que-state1"), e.removeClass("que-state0")), OpenCurrentQue($(this))
     });
 
     $(".btn-save-answer").click(function (e) {
@@ -121,14 +132,12 @@ $(document).ready(function () {
             a = t.find("a").attr("data-href"),
             questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
             selectedOption = $("input[name='radios" + a + "']:checked").val() ? $("input[name='radios" + a + "']:checked").val() : 0, //selected option
-            studentName = $("input[name='radios" + a + "']").attr('studentName'),
-            examId = $("input[name='radios" + a + "']").attr('class'),
             n = ($("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(), $("#" + a).find(".hdfCurrectAns").val(), !1);
         if ($("input[name='radios" + a + "']").each(function () {
             $(this).is(":checked") && (n = !0)
         }), 0 == n) { alert("Please choose an option"); return !1 };
-        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-save-mark"), t.find("a").removeClass("que-mark"), t.find("a").addClass("que-save"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus();
-        sendResponseData(studentName, examId, questionNumber, selectedOption, 0);
+        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-state4"), t.find("a").removeClass("que-state3"), t.find("a").addClass("que-state2"), t.find("a").removeClass("que-state1"), t.find("a").removeClass("que-state0"), NextQuestion(!1), CheckQueAttemptStatus();
+        sendResponseData(questionNumber, selectedOption, 2);
     });
 
     $(".btn-save-mark-answer").click(function (e) {
@@ -137,8 +146,6 @@ $(document).ready(function () {
             a = t.find("a").attr("data-href"),
             questionNumber = parseInt(a.match(/(\d+)/g)[0]) //question number
             selectedOption = $("input[name='radios" + a + "']:checked").val() ? $("input[name='radios" + a + "']:checked").val() : 0, //selected option
-            studentName = $("input[name='radios" + a + "']").attr('studentName'),
-            examId = $("input[name='radios" + a + "']").attr('class'),
             n = ($("#" + a).find(".hdfQuestionID").val(),
                 $("#" + a).find(".hdfPaperSetID").val(),
                 $("#" + a).find(".hdfCurrectAns").val(),
@@ -146,19 +153,17 @@ $(document).ready(function () {
         if ($("input[name='radios" + a + "']").each(function () {
             $(this).is(":checked") && (n = !0)
         }), 0 == n) { alert("Please choose an option"); return !1 };;
-        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-save"), t.find("a").removeClass("que-mark"), t.find("a").addClass("que-save-mark"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus()
-        sendResponseData(studentName, examId, questionNumber, selectedOption, 1);
+        $("input[name='radios" + a + "']:checked").val(), t.find("a").removeClass("que-state2"), t.find("a").removeClass("que-state3"), t.find("a").addClass("que-state4"), t.find("a").removeClass("que-state1"), t.find("a").removeClass("que-state0"), NextQuestion(!1), CheckQueAttemptStatus()
+        sendResponseData(questionNumber, selectedOption, 4);
     });
 
     $(".btn-mark-answer").click(function (e) {
         e.preventDefault();
         var t = $(".test-questions").find("li.active"),
             a = t.find("a").attr("data-href"),
-            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
-            studentName = $("input[name='radios" + a + "']").attr('studentName'),
-            examId = $("input[name='radios" + a + "']").attr('class');
-        $("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(), $("#" + a).find(".hdfCurrectAns").val(), $("#" + a).find(".hdfCurrectAns").val(), t.find("a").removeClass("que-save-mark"), t.find("a").removeClass("que-save"), t.find("a").addClass("que-mark"), t.find("a").removeClass("que-not-answered"), t.find("a").removeClass("que-not-attempted"), NextQuestion(!1), CheckQueAttemptStatus()
-        sendResponseData(studentName, examId, questionNumber, 0, 1);
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]); //question number
+        $("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(), $("#" + a).find(".hdfCurrectAns").val(), $("#" + a).find(".hdfCurrectAns").val(), t.find("a").removeClass("que-state4"), t.find("a").removeClass("que-state2"), t.find("a").addClass("que-state3"), t.find("a").removeClass("que-state1"), t.find("a").removeClass("que-state0"), NextQuestion(!1), CheckQueAttemptStatus()
+        sendResponseData(questionNumber, 0, 3);
     });
 
     $(".btn-reset-answer").click(function (e) {
@@ -174,11 +179,11 @@ $(document).ready(function () {
             $("input[type=text]").val(""), a = t.find("a").attr("data-href"),
             $("#" + a).find(".hdfQuestionID").val(), $("#" + a).find(".hdfPaperSetID").val(),
             $("#" + a).find(".hdfCurrectAns").val(), $("#" + a).find(".hdfCurrectAns").val(),
-            t.find("a").removeClass("que-save-mark"),
-            t.find("a").removeClass("que-mark"),
-            t.find("a").removeClass("que-save"),
-            t.find("a").removeClass("que-not-attempted"),
-            t.find("a").addClass("que-not-answered"),
+            t.find("a").removeClass("que-state4"),
+            t.find("a").removeClass("que-state3"),
+            t.find("a").removeClass("que-state2"),
+            t.find("a").removeClass("que-state1"),
+            t.find("a").addClass("que-state0"),
             //NextQuestion(!1),
             CheckQueAttemptStatus()
     });
@@ -188,7 +193,7 @@ $(document).ready(function () {
             $(".test-questions").find("li").each(function () {
                 var e = $(this),
                     t = !1;
-                if (e.children().hasClass("que-save") ? t = !0 : e.children().hasClass("que-save-mark") && (t = !0), t) {
+                if (e.children().hasClass("que-state2") ? t = !0 : e.children().hasClass("que-state4") && (t = !0), t) {
                     var a = e.find("a").attr("data-href");
                     //console.log(a), $("#" + a);
                     $("#" + a).find(".hdfCurrectAns").val();

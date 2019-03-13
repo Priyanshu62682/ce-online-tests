@@ -5,9 +5,6 @@ body{
     color: #555;
 	font-family: sans-serif;
 }
-.hidden{
-    display: none;
-}
 .headerContainer{
 	padding: 7px 0;
 }
@@ -105,36 +102,36 @@ h1{
 .pagination>li>a, .pagination>li>span {
     margin-bottom: 4px;
 }
-.pagination>li>a.que-mark, .pagination>li>a.que-not-answered, .pagination>li>a.que-save, .pagination>li>a.que-save-mark {
+.pagination>li>a.que-state1, .pagination>li>a.que-state2, .pagination>li>a.que-state3, .pagination>li>a.state4 {
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: center;
     background-color: #fff;
     border-width: 0;
 }
-.que-mark, .que-save, .que-save-mark {
+.que-state3, .que-state2, .que-state4 {
     color: #fff!important;
     border-width: 0;
 }
-.que-not-attempted{
+.que-state0 { /* not-attempted */
 	background: url(../img/Logo1.png);
     background-size: 100% 100%;
     color: #303030!important;
 }
-.que-not-answered {
+.que-state1 { /* not-answered */
     color: #fff!important;
     background: url(../img/Logo2.png);
     background-size: 100% 100%;
 }
-.que-save {
+.que-state2 { /* save */
     background: url(../img/Logo3.png);
     background-size: 100% 100%;
 }
-.que-mark {
+.que-state3 { /* mark */
     background: url(../img/Logo4.png);
     background-size: 100% 100%;
 }
-.que-save-mark {
+.que-state4 { /* save-mark */
     background: url(../img/Logo5.png);
     background-size: 100% 100%;
 }

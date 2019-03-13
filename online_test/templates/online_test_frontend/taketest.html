@@ -39,7 +39,10 @@
 			</div>
 		</div>
 	</header>
-	<input type="hidden" id="hdfTestDuration" value="180">
+	<input type="hidden" id="studentName" value="{{test.id}}">
+	<input type="hidden" id="examId" value="{{student}}">
+	<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+	<input type="hidden" id="hdfTestDuration" value="1">
 	<div id="heading-breadcrumbs">
 		<div class="container">
 			<div class="row">
@@ -110,7 +113,7 @@
 																	{% if section.section_type == "multiple_choice_correct_type" %}
 																		{% for choice in choices.choices %}
 																			<input type="checkbox"  
-																			class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice.0|floatformat:"0" == forloop.counter %}checked{% endif %} id= "{{student}}" name="checkBox{{question.serial}}"
+																			class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice == forloop.counter %}checked{% endif %} id= "{{student}}" name="checkBox{{question.serial}}"
 																			value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 																		{% endfor %}
 								
@@ -121,7 +124,7 @@
 																	{% elif section.section_type == "single_choice_correct_type" %}
 																		{% for choice in choices.choices %}
 																		<input studentName="{{student}}"  type="radio"  
-																		class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice.0|floatformat:"0" == forloop.counter %}checked{% endif %} id= "{{student}}" name="radiospage{{question.serial}}" 
+																		class="{{test.id}}" {% if question.previous_data and question.previous_data.previous_choice == forloop.counter %}checked{% endif %} id= "{{student}}" name="radiospage{{question.serial}}" 
 																		value="{{ forloop.counter }}" > {{ forloop.counter }} : {{choice}}<br>
 																		{% endfor %}
 																	{% endif %}<br>
@@ -162,15 +165,15 @@
 						<div class="panel-body">
 							<table class="table table-borderless mb0">
 								<tbody><tr>
-									<td class="full-width"> <a class="test-ques-stats que-not-attempted lblNotVisited">89</a> Not Visited </td>
-									<td class="full-width"> <a class="test-ques-stats que-not-answered lblNotAttempted">1</a> Not Answered </td>
+									<td class="full-width"> <a class="test-ques-stats que-state0 lblNotVisited">89</a> Not Visited </td>
+									<td class="full-width"> <a class="test-ques-stats que-state1 lblNotAttempted">1</a> Not Answered </td>
 								</tr>
 								<tr>
-									<td class="full-width"> <a class="test-ques-stats que-save lblTotalSaved">0</a> Answered </td>
-									<td class="full-width"> <a class="test-ques-stats que-mark lblTotalMarkForReview">0</a> Marked for Review </td>
+									<td class="full-width"> <a class="test-ques-stats que-state2 lblTotalSaved">0</a> Answered </td>
+									<td class="full-width"> <a class="test-ques-stats que-state3 lblTotalMarkForReview">0</a> Marked for Review </td>
 								</tr>
 								<tr>
-									<td colspan="2"> <a class="test-ques-stats que-save-mark lblTotalSaveMarkForReview">0</a> Answered &amp; Marked for Review (will be considered for evaluation) </td>
+									<td colspan="2"> <a class="test-ques-stats que-state4 lblTotalSaveMarkForReview">0</a> Answered &amp; Marked for Review (will be considered for evaluation) </td>
 								</tr>
 							</tbody></table>
 						</div>
@@ -183,7 +186,21 @@
 									{% for section in part.section_part %}
 										{% for question in section.question_section %}
 											{% if question %}
-												<li class="{% if question.serial == 1 %} active {% endif %}" data-seq="1"><a class="test-ques {% if question.serial == 1 %} que-not-answered {% else %} que-not-attempted {% endif %}" href="javascript:void(0);" data-href="page{{question.serial}}">{% if not question.serial > 10 %}0{% endif %}{{question.serial}}</a></li>
+												<li class="{% if question.serial == 1 %} active {% endif %}" data-seq="1">
+													<a class="test-ques
+														{% if question.serial == 1 %}
+															{% if question.previous_data and question.previous_data.previous_flag %}
+																que-state{{question.previous_data.previous_flag}} 
+															{% else %} 
+																que-state1 
+															{% endif %} 
+														{% else %}
+															{% if question.previous_data and question.previous_data.previous_flag %}
+																que-state{{question.previous_data.previous_flag}} 
+															{% else %}
+																que-state0
+															{% endif %}
+														{% endif %}" href="javascript:void(0);" data-href="page{{question.serial}}">{% if not question.serial > 10 %}0{% endif %}{{question.serial}}</a></li>
 											{% else %}
 												<p>No Questions</p>
 											{% endif %}
