@@ -114,21 +114,52 @@ $(document).ready(function () {
     CheckNextPrevButtons();
     CheckQueAttemptStatus();
     $("#btnPrevQue").click(function () {
+        var t = $(".test-questions").find("li.active"),
+            a = t.find("a").attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
+            stateText = $(".test-questions").find("li.active").find("a").attr("class").split(' ')[1];
+            if (stateText) {
+                var state = stateText[stateText.length - 1];
+                if (state == 1) {
+                    sendResponseData(questionNumber, 0, 1);
+                }
+            } else {
+                sendResponseData(questionNumber, 0, 1);
+            }
         PrevQuestion(!0)
     });
     $("#btnNextQue").click(function () {
         var t = $(".test-questions").find("li.active"),
             a = t.find("a").attr("data-href"),
-            questionNumber = parseInt(a.match(/(\d+)/g)[0]); //question number
-        sendResponseData(questionNumber, 0, 1);
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
+            stateText = $(".test-questions").find("li.active").find("a").attr("class").split(' ')[1];
+            if (stateText) {
+                var state = stateText[stateText.length - 1];
+                if (state == 1) {
+                    sendResponseData(questionNumber, 0, 1);
+                }
+            } else {
+                sendResponseData(questionNumber, 0, 1);
+            }
         NextQuestion(!0)
     });
     $(".test-ques").click(function () {
-        var e = $(".test-questions").find("li.active").find("a");
+        var e = $(".test-questions").find("li.active").find("a"),
+            a = e.attr("data-href"),
+            questionNumber = parseInt(a.match(/(\d+)/g)[0]), //question number
+            stateText = $(".test-questions").find("li.active").find("a").attr("class").split(' ')[1];
+        if (stateText) {
+            var state = stateText[stateText.length - 1];
+            if (state == 1) {
+                sendResponseData(questionNumber, 0, 1);
+            }
+        } else {
+            sendResponseData(questionNumber, 0, 1);
+        }
         $(".test-questions").find("li").removeClass("active"),
             $(this).parent().addClass("active"),
             $(this).hasClass("que-state2") || $(this).hasClass("que-state4") || $(this).hasClass("que-state3") || ($(this).addClass("que-state1"), $(this).removeClass("que-state0")), e.hasClass("que-state2") || e.hasClass("que-state4") || e.hasClass("que-state3") || (e.addClass("que-state1"), e.removeClass("que-state0")), OpenCurrentQue($(this))
-    });
+        });
 
     $(".btn-save-answer").click(function (e) {
         e.preventDefault();
@@ -186,8 +217,8 @@ $(document).ready(function () {
             t.find("a").removeClass("que-state4"),
             t.find("a").removeClass("que-state3"),
             t.find("a").removeClass("que-state2"),
-            t.find("a").removeClass("que-state1"),
-            t.find("a").addClass("que-state0"),
+            t.find("a").removeClass("que-state0"),
+            t.find("a").addClass("que-state1"),
             //NextQuestion(!1),
             CheckQueAttemptStatus()
     });
