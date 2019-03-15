@@ -189,14 +189,14 @@
 												<li class="{% if question.serial == 1 %} active {% endif %}" data-seq="1">
 													<a class="test-ques
 														{% if question.serial == 1 %}
-															{% if question.previous_data and question.previous_data.previous_flag %}
-																que-state{{question.previous_data.previous_flag}} 
+															{% if question.previous_data and question.previous_data.previous_state %}
+																que-state{{question.previous_data.previous_state}} 
 															{% else %} 
 																que-state1 
 															{% endif %} 
 														{% else %}
-															{% if question.previous_data and question.previous_data.previous_flag %}
-																que-state{{question.previous_data.previous_flag}} 
+															{% if question.previous_data and question.previous_data.previous_state %}
+																que-state{{question.previous_data.previous_state}} 
 															{% else %}
 																que-state0
 															{% endif %}
@@ -219,7 +219,8 @@
 						<div class="panel-body">
 							<div class="col-md-12 text-center">
 								<h4> Are you sure you want to submit for final marking?<br>No changes will be allowed after submission. <br> </h4>
-								<a class="btn btn-default btn-lg" id="btnYesSubmit">Yes</a> <a class="btn btn-default btn-lg" id="btnNoSubmit">No</a>
+								<a class="btn btn-default btn-lg" id="btnYesSubmit" href="{% url 'online_test_frontend:thankyou' student=student exam=exam %}">Yes</a> 
+								<a class="btn btn-default btn-lg" id="btnNoSubmit">No</a>
 							</div>
 						</div>
 					</div>

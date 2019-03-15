@@ -37,7 +37,7 @@ class TakeTestView(APIView):
 		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
 		#return Response(serializer.data[0])
-		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance, 'exam':exam.first() })
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -59,20 +59,27 @@ def get_request_choice(request):
 	if request.method=='POST':
 		progress=request.POST['progress']
 		data_input = json.loads(progress)
-		new_input={data_input['question_num']:data_input['selected_choice']}
-		print('************')
-		print(new_input)
-		exam_id=Exam.objects.get(id=request.POST['exam_id'])
-		student=Student.objects.get(student_username=request.POST['student'])
+		new_input={
+			str(data_input['questionNumber']):str(data_input['choice'])
+		}
+		new_state = {
+			str(data_input['questionNumber']):str(data_input['state'])
+		}
+		#to be reversed from frontend
+		sid = request.POST['exam_id']
+		eid = request.POST['student']
+		exam_id=Exam.objects.get(id=eid)
+		student=Student.objects.get(student_username=sid)
 
 		if Dynamic.objects.filter(student_id=student,test_id=exam_id).exists():
 			current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
 			progress_old=current_progress.progress
-			print('-----------')
-			print(progress_old)
+			progress_old_state=current_progress.progress_state
+			key = str(data_input['questionNumber'])
 			progress_old.update(new_input)
-			print(progress_old)
+			progress_old_state.update(new_state)
 			current_progress.progress=progress_old
+			current_progress.progress_state=progress_old_state
 			current_progress.save()
 
 		else:
@@ -80,6 +87,7 @@ def get_request_choice(request):
 				student_id=student,
 				test_id=exam_id,
 				progress=new_input,
+				progress_state=new_state,
 				)
 
 	else:
@@ -136,6 +144,7 @@ def calculate_performance(question_object,progress):
 		
 
 def Thank_view(request,student,exam_id):
+	print("In here")
 	if request.method=='GET':
 		student=Student.objects.get(student_username=student)
 		exam_object = Exam.objects.get(id=exam_id)

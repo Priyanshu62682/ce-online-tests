@@ -92,7 +92,7 @@ function sendResponseData(questionNumber, selectedOption, state) {
     var answerResponseJ= JSON.stringify(answerResponse);
     $.ajax({
         type:'POST',
-        url: "{% url 'online_test_frontend:submitselected' %}",
+        url: URL,
         data:{
             student:studentName,
             exam_id: examId,
@@ -100,6 +100,7 @@ function sendResponseData(questionNumber, selectedOption, state) {
             csrfmiddlewaretoken: csrf_token
         },
         success:function(){
+            console.log(URL)
             console.log('saved')
         }
     });

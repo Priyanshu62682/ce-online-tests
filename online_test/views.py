@@ -87,31 +87,31 @@ class CreateTestView(CreateView):
 # 		return context
 		
 
-def get_request_choice(request):
-	if request.method=='POST':
-		selected= request.POST['selected']
-		exam_id=request.POST['exam_id']
-		progress=request.POST['progress']
-		me=Student.objects.get(student_username='Abhishek')
+# def get_request_choice(request):
+# 	if request.method=='POST':
+# 		selected= request.POST['selected']
+# 		exam_id=request.POST['exam_id']
+# 		progress=request.POST['progress']
+# 		me=Student.objects.get(student_username='Abhishek')
 
-		# Dynamic.objects.get(student_id=me):
-		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
-		progress_old=current_progress.progress
-		progress_oldJS=json.dumps(progress_old)
+# 		# Dynamic.objects.get(student_id=me):
+# 		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
+# 		progress_old=current_progress.progress
+# 		progress_oldJS=json.dumps(progress_old)
 
-		# print(type(progress), type(progress_oldJS))
-		progress_new=progress+progress_oldJS 
-		current_progress.progress=progress_new
-		current_progress.save()
+# 		# print(type(progress), type(progress_oldJS))
+# 		progress_new=progress+progress_oldJS 
+# 		current_progress.progress=progress_new
+# 		current_progress.save()
 
-		# else:
-		# 	Dynamic.objects.create(
-		# 		student_id=me,
-		# 		test_id=exam_id,
-		# 		progress=progress,
-		# 		)
+# 		# else:
+# 		# 	Dynamic.objects.create(
+# 		# 		student_id=me,
+# 		# 		test_id=exam_id,
+# 		# 		progress=progress,
+# 		# 		)
 
-	return HttpResponse('')
+# 	return HttpResponse('')
 
 class CreatePartView(CreateView):
 	template_name = 'online_test/newpart.html'
