@@ -63,9 +63,9 @@ class QuestionSerializer(serializers.ModelSerializer):
 				previous_flag = None
 
 			previous_data ={
-					'previous_choice':previous_choice,
-					'previous_flag':previous_flag
-				} 
+				'previous_choice':previous_choice,
+				'previous_flag':previous_flag
+			} 
 
 
 		except ObjectDoesNotExist:
