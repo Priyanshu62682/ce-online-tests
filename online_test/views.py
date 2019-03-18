@@ -30,7 +30,7 @@ sys.path.append("..ce_online_test.settings")
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.db import transaction
-
+from django.views.generic.edit import UpdateView
 
 @transaction.atomic
 def signup(request):
@@ -487,6 +487,38 @@ class SectionUpdateView(LoginRequiredMixin,PermissionRequiredMixin, generic.Temp
 			part=part_instance,
 			section=section_instance)
 		return context
+
+class UpdateCurrentSection(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
+	print('hi')
+	permission_required = 'user.is_staff'
+	login_url = '/accounts/login'
+	redirect_field_name = 'redirect'
+	model = Section
+	form_class = EditSectionForm
+	template_name = 'online_test/update_current_section_form.html'
+	# print('hi2')	
+	fields=('positive_marks','per_option_positive_marks','negative_marks','section_instructions',)
+	# print('hi3')
+	def get_context_data(self,**kwargs):
+		print('hi4')
+		context = super(UpdateCurrentSection,self).get_context_data(**kwargs)
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+		print('hi5')
+		section_instance = self.kwargs['section']
+		print('hi6')
+		context['exam'] = exam_instance
+		context['part'] = part_instance
+		context['section'] = section_instance	
+		# context['pk']=self.kwargs['pk']	
+		return context
+
+	def get_success_url(self,**kwargs):
+		print('hi7')
+		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+		return reverse('online_test:sections',kwargs={'exam':exam_instance,'part':self.kwargs['part'] })
+
+
 
 class AddNewChoices(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 	permission_required = 'user.is_staff'

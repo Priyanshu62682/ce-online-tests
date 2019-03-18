@@ -9,7 +9,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-
+class EditSectionForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        exclude = []
 
 class SignUpForm(UserCreationForm):
 

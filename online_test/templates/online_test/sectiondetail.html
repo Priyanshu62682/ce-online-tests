@@ -6,6 +6,10 @@
 		<h4> {{part}}</h4>
 		<h5> {{section}}</h5>
 	</div>
+	<br>
+	<br>
+	<br>
+	
 	<div class="sectionliststyle" >
 		<div class="details" style="margin-top:vh;">
 			<div class="current-section" >
@@ -16,9 +20,7 @@
 	    		<a class="btn" href="{% url 'online_test:addnewquestion' exam=exam part=part section=section %}">
 	    			Add new Question
 	    		</a>
-	    		<a class="btn" href="{% url 'online_test:addnewquestionbatch' exam=exam part=part section=section %}">
-	    			Add Batch of Questions
-	    		</a>
+
 	    		
 			</div>
 		</div>

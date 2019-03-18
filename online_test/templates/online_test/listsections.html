@@ -138,7 +138,7 @@ code {
 
 <div class="container" >
 
-	<center><h3 class="showquestionheading" style="position:fixed; margin-top: 32%; margin-left: 31.5%; ">Click to view all Questions</h3></center>
+<!-- 	<center><h3 class="showquestionheading" style="position:fixed; margin-top: 32%; margin-left: 31.5%; ">Click to view all Questions</h3></center>
 
 <a class="outer" id="clicks"  href=# style="z-index: 4;">
 <div class="inner">
@@ -150,7 +150,78 @@ code {
 
 
 <nav class="yo display" id="display" style="z-index: 3;">
-		<div class="sectionliststyle" style="color: black;">
+		
+</nav>
+
+<code class="block" style="display: none;">
+  clicking on "a" toggles class "open" on "a"
+</code> -->
+
+
+
+
+
+
+
+
+	<div class="test-detail-style" style="z-index: 2;">
+		<h1>{{exam.title}}</h1>
+		<div style="margin-bottom: 1%;">
+		<h4 style="display: inline-block;" > {{part}}</h4>
+
+	<div class="current-section-detail" style="display: inline-block;  ">
+				
+	    		<button class="newsectionbtn" id="myBtn"><small>Add New Section</small></button>
+			</div>
+		</div>
+
+		{% for section in object_list %}
+			<div class="sectionlist" style="display: inline-block; overflow: hidden; " >
+	        	<a class="sectionname" style="float: left;" href="{% url 'online_test:updatesection' exam=exam part=part section=section %}">
+	        		<center><small>{{section.section_type}}</small></center>
+        				        		
+	        	</a>
+
+	        	<a   class="changesection" href="{% url 'online_test:changesection' exam=exam part=part section=section pk=exam.id  %}">
+	        		<small>Update Section</small>
+        				        		
+	        	</a>	
+
+	        	<a   class="deletesection" href="{% url 'online_test:deletesection' exam=exam part=part pk=exam.id %}">
+	        		<small>Delete Section</small>
+        				        		
+	        	</a>
+	        </div>
+		{% endfor %}
+
+
+	</div>
+
+
+	<div id="myModal" class="modal">
+
+	  <!-- Modal content -->
+	  <div class="modal-content" style="z-index: 5;">
+	    <span class="close" >&times;</span>
+	    <div class="inner" style=" margin-top: 18% ">
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:singlechoicecreatesection' exam=exam part=part  %}">Single Choice Correct</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:multiplechoicecreatesection' exam=exam part=part  %}">Multiple Choice Correct</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:matchcreatesection' exam=exam part=part  %}">Match Type</a></center>
+
+	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:integercreatesection' exam=exam part=part  %}">Integer Type</a></center>
+	    
+	
+
+	       
+	  </div>
+	</div>
+
+	</div>
+
+
+	<div class="sectionliststyle" style="color: black;">
 		
 		<div class="details">
 			<div class="current-section" >
@@ -210,68 +281,7 @@ code {
 	 		</div>
 	 	{% endif %}
  	</div>
-</nav>
 
-<code class="block" style="display: none;">
-  clicking on "a" toggles class "open" on "a"
-</code>
-
-
-
-
-
-
-
-
-	<div class="test-detail-style" style="z-index: 2;">
-		<h1>{{exam.title}}</h1>
-		<div style="margin-bottom: 1%;">
-		<h4 style="display: inline-block;" > {{part}}</h4>
-
-	<div class="current-section-detail" style="display: inline-block;  ">
-				
-	    		<button class="newsectionbtn" id="myBtn"><small>Add New Section</small></button>
-			</div>
-		</div>
-
-		{% for section in object_list %}
-			<div class="sectionlist" style="display: inline-block; overflow: hidden; " >
-	        	<a class="sectionname" style="float: left;" href="{% url 'online_test:updatesection' exam=exam part=part section=section %}">
-	        		<center><small>{{section.section_type}}</small></center>
-        				        		
-	        	</a>
-	        	<a   class="deletesection" href="{% url 'online_test:deletesection' exam=exam part=part pk=exam.id %}">
-	        		<small>Delete Section</small>
-        				        		
-	        	</a>
-	        </div>
-		{% endfor %}
-
-
-	</div>
-
-
-	<div id="myModal" class="modal">
-
-	  <!-- Modal content -->
-	  <div class="modal-content">
-	    <span class="close" >&times;</span>
-	    <div class="inner" style=" margin-top: 18% ">
-	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:singlechoicecreatesection' exam=exam part=part  %}">Single Choice Correct</a></center>
-
-	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:multiplechoicecreatesection' exam=exam part=part  %}">Multiple Choice Correct</a></center>
-
-	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:matchcreatesection' exam=exam part=part  %}">Match Type</a></center>
-
-	    <center><a style="color:#f93c00;" class="sections" href="{% url 'online_test:integercreatesection' exam=exam part=part  %}">Integer Type</a></center>
-	    
-	
-
-	       
-	  </div>
-	</div>
-
-	</div>
 	
 
 </div>
@@ -344,7 +354,7 @@ window.onclick = function(event) {
 
 
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 	
 /*
  * uilang v1.0.1
@@ -401,8 +411,11 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   UIElement.prototype.createEventListener = function() {
+
+  	
     var self = this
     var clicked = document.querySelectorAll(self.clickSelector)
+    if (clicked.classValue == "outer" || "open"){
     var i = clicked.length
 
     if (i < 1) {
@@ -414,10 +427,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateClass(el) {
+    	if (self.classValue == "outer" || "open"){
       el.classList[self.classBehavior](self.classValue)
+  }
     }
 
     function clickCallback(e) {
+   if (e.target.className.toLowerCase() == "outer" || "open"){
       switch (self.targetSelector) {
         case "target" :
         case "this"   :
@@ -433,10 +449,13 @@ document.addEventListener("DOMContentLoaded", function() {
             updateClass(target.item(i))
           }
       }
-      if (e.target.nodeName.toLowerCase() == "a") {
+      if (e.target.className.toLowerCase() == "a") {
         e.preventDefault()
       }
+
+  }
     }
+}
   }
 
   codeBlockContent.split(delimiter).forEach(function(data) {
@@ -452,10 +471,16 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 
+$(document).ready(function(){
+   
+    
+
+        $("a").off("click",UIElement);
+   
+});
 
 
-
-</script>
+</script> -->
 
 
 {% endblock %}
