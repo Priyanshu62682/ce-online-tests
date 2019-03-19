@@ -69,49 +69,6 @@ class CreateTestView(CreateView):
 	fields = '__all__'
 	template_name = 'online_test/createtest.html'
 
-# class DynamicChoiceSubmit(CreateView):
-# 	model = Dynamic
-# 	fields = '__all__'
-
-# 	def get_success_url(self, **kwargs):
-# 		return reverse('online_test:testdetail',kwargs={'slug':self.kwargs['slug']})
-	
-
-# 	def get_context_data(self,**kwargs):
-# 		context = super(DynamicChoiceSubmit,self).get_context_data(**kwargs)
-# 		exam = Exam.objects.get(url=self.kwargs['slug'])
-# 		context['exam'] =exam
-# 		context['parts'] = Part.objects.filter(exam=exam)
-# 		context['sections'] = Section.objects.filter(exam=exam)
-# 		context['questions'] = Question.objects.filter(exam=exam)
-# 		return context
-		
-
-# def get_request_choice(request):
-# 	if request.method=='POST':
-# 		selected= request.POST['selected']
-# 		exam_id=request.POST['exam_id']
-# 		progress=request.POST['progress']
-# 		me=Student.objects.get(student_username='Abhishek')
-
-# 		# Dynamic.objects.get(student_id=me):
-# 		current_progress=Dynamic.objects.get(student_id=me,test_id=exam_id)
-# 		progress_old=current_progress.progress
-# 		progress_oldJS=json.dumps(progress_old)
-
-# 		# print(type(progress), type(progress_oldJS))
-# 		progress_new=progress+progress_oldJS 
-# 		current_progress.progress=progress_new
-# 		current_progress.save()
-
-# 		# else:
-# 		# 	Dynamic.objects.create(
-# 		# 		student_id=me,
-# 		# 		test_id=exam_id,
-# 		# 		progress=progress,
-# 		# 		)
-
-# 	return HttpResponse('')
 
 class CreatePartView(CreateView):
 	template_name = 'online_test/newpart.html'
@@ -128,8 +85,6 @@ class CreatePartView(CreateView):
 			return super(CreatePartView, self).form_invalid(form)
 		form.instance.exam = exam_ob
 		return super(CreatePartView, self).form_valid(form,**kwargs)
-
-		
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(url=self.kwargs['testslug'])
@@ -446,7 +401,6 @@ class ResultFullDetailView(generic.TemplateView):
 		context['studentresult'] = result
 		#markedchoices = incorporate all the type of datachoices
 		context['selectedchoices'] = result.result_json['user_choices']
-		print(result.result_json['user_choices']['3'])
 		return context
 
 class QuestionChoiceAdd(CreateView):

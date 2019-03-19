@@ -219,7 +219,9 @@
 						<div class="panel-body">
 							<div class="col-md-12 text-center">
 								<h4> Are you sure you want to submit for final marking?<br>No changes will be allowed after submission. <br> </h4>
-								<a class="btn btn-default btn-lg" id="btnYesSubmit" href="{% url 'online_test_frontend:thankyou' student=student exam=exam %}">Yes</a> 
+								<!--a class="btn btn-default btn-lg" id="btnYesSubmit" href="{% url 'online_test_frontend:thankyou' student=student exam_id=test.id %}">Yes</a--> 
+
+								<a class="btn btn-default btn-lg" href="{% url 'online_test_frontend:thankyou' student=student exam_id=test.id %}">Yes</a> 
 								<a class="btn btn-default btn-lg" id="btnNoSubmit">No</a>
 							</div>
 						</div>

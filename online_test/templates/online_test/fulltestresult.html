@@ -1,5 +1,13 @@
 {% extends "online_test/index.html" %}
 {% block content %}
-{{selectedchoices}}
+
+{% for choice in selectedchoices %}
+    {{choice}}
+    {% for item in choice %}
+        {{item}}
+    
+    {% endfor %}
+{% endfor %}
+
 
 {% endblock %}

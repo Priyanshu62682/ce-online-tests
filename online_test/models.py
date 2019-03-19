@@ -44,14 +44,11 @@ class Exam(models.Model):
 		blank=True,
 		help_text = "Enter the url for the test",
 		)
-	description = models.CharField(
-		max_length=2000,
-		verbose_name = "test description",
+	description = models.TextField(
 		help_text = "Test description",
 		blank = True,
 		)
-	instructions = models.CharField(
-		max_length=500,
+	instructions = models.TextField(
 		verbose_name = "instructions",
 		help_text = "Test instructions",
 		blank = True,
@@ -148,8 +145,7 @@ class Section(models.Model):
 		help_text = "Example: -1",
 		blank = False,
 		)
-	section_instructions = models.CharField(
-		max_length = 1000,
+	section_instructions = models.TextField(
 		blank = True,
 		help_text = "Enter instructions for the section",
 		)
@@ -170,8 +166,7 @@ class Question(models.Model):
 	# part = StatusField(choices_name='part_choices')
 	part = models.ForeignKey(Part,related_name='question_part',on_delete=models.CASCADE)
 	section = models.ForeignKey(Section,related_name='question_section',on_delete = models.CASCADE)
-	content = models.CharField(
-		max_length=1000,
+	content = models.TextField(
 		blank = False,
 		help_text = "Enter the question",
 		)

@@ -2,13 +2,32 @@
 {% block content %}
 <div class="container">
 	<center>
-	<h2>{{exam}}</h2>
-	<h3>Scheduled On:</h3>
+	<h1>{{exam}}</h1>
+	<p>Scheduled On:</p>
 	<hr>
+	<h2>Click to register for the test</h2>
 	<form action="{% url 'online_test_frontend:subscribetest' student=student exam=exam %}" method="post">
 		{% csrf_token %}
-    	{{ form.as_p }}
-    	<input type="submit" value="SAVE">
+		
+			{% for field in form %}
+			<div class="row" style="padding: 10px">
+					<div class="col-md-2">    
+					{{ field.label_tag.as_hidden }}
+					
+					{{ field.errors.as_hidden }}
+					</div>
+					<div class="col-md-5 " >
+						<div>
+						{{ field.as_hidden }}
+						</div>
+					</div>
+					
+				</div>
+			{% endfor %}
+
+
+			<input type="submit" value="Register">
+		
 	</form>
 	</center>
 </div>

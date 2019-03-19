@@ -44,7 +44,7 @@ html,body {
 	overflow: scroll;
 	top: 6%;
 	width:88%;
-	color: #444 !important;
+
 	background-color: #fff;
 	height: 100%;
 	padding: 0px 50px 0px 0px;
@@ -243,3 +243,27 @@ form-table tr{
 	padding: 5px;
 }
 
+
+.left{
+	display: inline-block;
+	position: relative;
+	margin: 0 auto;
+	float: left;
+	height: 100%;
+	width: 50%;
+	text-align: right;
+}
+
+
+/*dashboard area style*/
+
+.right{
+	display: inline-block;
+	position: relative;
+	float: right;
+	overflow: scroll;
+	width:50%;
+	color: #444 !important;
+	height: 100%;
+	padding: 0px 50px 0px 0px;
+}

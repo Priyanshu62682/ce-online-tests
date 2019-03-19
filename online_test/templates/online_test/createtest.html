@@ -1,16 +1,34 @@
 {% extends "online_test/index.html" %}
 
-{% block javascript %}
-
-{% endblock %}
-
 {% block content %}
 	<div class="container">
 		<h3>Create new test</h3>
+		
 		<form action="{% url 'online_test:createtest' %}" method="post">
 			{% csrf_token %}
-	    	{{ form.as_p }}
-	    	<input type="submit" value="SAVE">
+			{% for field in form %}
+			<div class="row" style="padding: 10px">
+					<div class="col-md-2">    
+					 {{ field.label_tag }}
+					 
+					 {{ field.errors }}
+					</div>
+					<div class="col-md-5 " >
+						<div>
+						{{ field }}
+						{% if field.help_text %}
+					    	<sup>{{ field.help_text }}</sup>
+						{% endif %}
+						</div>
+					</div>
+					
+				</div>
+			{% endfor %}
+
+
+			<center><input type="submit" value="SAVE"></center>
 		</form>
+		
 	</div>
+
 {% endblock %}

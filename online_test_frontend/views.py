@@ -9,6 +9,9 @@ from django.http import HttpResponse,HttpResponseRedirect
 import json
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from datetime import datetime
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.shortcuts import redirect
 
 # Create your views here.
 
@@ -17,19 +20,27 @@ class UserDashboardView(generic.TemplateView):
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
 		#Select exam as per convinience
+
 		user = Student.objects.get(student_username=self.kwargs['student'])
-		print(user)
 		context['student'] = self.kwargs['student']
-		context['active_tests'] = Exam.objects.filter(published=True)
-		context['registered_tests'] = Subscriptions.objects.filter(student=user)
+		registered_tests = Subscriptions.objects.filter(student=user)
+		context['registered_tests'] = registered_tests
+		context['active_tests'] = Exam.objects.filter(published=True).exclude(
+			title__in=[test.exam for test in registered_tests])
+		
 		return context
 
-class TakeTestView(APIView):
-#class TakeTestView(generic.TemplateView):
+#class TakeTestView(APIView):
+class TakeTestView(generic.TemplateView):
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
 		student_instance=Student.objects.get(student_username=student)
+		if Result.objects.filter(test_id=exam.first(), student_username=student_instance).exists():
+			return HttpResponse('<center><h3>Sorry! You already have taken this Test.</h3></center>')
+			# raise Http404("Sorry! You already have taken this Test.")
+			# raise PermissionDenied
+			# return render(request, 'online_test_frontend/dashboard.html')
 		context = {
 			"exam":exam,
 			"student":student_instance,
@@ -268,7 +279,7 @@ def Thank_view(request,student,exam_id):
 			total_score = 'None'
 
 
-		question_object = Question.objects.filter(exam=exam_object).order_by('serial')
+		# question_object = Question.objects.filter(exam=exam_object).order_by('serial')
 	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
 		'total_score':total_score,'performance':performance})
 
@@ -299,12 +310,30 @@ class SubscribeTest(CreateView):
 	# 	form.instance.registered_on = datetime.now
 	# 	return super(SubscribeTest, self).form_valid(form,**kwargs)
 
+	def get(self, request, *args, **kwargs):
+		exam = Exam.objects.filter(title=self.kwargs['exam']).first()
+		student = Student.objects.filter(student_username=self.kwargs['student']).first()
+		if Subscriptions.objects.filter(student=student,exam=exam).exists():
+			return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':student}))
+		else:
+			return super(SubscribeTest, self).get(self,request,**kwargs)
+
+
 	def get_context_data(self,**kwargs):
 		context = super(SubscribeTest,self).get_context_data(**kwargs)
 		#Select exam as per convinience
 		context['student'] = self.kwargs['student']
 		context['exam'] = self.kwargs['exam']
 		return context
+
+	def get_initial(self):
+		exam = Exam.objects.filter(title=self.kwargs['exam']).first()
+		student = Student.objects.filter(student_username=self.kwargs['student']).first()
+		initial_data = super(SubscribeTest, self).get_initial()
+		initial_data['student'] = student
+		initial_data['exam'] = exam
+		return initial_data
+
 	def get_success_url(self,**kwargs):
 		return reverse('online_test_frontend:usertestinfo',
 			kwargs={'student':self.kwargs['student'],'exam':self.kwargs['exam'] })

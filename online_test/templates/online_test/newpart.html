@@ -3,22 +3,28 @@
 <div class="container">
 	<h3>Add new Part</h3>
 	<form method="post" action="{% url 'online_test:createpart' testslug=exam.url %}" >		
-		{% csrf_token %}
-		{{ form.non_field_errors }}
-		<table>
-			<tr>
-				<td>
-					<label for="id_name">Part Name :</label>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<input name="name" id="id_content" rows="4" cols="70" required 
-					placeholder="Part name"/>
-				</td>
-			</tr>
-		</table>
-    	<input type="submit" value="SAVE">
+			{% csrf_token %}
+			{% for field in form %}
+			<div class="row" style="padding: 10px">
+					<div class="col-md-2">    
+					 {{ field.label_tag }}
+					 
+					 {{ field.errors }}
+					</div>
+					<div class="col-md-5 " >
+						<div>
+						{{ field }}
+						{% if field.help_text %}
+					    	<sup>{{ field.help_text }}</sup>
+						{% endif %}
+						</div>
+					</div>
+					
+				</div>
+			{% endfor %}
+
+
+			<input type="submit" value="SAVE">
 	</form>
 </div>
 {% endblock %}

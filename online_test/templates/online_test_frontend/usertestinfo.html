@@ -1,7 +1,7 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
 <h1>{{exam}}</h1>
-<h3>{{exam.description}}</h3>
+<h3>{{exam.instructions}}</h3>
 <a href="{% url 'online_test_frontend:test' student=student exam=exam %}" >
 	<h2>Start</h2>
 </a>
