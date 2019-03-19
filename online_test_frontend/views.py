@@ -42,18 +42,27 @@ class UserDashboardView(LoginRequiredMixin, generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
+# <<<<<<< HEAD
 class TakeTestView(LoginRequiredMixin, generic.TemplateView):
 	# permission_required = 'user.is_staff'
 	login_url = '/accounts/login'
 	redirect_field_name = 'redirect'
+# =======
+# class TakeTestView(APIView):
+# #class TakeTestView(generic.TemplateView):
+# >>>>>>> b6ac48eb66ae46e493034014461d01a7cc71d607
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
-		serializer = ExamSerializer(instance=exam,many=True)
 		student_instance=Student.objects.get(student_username=student)
+		context = {
+			"exam":exam,
+			"student":student_instance,
+		}
+		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		#return Response(serializer.data)
-		return render(request, self.template_name, {'test': serializer.data,'student':student_instance})
+		return Response(serializer.data[0])
+		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -79,16 +88,18 @@ def get_request_choice(request):
 		progress=request.POST['progress']
 		data_input = json.loads(progress)
 		new_input={data_input['question_num']:data_input['selected_choice']}
-
-		# print(new_input)
+		print('************')
+		print(new_input)
 		exam_id=Exam.objects.get(id=request.POST['exam_id'])
 		student=Student.objects.get(student_username=request.POST['student'])
 
 		if Dynamic.objects.filter(student_id=student,test_id=exam_id).exists():
 			current_progress=Dynamic.objects.get(student_id=student,test_id=exam_id)
 			progress_old=current_progress.progress
-			# print(progress_old)
+			print('-----------')
+			print(progress_old)
 			progress_old.update(new_input)
+			print(progress_old)
 			current_progress.progress=progress_old
 			current_progress.save()
 
@@ -104,23 +115,14 @@ def get_request_choice(request):
 	return HttpResponse('')
 
 def calculate_SCC(question,choice_object_json,progress):
-	# print(choice_object_json.choices)
-	# print(progress['2'])
-	# for answer in progress[question.serial]:
-	# 	for correct in choice_object_json.correct_choice:
-	# 		if answer==
-	# print(question.serial)
-	# print(progress[str(question.serial)])
+
 	key = str(question.serial)
 	if progress[key]==choice_object_json.correct_choice:
 		marks = question.section.positive_marks
 	else:
 		marks = question.section.negative_marks
-	
-	#print("Marks awarded: "+ str(marks))
 
 	return marks
-	# return 0
 
 def calculate_MCC(question,choice_object_json,progress):
 	key = str(question.serial)
@@ -166,8 +168,12 @@ def Thank_view(request,student,exam_id):
 		student=Student.objects.get(student_username=student)
 		exam_object = Exam.objects.get(id=exam_id)
 		current_progress=Dynamic.objects.get(student_id=student,test_id=exam_object)
+		print(exam_object)
+
 		progress=current_progress.progress
 		student=current_progress.student_id
+		print(progress)
+		print(student)
 		test=current_progress.test_id
 		
 		result_object={}
@@ -265,9 +271,7 @@ def Thank_view(request,student,exam_id):
 		
 		result_object.update({'user_choices':current_progress.progress})
 		result_object.update(final)
-		print(performance)
 
-		#print(result_object)
 		if not Result.objects.filter(test_id=test,student_username=student).exists():
 			Result.objects.create(
 				test_completed= True,

@@ -48,7 +48,7 @@ class Exam(models.Model):
 		help_text = "Enter the url for the test",
 		)
 	description = models.CharField(
-		max_length=300,
+		max_length=2000,
 		verbose_name = "test description",
 		help_text = "Test description",
 		blank = True,
@@ -297,6 +297,7 @@ class Dynamic(models.Model):
 	student_id= models.ForeignKey(Student,on_delete=models.CASCADE)
 	test_id=models.ForeignKey(Exam,on_delete=models.PROTECT)
 	progress=JSONField(blank=True)
+	progress_flags = JSONField(blank=True)
 
 	def __str__(self):
 		return str(self.student_id)

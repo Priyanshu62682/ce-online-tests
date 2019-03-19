@@ -220,8 +220,6 @@ class CreateTestView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 
 def get_request_choice(request):
 	if request.method=='POST':
-		
-		
 		selected= request.POST['selected']
 		exam_id=request.POST['exam_id']
 		progress=request.POST['progress']
@@ -255,8 +253,21 @@ class CreatePartView(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 	fields = ('name',)
 
 	def form_valid(self, form,**kwargs):
+# <<<<<<< HEAD
 		form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+# =======
+		#print(form.cleaned_data.get("name"))
+		exam_ob = Exam.objects.get(url=self.kwargs['testslug'])
+		# print(exam_ob)
+		# print(Part.objects.filter(exam=exam_ob,name=form.cleaned_data.get("name")))
+		if Part.objects.filter(exam=exam_ob,name=form.cleaned_data.get('name')).exists():
+			form.add_error('name', forms.ValidationError('Part already Exists'))
+			return super(CreatePartView, self).form_invalid(form)
+		form.instance.exam = exam_ob
+# >>>>>>> b6ac48eb66ae46e493034014461d01a7cc71d607
 		return super(CreatePartView, self).form_valid(form,**kwargs)
+
+		
 
 	def get_success_url(self,**kwargs):
 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
@@ -590,6 +601,7 @@ class PartDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
 		return reverse('online_test:testdetail',
 			kwargs={'exam':exam,'pk':exam.id})
 
+# <<<<<<< HEAD
 	def get_context_data(self,**kwargs):
 		context = super(PartDelete,self).get_context_data(**kwargs)
 		exam = Exam.objects.get(url=self.kwargs['slug'])
@@ -598,6 +610,16 @@ class PartDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
 		context['sections'] = Section.objects.filter(exam=exam)
 		context['questions'] = Question.objects.filter(exam=exam)
 		return context 
+# =======
+#     def get_context_data(self,**kwargs):
+#     	context = super(PartDelete,self).get_context_data(**kwargs)
+#     	exam = Exam.objects.get(url=self.kwargs['slug'])
+#     	context['exam'] =exam
+#     	context['parts'] = Part.objects.filter(exam=exam)
+#     	context['sections'] = Section.objects.filter(exam=exam)
+#     	context['questions'] = Question.objects.filter(exam=exam)
+#     	return context
+# >>>>>>> b6ac48eb66ae46e493034014461d01a7cc71d607
 
 class TestDelete(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
 	permission_required = 'user.is_staff'
@@ -616,8 +638,7 @@ class ResultListView(LoginRequiredMixin,PermissionRequiredMixin, generic.Templat
 
 	def get_context_data(self,**kwargs):
 		context = super(ResultListView,self).get_context_data(**kwargs)
-		tests = Exam.objects.filter(test_completed=True)
-		print(tests)
+		tests = Exam.objects.all().order_by('-created_on')
 		context['tests'] = tests
 		return context
 
@@ -629,49 +650,150 @@ class ResultDetailView(LoginRequiredMixin,PermissionRequiredMixin, generic.Templ
 
 	def get_context_data(self,**kwargs):
 		context = super(ResultDetailView,self).get_context_data(**kwargs)
-
-
 		exam = Exam.objects.get(title=self.kwargs['exam'])
 		students = Result.objects.filter(test_id=exam)
 		context['exam'] = Exam.objects.get(title=self.kwargs['exam'])
 		context['students'] = students
-		print(students)
 		return context
 
-class QuestionChoiceAdd(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
-	permission_required = 'user.is_staff'
-	login_url = '/accounts/login'
-	redirect_field_name = 'redirect'
+class ResultFullDetailView(generic.TemplateView):
+	template_name = 'online_test/fulltestresult.html'
 
-	model = Question
-	fields = ['serial','content', 'figure']
-	extra=2
-
-	def get_context_data(self, **kwargs):
-		context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
-		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
-		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
-		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
-		context['exam'] = self.kwargs['exam']
-		context['part'] = self.kwargs['part']
-		context['section'] = self.kwargs['section']
-
-		if self.request.POST:
-			context['formset']=QuestionAddForm(self.request.POST)
-		else:
-			if context['section']=='single_choice_correct_type':
-				context['formset']=QuestionAddForm(extra=4)
-			if  context['section']=='multiple_choice_correct_type':
-				context['formset']=QuestionAddForm(extra=4)
-			if context['section']=='match_type':
-				context['formset']=QuestionAddForm(extra=5)
-			if context['section']=='integer_type':
-				context['formset']=QuestionAddForm(extra=0)
-
-
+	def get_context_data(self,**kwargs):
+		context = super(ResultFullDetailView,self).get_context_data(**kwargs)
+		exam = Exam.objects.get(title=self.kwargs['exam'])
+		student = Student.objects.get(student_username=self.kwargs['student'])
+		result = Result.objects.get(test_id=exam, student_username=student)
+		context['studentresult'] = result
+		#markedchoices = incorporate all the type of datachoices
+		context['selectedchoices'] = result.result_json['user_choices']
+		print(result.result_json['user_choices']['3'])
 		return context
 
-	def form_valid(self, form):
+# <<<<<<< HEAD
+# class QuestionChoiceAdd(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
+# 	permission_required = 'user.is_staff'
+# 	login_url = '/accounts/login'
+# 	redirect_field_name = 'redirect'
+
+# 	model = Question
+# 	fields = ['serial','content', 'figure']
+# 	extra=2
+
+# 	def get_context_data(self, **kwargs):
+# 		context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
+# 		exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+# 		part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+# 		section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+# 		context['exam'] = self.kwargs['exam']
+# 		context['part'] = self.kwargs['part']
+# 		context['section'] = self.kwargs['section']
+# =======
+class QuestionChoiceAdd(CreateView):
+    model = Question
+    fields = ['serial','content', 'figure']
+    extra=2
+
+    def get_context_data(self, **kwargs):
+    	context=super(QuestionChoiceAdd,self).get_context_data(**kwargs)
+    	exam_instance = Exam.objects.get(title=self.kwargs['exam'])
+    	part_instance = Part.objects.get(exam=exam_instance,name=self.kwargs['part'])
+    	section_instance = Section.objects.get(exam=exam_instance, part=part_instance,section_type=self.kwargs['section'])
+    	context['exam'] = self.kwargs['exam']
+    	context['part'] = self.kwargs['part']
+    	context['section'] = self.kwargs['section']
+
+    	if self.request.POST:
+    		context['formset']=QuestionAddForm(self.request.POST)
+    	else:
+    		if context['section']=='single_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if  context['section']=='multiple_choice_correct_type':
+	    		context['formset']=QuestionAddForm(extra=4)
+	    	if context['section']=='match_type':
+	    		context['formset']=QuestionAddForm(extra=5)
+	    	if context['section']=='integer_type':
+	    		context['formset']=QuestionAddForm(extra=0)
+
+
+    	return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
+        form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
+        form.instance.section = Section.objects.get(exam=form.instance.exam, part=form.instance.part,section_type=self.kwargs['section'])
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+
+            formset.instance = self.object
+            question_id=self.request.POST.getlist("question_id")
+
+            print(question_id)
+            # cd = formset.cleaned_data
+            if context['section']=='single_choice_correct_type' or context['section']=='multiple_choice_correct_type':
+            	c_1=self.request.POST.getlist("choice_1")
+            	c_2=self.request.POST.getlist("choice_2")
+            	c_3=self.request.POST.getlist("choice_3")
+            	c_4=self.request.POST.getlist("choice_4")
+            	c_a=self.request.POST.getlist("correct_choice")
+            	answer=	[]
+            	answer.append(c_1[0])
+            	answer.append(c_2[0])
+            	answer.append(c_3[0])
+            	answer.append(c_4[0])
+            	# print(answer)
+            	member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            	member.save()
+            else:
+            	if context['section']=='match_type':
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_2=self.request.POST.getlist("choice_2")
+            		c_3=self.request.POST.getlist("choice_3")
+            		c_4=self.request.POST.getlist("choice_4")
+            		c_5=self.request.POST.getlist("choice_5")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		answer.append(c_1[0])
+            		answer.append(c_2[0])
+            		answer.append(c_3[0])
+            		answer.append(c_4[0])
+            		answer.append(c_5[0])
+
+            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            		member.save()
+
+            	else:
+            		c_1=self.request.POST.getlist("choice_1")
+            		c_a=self.request.POST.getlist("correct_choice")
+            		answer=[]
+            		member = QuestionChoices(choices=answer, correct_choice=c_a[0], question_id=formset.instance, section=form.instance.section)
+            		member.save()
+
+            # formset.save()
+            return HttpResponseRedirect(reverse('online_test:updatesection', 
+            	kwargs={'exam':self.kwargs['exam'], 'part':self.kwargs['part'], 'section':self.kwargs['section']}))
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+# >>>>>>> b6ac48eb66ae46e493034014461d01a7cc71d607
+
+        if self.request.POST:
+            context['formset']=QuestionAddForm(self.request.POST)
+        else:
+            if context['section']=='single_choice_correct_type':
+                context['formset']=QuestionAddForm(extra=4)
+            if  context['section']=='multiple_choice_correct_type':
+                context['formset']=QuestionAddForm(extra=4)
+            if context['section']=='match_type':
+                context['formset']=QuestionAddForm(extra=5)
+            if context['section']=='integer_type':
+                context['formset']=QuestionAddForm(extra=0)
+
+
+        return context
+
+    def form_valid(self, form):
 	    context = self.get_context_data()
 	    form.instance.exam = Exam.objects.get(title=self.kwargs['exam'])
 	    form.instance.part = Part.objects.get(exam=form.instance.exam,name=self.kwargs['part'])
@@ -733,8 +855,8 @@ class QuestionChoiceAdd(LoginRequiredMixin,PermissionRequiredMixin, CreateView):
 
 
 
-	def get_success_url(self,**kwargs):
-		return HttpResponseRedirect(reverse('online_test:updatesection',
+    def get_success_url(self,**kwargs):
+        return HttpResponseRedirect(reverse('online_test:updatesection',
 			kwargs={'exam':self.kwargs['exam'],'part':self.kwargs['part'],'section':self.kwargs['section'] }))
     # if this is POST request we need to process the form data
 	
