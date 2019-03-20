@@ -24,7 +24,7 @@
 	        	{% for part in student.result_json.part_result %}
 	        		<td class="col-md-1">{{part.score}}</td> 
 					<!--td class="col-md-1">{{part.score}} Marks</td-->
-				{% endfor %}
+						{% endfor %}
 				<td class="col-md-1">{{student.result_json.total_score}} </td>
 
 				<td class="col-md-1"><a href="{% url 'online_test:resultfulldetail' exam=exam student=student %}">See complete result</a></td>

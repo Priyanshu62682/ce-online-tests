@@ -1,13 +1,59 @@
 {% extends "online_test/index.html" %}
 {% block content %}
+    <center>
+        <h1>{{student}}</h1>
+        <h3>Test Result</h3>
+    </center>
+    <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Part</th>
+            <th>Total Positives</th>
+            <th>Total Negatives</th>
+            <th>Total Positive Marks</th>
+            <th>Total Negative Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+        {% for result in final_result %}
+        <tr>
+            <td>{{result.name}}</td>
+            <td>{{result.positives}}</td>
+            <td>{{result.negatives}}</td>
+            <td>{{result.positive_marks}}</td>
+            <td>{{result.negative_marks}}</td>
+        </tr>    
+        {% endfor %}
+        
+        </tbody>
+    </table>
+    <center>
+        <h3>Result - Questionwise</h3>
+    </center>
+        <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Correct Answer</th>
+            <th>Marked answer</th>
+            <th>Marks Awarded</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+        {% for choice in result %}
+        <tr>
+            <td>{{choice.serial}}</td>
+            <td>{{choice.correct_choice}}</td>
+            <td>{{choice.marked_choice}}</td>
+            <td>{{choice.marks}}</td>
+        </tr>    
+        {% endfor %}
+        
+        </tbody>
+    </table>
 
-{% for choice in selectedchoices %}
-    {{choice}}
-    {% for item in choice %}
-        {{item}}
-    
-    {% endfor %}
-{% endfor %}
 
 
 {% endblock %}

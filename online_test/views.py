@@ -394,13 +394,36 @@ class ResultFullDetailView(generic.TemplateView):
 	template_name = 'online_test/fulltestresult.html'
 
 	def get_context_data(self,**kwargs):
+		# error handling
+		
 		context = super(ResultFullDetailView,self).get_context_data(**kwargs)
 		exam = Exam.objects.get(title=self.kwargs['exam'])
 		student = Student.objects.get(student_username=self.kwargs['student'])
 		result = Result.objects.get(test_id=exam, student_username=student)
 		context['studentresult'] = result
-		#markedchoices = incorporate all the type of datachoices
-		context['selectedchoices'] = result.result_json['user_choices']
+		markedchoices = sorted(result.result_json['user_choices'].items())
+		questions = Question.objects.filter(exam=exam).order_by('serial')
+		final_result=[]
+		for question in questions:
+			correct_choice = QuestionChoices.objects.filter(question_id=question).first().correct_choice
+			marked_choice_value = markedchoices[question.serial-1][1]
+			#check for out of bounds
+			if correct_choice==marked_choice_value:
+				marks=question.section.positive_marks
+			else:
+				marks=question.section.negative_marks
+			
+			student_result = {
+				'serial':question.serial,
+				'correct_choice':correct_choice,
+				'marked_choice':marked_choice_value,
+				'marks':marks
+			}
+			final_result.append(student_result)
+		
+
+		context['final_result']=result.result_json['part_result']
+		context['result'] = final_result
 		return context
 
 class QuestionChoiceAdd(CreateView):
