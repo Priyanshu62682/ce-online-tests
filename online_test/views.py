@@ -41,7 +41,7 @@ def signup(request):
             user = user_form.save()
             user.refresh_from_db()
             user_obj=User.objects.get(username=user.username) 
-            student_form=Student.objects.get(user=user_obj)
+            # student_form=Student.objects.get(student_username=user_obj)
             
             
             print(student_form)
@@ -49,7 +49,7 @@ def signup(request):
             # student_form.birth_date=request.POST.get('birth_date')
             # print(student_form.cleaned_data.get('birth_date'))
             student_form.student_username=user.username
-            # print(user.username)
+            # print(student_form.student_username)
             student_form.batch=request.POST.get('batch')
             student_form.address=request.POST.get('address')
             student_form.name=request.POST.get('name')
@@ -58,7 +58,8 @@ def signup(request):
             raw_password = user_form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(reverse('online_test_frontend:user-dashboard', kwargs={'student':user.student_username}))
+            # Student.refresh_from_db()
+            return HttpResponseRedirect(reverse('login'))
     else:
         user_form = SignUpForm()
         student_form = StudentForm()

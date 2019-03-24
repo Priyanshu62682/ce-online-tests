@@ -20,7 +20,7 @@ class SignUpForm(UserCreationForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student 
-        fields=('name', 'batch','Address' ) 
+        fields=('student_username','name', 'batch','Address' ) 
 
 
 class ContactForm(forms.Form):

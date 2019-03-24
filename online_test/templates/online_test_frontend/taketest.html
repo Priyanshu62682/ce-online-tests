@@ -1,7 +1,7 @@
 {% extends "online_test_frontend/index.html" %}
 {% load static %}
 {% block content %}
-{% if student == user %}
+
 	<header class="headerContainer">
 		<div class="headerNavbar">
 			<div class="container">
@@ -336,10 +336,5 @@
 			</div> -->
 		</div>
 	</div>
-{% else %}
-	<div class="container">
-		<h3>Nice try</h3>
-		<a href="/login">login now on YOUR account</a>
-	</div>
-{% endif %}
+<!--  -->
 {% endblock %}

@@ -1,8 +1,7 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-{% if student == user %}
 	<div class="container">
-		<h1 class="col-mid-6" style="border: solid 2px red;">{{user}}'s dashboard</h1>
+		<h1 class="col-mid-6">{{user}}'s dashboard</h1>
 		<a href="/logout" style="float:right; color: #555"> <i class="fa fa-minus"></i>Logout</a>
 		<hr>
 		
@@ -54,10 +53,4 @@
 		</div>
 		
 	</div>
-{% else %}
-	<div class="container">
-		<h3>Nice try</h3>
-		<a href="/login">login now on YOUR account</a>
-	</div>
-{% endif %}
 {% endblock %}

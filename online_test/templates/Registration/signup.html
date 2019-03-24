@@ -3,7 +3,8 @@
   <form method="post">
     {% csrf_token %}
     {{ user_form.as_p }}
-    {{student_user_form.as_p }}
+    <p style="color: red">Enter same student username same as username above</p>
+    {{student_form.as_p }}
     <button type="submit">Sign up</button>
   </form>
 {% endblock %}
