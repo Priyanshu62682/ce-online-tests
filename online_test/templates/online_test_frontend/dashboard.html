@@ -1,54 +1,63 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
-<div class="container">
-	<h1 >User Dashboard</h1><hr>
-
-	<h4 >Upcoming registered tests:</h4>
-	<div class="block">
-		{% if registered_tests %}
-			{% for test in registered_tests %}
-				<div class="subscription-list">
-					<div class="test-description">
-						<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
-						</div>
-						<div class="description-block">
-							{{test.exam}}
-							<h6>On board Pattern</h6>
-							<button>
-								<a href="{% url 'online_test_frontend:usertestinfo' student=student exam=test.exam %}">Start Now
-								</a>
-							</button>
+{% if student == user %}
+	<div class="container">
+		<h1 class="col-mid-6" style="border: solid 2px red;">{{user}}'s dashboard</h1>
+		<a href="/logout" style="float:right; color: #555"> <i class="fa fa-minus"></i>Logout</a>
+		<hr>
+		
+		<h4 >Upcoming registered tests:</h4>
+		<div class="block">
+			{% if registered_tests %}
+				{% for test in registered_tests %}
+					<div class="subscription-list">
+						<div class="test-description">
+							<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
+							</div>
+							<div class="description-block">
+								{{test.exam}}
+								<h6>On board Pattern</h6>
+								<button>
+									<a href="{% url 'online_test_frontend:usertestinfo' student=student exam=test.exam %}">Start Now
+									</a>
+								</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			{% endfor %}
-		{% else %}
-			<center>
-				<p>No registered tests</p>
-			</center>
-		{% endif %}
-	</div>	
-	<h4 >Available Tests :</h4>
-	<div class="block">
-		{% for test in active_tests %}
-		<div class="subscription-list">
-			<div class="test-description">
-				<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
-				</div>
-				<div class="description-block"> 
-					<h2>{{test}}</h2>
-					<h6>On board Pattern</h6>
-					<button>
-						<a href="{% url 'online_test_frontend:subscribetest' student=student exam=test.title %}" >Register Now</a>
-				</button>
+				{% endfor %}
+			{% else %}
+				<center>
+					<p>No registered tests</p>
+				</center>
+			{% endif %}
+		</div>	
+		<h4 >Available Tests :</h4>
+		<div class="block">
+			{% for test in active_tests %}
+			<div class="subscription-list">
+				<div class="test-description">
+					<div class="test-heading" style="font-size:30px; font-weight: 600 ;padding: 20px; color: #595959;">
+					</div>
+					<div class="description-block"> 
+						<h2>{{test}}</h2>
+						<h6>On board Pattern</h6>
+						<button>
+							<a href="{% url 'online_test_frontend:subscribetest' student=student exam=test.title %}" >Register Now</a>
+					</button>
 
 
-				</div>
+					</div>
 
+				</div>
 			</div>
+			{% endfor %}
 		</div>
-		{% endfor %}
+		
 	</div>
-	
-</div>
+{% else %}
+	<div class="container">
+		<h3>Nice try</h3>
+		<a href="/login">login now on YOUR account</a>
+	</div>
+{% endif %}
 {% endblock %}

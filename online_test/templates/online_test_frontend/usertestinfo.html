@@ -1,9 +1,15 @@
 {% extends "online_test_frontend/index.html" %}
 {% block content %}
+{% if student == user %}
 <h1>{{exam}}</h1>
 <h3>{{exam.description}}</h3>
 <a href="{% url 'online_test_frontend:test' student=student exam=exam %}" >
 	<h2>Start</h2>
 </a>
-
+{% else %}
+	<div class="container">
+		<h3>Nice try</h3>
+		<a href="/login">login now on YOUR account</a>
+	</div>
+{% endif %}
 {% endblock %}

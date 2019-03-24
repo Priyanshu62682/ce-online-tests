@@ -22,7 +22,13 @@
 
 <body>
 	<div class="topbar">
-		<p><i class="fa fa-user-secret"></i>Hello Admin</p>
+		{% if user.is_authenticated %}
+		<p><i class="fa fa-user-secret"></i>Hello {{user.username}}</p>
+		{% else %}
+		<p><a href="/accounts/login"><i class="fa fa-secret"></i>Login</a></p>
+		{% endif %}
+
+
 	</div>
 
 	<div class="dashboard_controls">
@@ -34,6 +40,11 @@
 	        	<li><a href=""><i class="fa fa-home"></i>Students</a></li>
 	        	<li><a href="{% url 'online_test:resultlist' %}"><i class="fa fa-home" ></i>Results</a></li>
 	        	<li><a href="{% url 'online_test:createtest' %}"><i class="fa fa-plus"></i>Create new tests</a></li>
+	        	{% if user.is_authenticated %}
+			     <!-- <li><a ><i class="fa fa-child"></i>Hello{{ user.get_username }}</a></li> -->
+			     <li style="color:white"><a href="/logout"> <i class="fa fa-minus"></i>Logout</a></li>   
+				   
+				   {% endif %} 
     		</ul>
     	</div>
         {% endblock %}

@@ -24,6 +24,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from datetime import datetime
+from urllib import request
 
 # Create your views here.
 
@@ -36,15 +37,30 @@ class UserDashboardView(LoginRequiredMixin,generic.TemplateView):
 	login_url = '/login'
 	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/dashboard.html'
+	# def user(request):
+	# 	print(request.user.username)
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
 		#Select exam as per convinience
 		user = Student.objects.get(student_username=self.kwargs['student'])
-		print(user)
+		print(self.request.user)
 		context['student'] = self.kwargs['student']
 		context['active_tests'] = Exam.objects.filter(published=True)
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
+		# if self.request.user==user:
+		# 	return context
+		# else:
+		# 	print('this')
+		# 	return reverse('login')
+	
+	# def notauth(request,self,**kwargs):
+	# 	print('yo')
+	# 	if self.kwargs['student']!=request.user.username:
+	# 		print(self.kwargs['student'])
+	# 		print(request.user.username)
+	# 		return HttpResponseRedirect(reverse('online_test:login'))
+
 
 # class TakeTestView(APIView):
 class TakeTestView(LoginRequiredMixin,generic.TemplateView):

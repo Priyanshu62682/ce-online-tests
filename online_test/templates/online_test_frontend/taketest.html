@@ -1,6 +1,7 @@
 {% extends "online_test_frontend/index.html" %}
 {% load static %}
 {% block content %}
+{% if student == user %}
 	<header class="headerContainer">
 		<div class="headerNavbar">
 			<div class="container">
@@ -27,12 +28,26 @@
 												<tr>
 													<td style="padding: 0px 5px;">Remaining Time</td>
 													<td>: <span class="timer-title time-started">02:38:59</span></td>
+													<!-- <td style="padding: 0px 5px;">:<a href="/logout"> <i class="fa fa-minus"></i>Logout</a></td> -->
 												</tr>
+												{% if user.is_authenticated %}
+												<tr>
+													<td style="padding: 0px 5px;">Signout</td>
+													<td >: <a  style="color: #f7931e; font-weight: bold" href="/logout"> <i ></i>Click Here</a></td>
+													
+													<!-- <td style="padding: 0px 5px;">:<a href="/logout"> <i class="fa fa-minus"></i>Logout</a></td> -->
+												</tr>
+												{% endif %}
 											</tbody></table>
 										</td>
 									</tr>
 								</tbody></table>
 							</li>
+							<!-- {% if user.is_authenticated %} -->
+			     <!-- <li><a ><i class="fa fa-child"></i>Hello{{ user.get_username }}</a></li> -->
+			   <!--   <li style="color:white"><a style="color:#f7931e" href="/logout"> <i class="fa fa-minus"></i>Logout</a></li>   
+				   
+				   {% endif %} -->
 						</ul>
 					</div>
 				</div>
@@ -321,4 +336,10 @@
 			</div> -->
 		</div>
 	</div>
+{% else %}
+	<div class="container">
+		<h3>Nice try</h3>
+		<a href="/login">login now on YOUR account</a>
+	</div>
+{% endif %}
 {% endblock %}

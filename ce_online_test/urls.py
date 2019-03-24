@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-dashboard/',include('online_test.urls')),
     path('user-dashboard/',include('online_test_frontend.urls')),
-    path('', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='login'),
+    path('', include('django.contrib.auth.urls'), {'template_name':"templates/Registration/"}, name='login'),
     # path('', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='signup'),
     # path('signup/', views.SignUp.as_view(),{'template_name':"templates/registration/"},name='signup')
 ]
