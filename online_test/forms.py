@@ -4,7 +4,23 @@ from django.forms import inlineformset_factory
 from django.forms import ModelForm
 from django.forms import modelformset_factory
 from django.forms.models import BaseInlineFormSet
-from django.forms.models import BaseModelFormSet    
+from django.forms.models import BaseModelFormSet   
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User 
+
+
+
+class SignUpForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ('username','password1', 'password2', )
+
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student 
+        fields=('name', 'batch','Address' ) 
 
 
 class ContactForm(forms.Form):

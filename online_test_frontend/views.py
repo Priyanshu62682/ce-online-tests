@@ -7,12 +7,34 @@ from online_test.serializers import *
 from django.http import JsonResponse
 from django.http import HttpResponse,HttpResponseRedirect
 import json
+from django.db import transaction
+from operator import itemgetter
+from django.contrib.auth import *
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.conf import settings
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from datetime import datetime
 
 # Create your views here.
 
-class UserDashboardView(generic.TemplateView):
+# class SignUp(generic.CreateView):
+#     form_class = UserCreationForm
+#     success_url = reverse_lazy('login')
+#     template_name = 'Registration/signup.html'
+
+class UserDashboardView(LoginRequiredMixin,generic.TemplateView):
+	login_url = '/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/dashboard.html'
 	def get_context_data(self,**kwargs):
 		context = super(UserDashboardView,self).get_context_data(**kwargs)
@@ -24,8 +46,10 @@ class UserDashboardView(generic.TemplateView):
 		context['registered_tests'] = Subscriptions.objects.filter(student=user)
 		return context
 
-class TakeTestView(APIView):
-#class TakeTestView(generic.TemplateView):
+# class TakeTestView(APIView):
+class TakeTestView(LoginRequiredMixin,generic.TemplateView):
+	login_url = '/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/taketest.html'
 	def get(self,request,student,exam):
 		exam = Exam.objects.filter(title=exam)
@@ -36,8 +60,8 @@ class TakeTestView(APIView):
 		}
 		serializer = ExamSerializer(instance=exam,context=context,many=True)
 		#print(serializer.data)
-		return Response(serializer.data[0])
-		#return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
+		# return Response(serializer.data[0])
+		return render(request, self.template_name, {'test': serializer.data[0],'student':student_instance})
 
 	# def get_context_data(self,**kwargs):
 	# 	context = super(TakeTestView,self).get_context_data(**kwargs)
@@ -263,7 +287,9 @@ def Thank_view(request,student,exam_id):
 	return render (request, 'online_test_frontend/thankyou.html', {'message': message,'progress':progress,
 		'total_score':total_score,'performance':performance})
 
-class UserTestInfo(generic.TemplateView):
+class UserTestInfo(LoginRequiredMixin,generic.TemplateView):
+	login_url = '/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/usertestinfo.html'
 	def get_context_data(self,**kwargs):
 		context = super(UserTestInfo,self).get_context_data(**kwargs)
@@ -275,7 +301,9 @@ class UserTestInfo(generic.TemplateView):
 		
 
 
-class SubscribeTest(CreateView):
+class SubscribeTest(LoginRequiredMixin,CreateView):
+	login_url = '/login'
+	redirect_field_name = 'redirect'
 	template_name = 'online_test_frontend/confirm_registration.html'
 	model = Subscriptions
 	fields = '__all__'

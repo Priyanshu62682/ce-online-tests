@@ -15,9 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.contrib.auth import views as auth_views
+from django.conf.urls import url
+# from online_test.views import SignUp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-dashboard/',include('online_test.urls')),
     path('user-dashboard/',include('online_test_frontend.urls')),
+    path('', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='login'),
+    # path('', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='signup'),
+    # path('signup/', views.SignUp.as_view(),{'template_name':"templates/registration/"},name='signup')
 ]

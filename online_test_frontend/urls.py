@@ -11,4 +11,5 @@ urlpatterns = [
 	path('<student>/<exam>/testinfo/',views.UserTestInfo.as_view(), name = 'usertestinfo'),
 	path('<student>/<exam>/confirm_registration/',views.SubscribeTest.as_view(), name = 'subscribetest'),
 	path('<student>/<exam_id>/endtest/', views.Thank_view, name='thankyou'),
+	# path('signup', views.SignUp.as_view(), name='signup')
 ]

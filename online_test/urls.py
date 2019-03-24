@@ -2,6 +2,11 @@ from django.urls import path
 
 from . import views
 
+from django.contrib.auth import views as auth_views
+from django.conf.urls import url, include
+
+from . import views
+
 app_name = 'online_test'
 urlpatterns = [
 	path('', views.DashboardView.as_view(), name='dashboard'),
@@ -29,5 +34,7 @@ urlpatterns = [
 	path('resultslist/<exam>/<student>/detail', views.ResultFullDetailView.as_view(), name='resultfulldetail'),
 	#path('user/submitselected/',views.get_request_choice, name = 'submitselected'),
 	#path('managetests/<slug:slug>/dynamic', views.DynamicChoiceSubmit.as_view(), name='dynamicsubmit'),
+	path('login_success/', views.login_success, name='login_success'),
+	path('signup/',views.signup, name='signup'),
 
 ]

@@ -59,7 +59,7 @@ ROOT_URLCONF = 'ce_online_test.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,3 +133,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/diagrams/'
+
+LOGIN_REDIRECT_URL = 'online_test:login_success'
