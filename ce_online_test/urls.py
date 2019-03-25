@@ -17,13 +17,18 @@ from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
 from django.conf.urls import url
-# from online_test.views import SignUp
+from online_test import views as test_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-dashboard/',include('online_test.urls')),
     path('user-dashboard/',include('online_test_frontend.urls')),
     path('', include('django.contrib.auth.urls'), {'template_name':"templates/Registration/"}, name='login'),
+    path('signup/',test_views.signup, name='signup'),
+    # patterns('',
+    #            (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+    #              {'document_root': settings.MEDIA_ROOT}),
+    #           )
     # path('', include('django.contrib.auth.urls'), {'template_name':"templates/registration/"}, name='signup'),
     # path('signup/', views.SignUp.as_view(),{'template_name':"templates/registration/"},name='signup')
 ]
